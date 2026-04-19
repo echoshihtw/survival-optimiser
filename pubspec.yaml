@@ -1,0 +1,28 @@
+name: survival_optimizer
+publish_to: none
+
+environment:
+  sdk: '^3.11.5'
+
+workspace:
+  - packages/domain
+  - packages/data
+  - packages/application
+  - packages/design_system
+  - packages/presentation
+  - app
+
+dev_dependencies:
+  melos: ^7.5.1
+
+melos:
+  scripts:
+    test:
+      run: melos exec -- flutter test
+      description: Run all tests
+    analyze:
+      run: melos exec -- flutter analyze
+      description: Analyze all packages
+    gen:
+      run: melos exec -- dart run build_runner build --delete-conflicting-outputs
+      description: Run code generation

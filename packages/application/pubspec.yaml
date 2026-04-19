@@ -1,0 +1,25 @@
+name: application
+description: Application layer - Riverpod providers and use cases
+version: 0.0.1
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: '^3.11.5'
+
+dependencies:
+  domain:
+    path: ../domain
+  flutter_riverpod: ^3.0.3
+  riverpod_annotation: ^3.0.3
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  riverpod_generator: ^3.0.3
+  build_runner: ^2.10.4
+  mocktail: ^1.0.0
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+  shared_preferences: ^2.2.0

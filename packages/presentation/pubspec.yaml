@@ -1,0 +1,27 @@
+name: presentation
+description: Presentation layer - screens and widgets
+version: 0.0.1
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: '^3.11.5'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  application:
+    path: ../application
+  design_system:
+    path: ../design_system
+  domain:
+    path: ../domain
+  go_router: ^14.6.1
+  fl_chart: ^0.68.0
+  intl: ^0.20.2
+  uuid: ^4.0.0
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter

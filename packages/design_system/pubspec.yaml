@@ -1,0 +1,24 @@
+name: design_system
+description: Design system - tokens, theme, terminal components
+version: 0.0.1
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: '^3.11.5'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  google_fonts: ^6.2.1
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  generate: true

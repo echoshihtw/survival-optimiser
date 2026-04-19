@@ -1,0 +1,22 @@
+name: survival_optimizer
+
+packages:
+  - packages/*
+  - app
+
+command:
+  bootstrap:
+    runPubGetInParallel: false
+
+scripts:
+  test:
+    run: melos exec -- flutter test
+    description: Run all tests
+
+  analyze:
+    run: melos exec -- flutter analyze
+    description: Analyze all packages
+
+  gen:
+    run: melos exec -- dart run build_runner build --delete-conflicting-outputs
+    description: Run code generation

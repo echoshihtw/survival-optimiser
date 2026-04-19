@@ -1,0 +1,24 @@
+name: data
+description: Data layer - Drift SQLite implementation
+version: 0.0.1
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: '^3.11.5'
+
+dependencies:
+  domain:
+    path: ../domain
+  drift: ^2.26.1
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.0.0
+  path: ^1.8.0
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  drift_dev: ^2.26.1
+  build_runner: ^2.10.4
+  lints: ^6.0.0
+  test: ^1.24.0
