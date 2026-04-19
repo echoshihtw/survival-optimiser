@@ -1,55 +1,78 @@
 import 'package:test/test.dart';
 import 'package:domain/domain.dart';
-
-Transaction _tx({
-  required int year,
-  required int month,
-  required TransactionType type,
-  required double amount,
-}) {
-  final now = DateTime.now();
-  return Transaction(
-    id:        '$year-$month-${type.name}',
-    date:      DateTime(year, month, 1),
-    type:      type,
-    amount:    Money(amount),
-    createdAt: now,
-    updatedAt: now,
-  );
-}
+import '../helpers/transaction_helper.dart';
 
 void main() {
   group('aggregateMonths', () {
-    test('returns empty list when no transactions', () {
+    test('returns empty for no transactions', () {
       expect(aggregateMonths([]), isEmpty);
+    });
+
+    test('returns empty if only opening balance', () {
+      final txs = [
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.openingBalance, amount: 1000000),
+      ];
+      expect(aggregateMonths(txs), isEmpty);
     });
 
     test('opening balance sets starting cash', () {
       final txs = [
-        _tx(year: 2025, month: 1, type: TransactionType.openingBalance, amount: 1000000),
-        _tx(year: 2025, month: 1, type: TransactionType.expense, amount: 50000),
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.openingBalance, amount: 1000000),
+        makeTx(year: 2025, month: 1, day: 15,
+            type: TransactionType.expense, amount: 50000),
       ];
       final months = aggregateMonths(txs);
       expect(months.first.balance, 950000);
     });
 
-    test('netFlow is sum of signed amounts in month', () {
+    test('income is positive netFlow', () {
       final txs = [
-        _tx(year: 2025, month: 1, type: TransactionType.openingBalance, amount: 500000),
-        _tx(year: 2025, month: 2, type: TransactionType.income,  amount: 80000),
-        _tx(year: 2025, month: 2, type: TransactionType.expense, amount: 50000),
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.openingBalance, amount: 500000),
+        makeTx(year: 2025, month: 2, day: 1,
+            type: TransactionType.income, amount: 80000),
+        makeTx(year: 2025, month: 2, day: 15,
+            type: TransactionType.expense, amount: 50000),
       ];
       final months = aggregateMonths(txs);
       final feb = months.firstWhere((m) => m.month.value.month == 2);
-      expect(feb.netFlow, 30000); // 80k - 50k
+      expect(feb.netFlow, 30000);
     });
 
-    test('balance runs cumulatively across months', () {
+    test('loan is treated as inflow', () {
       final txs = [
-        _tx(year: 2025, month: 1, type: TransactionType.openingBalance, amount: 1000000),
-        _tx(year: 2025, month: 1, type: TransactionType.expense, amount: 50000),
-        _tx(year: 2025, month: 2, type: TransactionType.expense, amount: 50000),
-        _tx(year: 2025, month: 3, type: TransactionType.expense, amount: 50000),
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.openingBalance, amount: 0),
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.loan, amount: 500000),
+      ];
+      final months = aggregateMonths(txs);
+      expect(months.first.netFlow, 500000);
+    });
+
+    test('repayment is outflow', () {
+      final txs = [
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.openingBalance, amount: 500000),
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.repayment, amount: 15000),
+      ];
+      final months = aggregateMonths(txs);
+      expect(months.first.netFlow, -15000);
+    });
+
+    test('balance accumulates across months', () {
+      final txs = [
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.openingBalance, amount: 1000000),
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.expense, amount: 50000),
+        makeTx(year: 2025, month: 2, day: 1,
+            type: TransactionType.expense, amount: 50000),
+        makeTx(year: 2025, month: 3, day: 1,
+            type: TransactionType.expense, amount: 50000),
       ];
       final months = aggregateMonths(txs);
       expect(months[0].balance, 950000);
@@ -57,16 +80,35 @@ void main() {
       expect(months[2].balance, 850000);
     });
 
-    test('months are sorted chronologically', () {
+    test('months sorted chronologically', () {
       final txs = [
-        _tx(year: 2025, month: 1, type: TransactionType.openingBalance, amount: 500000),
-        _tx(year: 2025, month: 3, type: TransactionType.expense, amount: 10000),
-        _tx(year: 2025, month: 1, type: TransactionType.expense, amount: 10000),
-        _tx(year: 2025, month: 2, type: TransactionType.expense, amount: 10000),
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.openingBalance, amount: 500000),
+        makeTx(year: 2025, month: 3, day: 1,
+            type: TransactionType.expense, amount: 10000),
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.expense, amount: 10000),
+        makeTx(year: 2025, month: 2, day: 1,
+            type: TransactionType.expense, amount: 10000),
       ];
       final months = aggregateMonths(txs);
-      final monthNumbers = months.map((m) => m.month.value.month).toList();
-      expect(monthNumbers, [1, 2, 3]);
+      final nums = months.map((m) => m.month.value.month).toList();
+      expect(nums, [1, 2, 3]);
+    });
+
+    test('multiple transactions in same month aggregate correctly', () {
+      final txs = [
+        makeTx(year: 2025, month: 1, day: 1,
+            type: TransactionType.openingBalance, amount: 1000000),
+        makeTx(year: 2025, month: 1, day: 5,
+            type: TransactionType.expense, amount: 20000),
+        makeTx(year: 2025, month: 1, day: 10,
+            type: TransactionType.expense, amount: 30000),
+        makeTx(year: 2025, month: 1, day: 15,
+            type: TransactionType.income, amount: 80000),
+      ];
+      final months = aggregateMonths(txs);
+      expect(months.first.netFlow, 30000); // 80000 - 20000 - 30000
     });
   });
 }
