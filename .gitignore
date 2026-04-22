@@ -1,6 +1,67 @@
+# Dart/Flutter
 .dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
 build/
+pubspec.lock
+
+# Generated files
 *.g.dart
 *.freezed.dart
-.fvm/
+*.mocks.dart
+
+# Android
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+**/android/app/google-services.json
+**/android/captures/
+**/android/.idea/
+**/android/*.iml
+
+# iOS
+**/ios/Pods/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/.symlinks/
+**/ios/GoogleService-Info.plist
+
+# macOS
+**/macos/Flutter/ephemeral/
+**/macos/Pods/
+
+# IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.swp
+*.swo
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Melos
+melos_*.iml
+
+# FVM
+.fvm/
+
+# Coverage
+coverage/
+lcov.info
+
+# Environment / secrets
+*.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+*.p8
+*.p12
+*.mobileprovision
