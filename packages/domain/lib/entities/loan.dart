@@ -1,9 +1,10 @@
 class Loan {
   final String id;
   final String name;
-  final String source;        // BANK, FRIEND, FAMILY, OTHER
+  final String source;
   final double originalAmount;
   final double monthlyPayment;
+  final int originalTermMonths;
   final DateTime startDate;
   final String? note;
   final bool isActive;
@@ -16,6 +17,7 @@ class Loan {
     required this.source,
     required this.originalAmount,
     required this.monthlyPayment,
+    this.originalTermMonths = 0,
     required this.startDate,
     this.note,
     this.isActive = true,
@@ -29,6 +31,7 @@ class Loan {
     String? source,
     double? originalAmount,
     double? monthlyPayment,
+    int? originalTermMonths,
     DateTime? startDate,
     String? note,
     bool? isActive,
@@ -36,16 +39,17 @@ class Loan {
     DateTime? updatedAt,
   }) {
     return Loan(
-      id:             id             ?? this.id,
-      name:           name           ?? this.name,
-      source:         source         ?? this.source,
-      originalAmount: originalAmount ?? this.originalAmount,
-      monthlyPayment: monthlyPayment ?? this.monthlyPayment,
-      startDate:      startDate      ?? this.startDate,
-      note:           note           ?? this.note,
-      isActive:       isActive       ?? this.isActive,
-      createdAt:      createdAt      ?? this.createdAt,
-      updatedAt:      updatedAt      ?? this.updatedAt,
+      id:                 id                 ?? this.id,
+      name:               name               ?? this.name,
+      source:             source             ?? this.source,
+      originalAmount:     originalAmount     ?? this.originalAmount,
+      monthlyPayment:     monthlyPayment     ?? this.monthlyPayment,
+      originalTermMonths: originalTermMonths ?? this.originalTermMonths,
+      startDate:          startDate          ?? this.startDate,
+      note:               note               ?? this.note,
+      isActive:           isActive           ?? this.isActive,
+      createdAt:          createdAt          ?? this.createdAt,
+      updatedAt:          updatedAt          ?? this.updatedAt,
     );
   }
 }

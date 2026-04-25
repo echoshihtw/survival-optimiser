@@ -9,6 +9,9 @@ class AddTransactionUseCase {
     if (transaction.amount.isZero) {
       throw const InvalidTransactionFailure('Amount cannot be zero');
     }
+    if (transaction.amount.value > 1e12) {
+      throw const InvalidTransactionFailure('Amount exceeds maximum');
+    }
     await _repository.add(transaction);
   }
 }

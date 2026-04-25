@@ -9,6 +9,7 @@ import 'widgets/investable_bar.dart';
 import 'widgets/cash_chart.dart';
 import '../config/config_screen.dart';
 import '../loans/liabilities_panel.dart';
+import '../subscriptions/subscriptions_panel.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -96,6 +97,8 @@ class DashboardScreen extends ConsumerWidget {
                 InvestableBar(model: model),
                 const SizedBox(height: AppSpacing.sm),
                 const LiabilitiesPanel(),
+                const SizedBox(height: AppSpacing.sm),
+                const SubscriptionsPanel(),
                 const SizedBox(height: AppSpacing.sm),
                 TerminalPanel(
                   title: l10n.cashTimeline,

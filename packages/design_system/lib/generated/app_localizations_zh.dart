@@ -295,6 +295,66 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get change => '更改';
+
+  @override
+  String get subscriptions => '订阅';
+
+  @override
+  String get noSubscriptions => '> 无有效订阅';
+
+  @override
+  String get subscriptionName => '名称';
+
+  @override
+  String get subscriptionAmount => '金额';
+
+  @override
+  String get subscriptionCycle => '计费周期';
+
+  @override
+  String get subscriptionCategory => '类别';
+
+  @override
+  String get subscriptionNextBilling => '下次扣款';
+
+  @override
+  String get subscriptionDaysLeft => '天';
+
+  @override
+  String get totalPerMonth => '月合计';
+
+  @override
+  String get totalPerYear => '年合计';
+
+  @override
+  String get newSubscription => '+ 订阅';
+
+  @override
+  String get editSubscription => '> 编辑订阅';
+
+  @override
+  String get addSubscription => '> 新增订阅';
+
+  @override
+  String get personal => '个人';
+
+  @override
+  String get business => '商业';
+
+  @override
+  String get weekly => '每周';
+
+  @override
+  String get monthly => '每月';
+
+  @override
+  String get quarterly => '每季';
+
+  @override
+  String get yearly => '每年';
+
+  @override
+  String get subscrPerMonth => '订阅/月';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -588,4 +648,64 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get change => '更改';
+
+  @override
+  String get subscriptions => '訂閱';
+
+  @override
+  String get noSubscriptions => '> 無有效訂閱';
+
+  @override
+  String get subscriptionName => '名稱';
+
+  @override
+  String get subscriptionAmount => '金額';
+
+  @override
+  String get subscriptionCycle => '計費週期';
+
+  @override
+  String get subscriptionCategory => '類別';
+
+  @override
+  String get subscriptionNextBilling => '下次扣款';
+
+  @override
+  String get subscriptionDaysLeft => '天';
+
+  @override
+  String get totalPerMonth => '月合計';
+
+  @override
+  String get totalPerYear => '年合計';
+
+  @override
+  String get newSubscription => '+ 訂閱';
+
+  @override
+  String get editSubscription => '> 編輯訂閱';
+
+  @override
+  String get addSubscription => '> 新增訂閱';
+
+  @override
+  String get personal => '個人';
+
+  @override
+  String get business => '商業';
+
+  @override
+  String get weekly => '每週';
+
+  @override
+  String get monthly => '每月';
+
+  @override
+  String get quarterly => '每季';
+
+  @override
+  String get yearly => '每年';
+
+  @override
+  String get subscrPerMonth => '訂閱/月';
 }

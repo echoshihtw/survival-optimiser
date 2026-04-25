@@ -161,6 +161,8 @@ class _SimInput extends StatelessWidget {
       label: label,
       hint: hint,
       keyboardType: TextInputType.number,
+      maxLength: 13,
+      inputFormatters: [AppInputFormatters.amount],
       onChanged: onChanged,
     );
   }

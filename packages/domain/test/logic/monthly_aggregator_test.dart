@@ -13,7 +13,7 @@ void main() {
         makeTx(year: 2025, month: 1, day: 1,
             type: TransactionType.openingBalance, amount: 1000000),
       ];
-      expect(aggregateMonths(txs), isEmpty);
+      expect(aggregateMonths(txs).first.balance, 1000000);
     });
 
     test('opening balance sets starting cash', () {

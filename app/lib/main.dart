@@ -9,15 +9,17 @@ import 'package:data/data.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final db         = AppDatabase();
-  final txRepo     = DriftTransactionRepository(db);
-  final loanRepo   = DriftLoanRepository(db);
+  final db      = AppDatabase();
+  final txRepo  = DriftTransactionRepository(db);
+  final loanRepo = DriftLoanRepository(db);
+  final subRepo  = DriftSubscriptionRepository(db);
 
   runApp(
     ProviderScope(
       overrides: [
         transactionRepositoryProvider.overrideWithValue(txRepo),
         loanRepositoryProvider.overrideWithValue(loanRepo),
+        subscriptionRepositoryProvider.overrideWithValue(subRepo),
       ],
       child: const SurvivalApp(),
     ),

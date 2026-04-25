@@ -13,6 +13,9 @@ export 'components/terminal_button.dart';
 export 'components/terminal_input.dart';
 export 'components/terminal_divider.dart';
 
+// Utils
+export 'utils/app_input_formatters.dart';
+
 // Localizations
 export 'generated/app_localizations.dart';
 export 'l10n_extension.dart';

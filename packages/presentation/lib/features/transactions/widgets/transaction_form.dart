@@ -141,6 +141,8 @@ class _TransactionFormState extends State<TransactionForm> {
             controller: _amountCtrl,
             keyboardType: TextInputType.number,
             hint: '50000',
+            maxLength: 13,
+            inputFormatters: [AppInputFormatters.amount],
           ),
           const SizedBox(height: AppSpacing.md),
 
@@ -149,6 +151,8 @@ class _TransactionFormState extends State<TransactionForm> {
             label: 'NOTE (OPTIONAL)',
             controller: _noteCtrl,
             hint: 'rent + utilities',
+            maxLength: 500,
+            inputFormatters: [AppInputFormatters.text],
           ),
           const SizedBox(height: AppSpacing.lg),
 

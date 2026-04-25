@@ -20,10 +20,19 @@ class LoanSummary {
 
   bool get isFullyPaid => remainingBalance <= 0;
 
-  int get monthsRemaining =>
-      loan.monthlyPayment > 0
-          ? (remainingBalance / loan.monthlyPayment).ceil().clamp(0, 9999)
-          : 0;
+  int get monthsRemaining {
+    if (isFullyPaid) return 0;
+    if (loan.originalTermMonths > 0) {
+      final now     = DateTime.now();
+      final start   = loan.startDate;
+      final elapsed = (now.year - start.year) * 12 +
+          (now.month - start.month);
+      return (loan.originalTermMonths - elapsed).clamp(0, loan.originalTermMonths);
+    }
+    return loan.monthlyPayment > 0
+        ? (remainingBalance / loan.monthlyPayment).ceil().clamp(0, 9999)
+        : 0;
+  }
 
   bool get isAheadThisMonth => paidThisMonth >= loan.monthlyPayment;
 }

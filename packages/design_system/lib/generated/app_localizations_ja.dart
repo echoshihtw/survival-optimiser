@@ -295,4 +295,64 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get change => '変更';
+
+  @override
+  String get subscriptions => 'サブスクリプション';
+
+  @override
+  String get noSubscriptions => '> アクティブなサブスクなし';
+
+  @override
+  String get subscriptionName => '名前';
+
+  @override
+  String get subscriptionAmount => '金額';
+
+  @override
+  String get subscriptionCycle => '請求サイクル';
+
+  @override
+  String get subscriptionCategory => 'カテゴリ';
+
+  @override
+  String get subscriptionNextBilling => '次回請求日';
+
+  @override
+  String get subscriptionDaysLeft => '日';
+
+  @override
+  String get totalPerMonth => '月合計';
+
+  @override
+  String get totalPerYear => '年合計';
+
+  @override
+  String get newSubscription => '+ サブスク';
+
+  @override
+  String get editSubscription => '> サブスク編集';
+
+  @override
+  String get addSubscription => '> 新規サブスク';
+
+  @override
+  String get personal => '個人';
+
+  @override
+  String get business => 'ビジネス';
+
+  @override
+  String get weekly => '毎週';
+
+  @override
+  String get monthly => '毎月';
+
+  @override
+  String get quarterly => '四半期';
+
+  @override
+  String get yearly => '毎年';
+
+  @override
+  String get subscrPerMonth => 'サブスク/月';
 }

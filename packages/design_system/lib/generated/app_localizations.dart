@@ -682,6 +682,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'CHANGE'**
   String get change;
+
+  /// No description provided for @subscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'SUBSCRIPTIONS'**
+  String get subscriptions;
+
+  /// No description provided for @noSubscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'> NO ACTIVE SUBSCRIPTIONS'**
+  String get noSubscriptions;
+
+  /// No description provided for @subscriptionName.
+  ///
+  /// In en, this message translates to:
+  /// **'NAME'**
+  String get subscriptionName;
+
+  /// No description provided for @subscriptionAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'AMOUNT'**
+  String get subscriptionAmount;
+
+  /// No description provided for @subscriptionCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'BILLING CYCLE'**
+  String get subscriptionCycle;
+
+  /// No description provided for @subscriptionCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'CATEGORY'**
+  String get subscriptionCategory;
+
+  /// No description provided for @subscriptionNextBilling.
+  ///
+  /// In en, this message translates to:
+  /// **'NEXT BILLING'**
+  String get subscriptionNextBilling;
+
+  /// No description provided for @subscriptionDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'DAYS'**
+  String get subscriptionDaysLeft;
+
+  /// No description provided for @totalPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'TOTAL/MO'**
+  String get totalPerMonth;
+
+  /// No description provided for @totalPerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'TOTAL/YR'**
+  String get totalPerYear;
+
+  /// No description provided for @newSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'+ SUBSCRIPTION'**
+  String get newSubscription;
+
+  /// No description provided for @editSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'> EDIT SUBSCRIPTION'**
+  String get editSubscription;
+
+  /// No description provided for @addSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'> NEW SUBSCRIPTION'**
+  String get addSubscription;
+
+  /// No description provided for @personal.
+  ///
+  /// In en, this message translates to:
+  /// **'PERSONAL'**
+  String get personal;
+
+  /// No description provided for @business.
+  ///
+  /// In en, this message translates to:
+  /// **'BUSINESS'**
+  String get business;
+
+  /// No description provided for @weekly.
+  ///
+  /// In en, this message translates to:
+  /// **'WEEKLY'**
+  String get weekly;
+
+  /// No description provided for @monthly.
+  ///
+  /// In en, this message translates to:
+  /// **'MONTHLY'**
+  String get monthly;
+
+  /// No description provided for @quarterly.
+  ///
+  /// In en, this message translates to:
+  /// **'QUARTERLY'**
+  String get quarterly;
+
+  /// No description provided for @yearly.
+  ///
+  /// In en, this message translates to:
+  /// **'YEARLY'**
+  String get yearly;
+
+  /// No description provided for @subscrPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'SUBSCR/MO'**
+  String get subscrPerMonth;
 }
 
 class _AppLocalizationsDelegate

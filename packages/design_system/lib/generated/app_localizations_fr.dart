@@ -297,4 +297,64 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get change => 'MODIFIER';
+
+  @override
+  String get subscriptions => 'ABONNEMENTS';
+
+  @override
+  String get noSubscriptions => '> AUCUN ABONNEMENT ACTIF';
+
+  @override
+  String get subscriptionName => 'NOM';
+
+  @override
+  String get subscriptionAmount => 'MONTANT';
+
+  @override
+  String get subscriptionCycle => 'CYCLE DE FACTURATION';
+
+  @override
+  String get subscriptionCategory => 'CATÉGORIE';
+
+  @override
+  String get subscriptionNextBilling => 'PROCHAINE FACTURATION';
+
+  @override
+  String get subscriptionDaysLeft => 'JOURS';
+
+  @override
+  String get totalPerMonth => 'TOTAL/MOIS';
+
+  @override
+  String get totalPerYear => 'TOTAL/AN';
+
+  @override
+  String get newSubscription => '+ ABONNEMENT';
+
+  @override
+  String get editSubscription => '> MODIFIER ABONNEMENT';
+
+  @override
+  String get addSubscription => '> NOUVEL ABONNEMENT';
+
+  @override
+  String get personal => 'PERSONNEL';
+
+  @override
+  String get business => 'PROFESSIONNEL';
+
+  @override
+  String get weekly => 'HEBDOMADAIRE';
+
+  @override
+  String get monthly => 'MENSUEL';
+
+  @override
+  String get quarterly => 'TRIMESTRIEL';
+
+  @override
+  String get yearly => 'ANNUEL';
+
+  @override
+  String get subscrPerMonth => 'ABONNEMENT/MOIS';
 }

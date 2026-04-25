@@ -33,14 +33,14 @@ class TransactionsScreen extends ConsumerWidget {
                     Row(children: [
                       Expanded(
                         child: TerminalButton(
-                          label: l10n.newEntry, icon: "+",
+                          label: l10n.newEntry,
                           onPressed: () => _showForm(context, ref, null),
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: TerminalButton(
-                          label: '⚡ LOAN WIZARD',
+                          label: '>> LOAN',
                           color: AppColors.gold,
                           onPressed: () => _showLoanWizard(context, ref),
                         ),
@@ -100,32 +100,28 @@ class TransactionsScreen extends ConsumerWidget {
       backgroundColor: AppColors.background,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       builder: (_) => LoanWizard(
-        onSubmit: (loanAmount, monthlyPayment, date, note) async {
+        onSubmit: (loanAmount, monthlyPayment, termMonths, date, note) async {
           final now    = DateTime.now();
           final loanId = const Uuid().v4();
-
-          // Parse source and name from note
           final parts  = (note ?? '').split(' — ');
           final source = parts.isNotEmpty
               ? parts[0].replaceAll(' LOAN', '')
               : 'OTHER';
           final name   = parts.length > 1 ? parts[1] : 'LOAN';
 
-          // Create loan entity
           final loan = Loan(
             id:             loanId,
             name:           name,
             source:         source,
-            originalAmount: loanAmount,
+            originalAmount:     loanAmount,
+            originalTermMonths: termMonths,
             monthlyPayment: monthlyPayment,
             startDate:      date,
-            note:           note,
             createdAt:      now,
             updatedAt:      now,
           );
           await ref.read(addLoanUseCaseProvider).execute(loan);
 
-          // Create loan transaction (cash inflow)
           final tx = Transaction(
             id:        const Uuid().v4(),
             date:      date,
@@ -202,6 +198,14 @@ class TransactionsScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.xs),
               Text('> ${tx.note}', style: AppTextStyles.small),
             ],
+            if (tx.type == TransactionType.loan) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                '> WILL ALSO REMOVE FROM LIABILITIES',
+                style: AppTextStyles.small
+                    .copyWith(color: AppColors.caution),
+              ),
+            ],
           ],
         ),
         actions: [
@@ -212,9 +216,17 @@ class TransactionsScreen extends ConsumerWidget {
           TextButton(
             onPressed: () async {
               Navigator.of(dialogContext).pop();
+              // Delete transaction
               await ref
                   .read(deleteTransactionUseCaseProvider)
                   .execute(tx.id);
+              // If loan — also delete loan entity
+              if (tx.type == TransactionType.loan &&
+                  tx.loanId != null) {
+                await ref
+                    .read(deleteLoanUseCaseProvider)
+                    .execute(tx.loanId!);
+              }
             },
             child: Text('[ Y ]',
                 style: AppTextStyles.value

@@ -12,7 +12,6 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  google_fonts: ^6.2.1
   intl: ^0.20.2
 
 dev_dependencies:
@@ -22,3 +21,12 @@ dev_dependencies:
 
 flutter:
   generate: true
+  fonts:
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/JetBrainsMono-Bold.ttf
+          weight: 700
+  assets:
+    - assets/fonts/

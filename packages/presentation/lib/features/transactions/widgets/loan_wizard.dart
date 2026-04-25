@@ -6,6 +6,7 @@ class LoanWizard extends StatefulWidget {
   final void Function(
     double loanAmount,
     double monthlyPayment,
+    int termMonths,
     DateTime date,
     String? note,
   ) onSubmit;
@@ -135,12 +136,13 @@ class _LoanWizardState extends State<LoanWizard>
   };
 
   void _submit() {
-    final amount  = double.tryParse(_amountCtrl.text.trim());
-    final payment = double.tryParse(_paymentCtrl.text.trim());
+    final amount   = double.tryParse(_amountCtrl.text.trim());
+    final payment  = double.tryParse(_paymentCtrl.text.trim());
+    final termMo   = int.tryParse(_monthsCtrl.text.trim()) ?? 0;
     if (amount == null || payment == null) return;
     final note = '$_source — ${_nameCtrl.text.trim()}'
         '${_noteCtrl.text.trim().isNotEmpty ? " | ${_noteCtrl.text.trim()}" : ""}';
-    widget.onSubmit(amount, payment, _date, note);
+    widget.onSubmit(amount, payment, termMo, _date, note);
     Navigator.of(context).pop();
   }
 
@@ -163,7 +165,7 @@ class _LoanWizardState extends State<LoanWizard>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('⚡ ${l10n.loanWizardTitle}',
+              Text('>> ${l10n.loanWizardTitle}',
                   style: AppTextStyles.title
                       .copyWith(color: AppColors.gold)),
               Text('${_step + 1} / $_totalSteps',

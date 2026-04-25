@@ -5,7 +5,7 @@
 .DEFAULT_GOAL := help
 SHELL         := /bin/bash
 APP_DIR       := app
-APP_ID        := com.survival.app
+APP_ID        := com.silverfern.survivaloptimizer
 FVM           := fvm flutter
 
 # ============================================================================

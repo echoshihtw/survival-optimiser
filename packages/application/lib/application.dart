@@ -9,6 +9,9 @@ export 'use_cases/delete_transaction_use_case.dart';
 export 'use_cases/add_loan_use_case.dart';
 export 'use_cases/edit_loan_use_case.dart';
 export 'use_cases/delete_loan_use_case.dart';
+export 'use_cases/add_subscription_use_case.dart';
+export 'use_cases/edit_subscription_use_case.dart';
+export 'use_cases/delete_subscription_use_case.dart';
 
 export 'providers/repository_provider.dart';
 export 'providers/transaction_provider.dart';
@@ -17,3 +20,5 @@ export 'providers/scenario_provider.dart';
 export 'providers/locale_provider.dart';
 export 'providers/currency_provider.dart';
 export 'providers/loan_provider.dart';
+export 'providers/subscription_provider.dart';
+export 'providers/budget_provider.dart';

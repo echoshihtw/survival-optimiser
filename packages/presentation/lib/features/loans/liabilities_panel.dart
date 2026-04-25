@@ -7,6 +7,8 @@ import 'package:domain/domain.dart';
 import 'package:intl/intl.dart';
 import 'loan_card.dart';
 
+const _uuid = Uuid();
+
 class LiabilitiesPanel extends ConsumerWidget {
   const LiabilitiesPanel({super.key});
 
@@ -101,6 +103,8 @@ class LiabilitiesPanel extends ConsumerWidget {
               controller: ctrl,
               keyboardType: TextInputType.number,
               hint: summary.loan.monthlyPayment.toStringAsFixed(0),
+              maxLength: 13,
+              inputFormatters: [AppInputFormatters.amount],
               onChanged: (_) {},
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -112,21 +116,35 @@ class LiabilitiesPanel extends ConsumerWidget {
                   onPressed: () async {
                     final amount = double.tryParse(ctrl.text.trim());
                     if (amount == null || amount <= 0) return;
-                    final now = DateTime.now();
-                    final tx  = Transaction(
-                      id:        const Uuid().v4(),
-                      date:      now,
-                      type:      TransactionType.repayment,
-                      amount:    Money(amount),
-                      note:      '${l10n.repay}: ${summary.loan.name}',
-                      loanId:    summary.loan.id,
-                      createdAt: now,
-                      updatedAt: now,
-                    );
-                    await ref
-                        .read(addTransactionUseCaseProvider)
-                        .execute(tx);
-                    if (ctx.mounted) Navigator.of(ctx).pop();
+                    try {
+                      final now = DateTime.now();
+                      final tx  = Transaction(
+                        id:        _uuid.v4(),
+                        date:      now,
+                        type:      TransactionType.repayment,
+                        amount:    Money(amount),
+                        note:      '${l10n.repay}: ${summary.loan.name}',
+                        loanId:    summary.loan.id,
+                        createdAt: now,
+                        updatedAt: now,
+                      );
+                      await ref
+                          .read(addTransactionUseCaseProvider)
+                          .execute(tx);
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                    } on DomainFailure catch (f) {
+                      if (ctx.mounted) {
+                        ScaffoldMessenger.of(ctx).showSnackBar(
+                          SnackBar(content: Text(f.message, style: AppTextStyles.danger)),
+                        );
+                      }
+                    } catch (_) {
+                      if (ctx.mounted) {
+                        ScaffoldMessenger.of(ctx).showSnackBar(
+                          SnackBar(content: Text('OPERATION FAILED', style: AppTextStyles.danger)),
+                        );
+                      }
+                    }
                   },
                 ),
               ),

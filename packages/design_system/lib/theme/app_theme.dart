@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../tokens/app_colors.dart';
+
+const _fontFamily = 'JetBrainsMono';
 
 abstract final class AppTheme {
   static ThemeData get dark => ThemeData(
@@ -12,9 +13,9 @@ abstract final class AppTheme {
       secondary: AppColors.dimGreen,
       error: AppColors.danger,
     ),
-    textTheme: GoogleFonts.jetBrainsMonoTextTheme(
-      ThemeData.dark().textTheme,
-    ).apply(
+    fontFamily: _fontFamily,
+    textTheme: ThemeData.dark().textTheme.apply(
+      fontFamily: _fontFamily,
       bodyColor: AppColors.primaryGreen,
       displayColor: AppColors.primaryGreen,
     ),
