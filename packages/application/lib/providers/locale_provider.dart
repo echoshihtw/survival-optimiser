@@ -11,9 +11,7 @@ class LocaleNotifier extends AsyncNotifier<Locale?> {
     final saved = prefs.getString(_localeKey);
     if (saved == null) return null; // null = use device locale
     final parts = saved.split('_');
-    return parts.length == 2
-        ? Locale(parts[0], parts[1])
-        : Locale(parts[0]);
+    return parts.length == 2 ? Locale(parts[0], parts[1]) : Locale(parts[0]);
   }
 
   Future<void> setLocale(Locale? locale) async {
@@ -30,5 +28,6 @@ class LocaleNotifier extends AsyncNotifier<Locale?> {
   }
 }
 
-final localeProvider =
-    AsyncNotifierProvider<LocaleNotifier, Locale?>(LocaleNotifier.new);
+final localeProvider = AsyncNotifierProvider<LocaleNotifier, Locale?>(
+  LocaleNotifier.new,
+);

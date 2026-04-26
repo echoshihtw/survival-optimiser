@@ -1,46 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../tokens/app_colors.dart';
-
-const _fontFamily = 'JetBrainsMono';
+import '../tokens/app_spacing.dart';
 
 abstract final class AppTheme {
-  static ThemeData get dark => ThemeData(
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: AppColors.background,
-    colorScheme: const ColorScheme.dark(
-      surface: AppColors.background,
-      primary: AppColors.primaryGreen,
-      secondary: AppColors.dimGreen,
-      error: AppColors.danger,
-    ),
-    fontFamily: _fontFamily,
-    textTheme: ThemeData.dark().textTheme.apply(
-      fontFamily: _fontFamily,
-      bodyColor: AppColors.primaryGreen,
-      displayColor: AppColors.primaryGreen,
-    ),
-    dividerColor: AppColors.panelBorder,
-    // Kill all Material rounded corners
-    cardTheme: const CardThemeData(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      color: AppColors.background,
-      elevation: 0,
-    ),
-    inputDecorationTheme: const InputDecorationTheme(
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppColors.dimGreen),
+  static ThemeData get dark {
+    return ThemeData(
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: AppColors.background,
+      colorScheme: const ColorScheme.dark(
+        surface: AppColors.surface,
+        primary: AppColors.green,
+        secondary: AppColors.blue,
+        error: AppColors.red,
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppColors.dimGreen),
+      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).apply(
+        bodyColor: AppColors.textPrimary,
+        displayColor: AppColors.textPrimary,
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppColors.primaryGreen),
+      cardTheme: CardThemeData(
+        color: AppColors.surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+          side: const BorderSide(color: AppColors.cardBorder, width: 1),
+        ),
       ),
-      labelStyle: TextStyle(color: AppColors.dimGreen),
-    ),
-    extensions: const [],
-  );
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.surfaceHigh,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.cardBorder),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.cardBorder),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.green, width: 1.5),
+        ),
+        labelStyle: TextStyle(color: AppColors.textSecondary),
+        hintStyle: TextStyle(color: AppColors.textDim),
+      ),
+      dividerColor: AppColors.cardBorder,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+      ),
+    );
+  }
 }

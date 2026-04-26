@@ -18,12 +18,10 @@ class LoanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final nf   = NumberFormat('#,##0', 'en_US');
+    final nf = NumberFormat('#,##0', 'en_US');
     final loan = summary.loan;
-    final pct  = (summary.repaidRatio * 100).toStringAsFixed(0);
-    final color = summary.isFullyPaid
-        ? AppColors.dimGreen
-        : AppColors.gold;
+    final pct = (summary.repaidRatio * 100).toStringAsFixed(0);
+    final color = summary.isFullyPaid ? AppColors.dimGreen : AppColors.gold;
 
     return GestureDetector(
       onTap: onTap,
@@ -40,14 +38,21 @@ class LoanCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(children: [
-                  Text(loan.source,
-                      style: AppTextStyles.label
-                          .copyWith(color: AppColors.dimGreen)),
-                  const SizedBox(width: AppSpacing.sm),
-                  Text(loan.name.toUpperCase(),
-                      style: AppTextStyles.value.copyWith(color: color)),
-                ]),
+                Row(
+                  children: [
+                    Text(
+                      loan.source,
+                      style: AppTextStyles.label.copyWith(
+                        color: AppColors.dimGreen,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text(
+                      loan.name.toUpperCase(),
+                      style: AppTextStyles.value.copyWith(color: color),
+                    ),
+                  ],
+                ),
                 if (!summary.isFullyPaid)
                   GestureDetector(
                     onTap: onRepay,
@@ -57,23 +62,34 @@ class LoanCard extends StatelessWidget {
                         vertical: AppSpacing.xxs,
                       ),
                       decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.gold)),
-                      child: Text(l10n.repay,
-                          style: AppTextStyles.small
-                              .copyWith(color: AppColors.gold)),
+                        border: Border.all(color: AppColors.gold),
+                      ),
+                      child: Text(
+                        l10n.repay,
+                        style: AppTextStyles.small.copyWith(
+                          color: AppColors.gold,
+                        ),
+                      ),
                     ),
                   ),
               ],
             ),
             const SizedBox(height: AppSpacing.xs),
-            _row(l10n.remaining,
-                summary.isFullyPaid ? '✓ PAID' : nf.format(summary.remainingBalance),
-                color),
+            _row(
+              l10n.remaining,
+              summary.isFullyPaid
+                  ? '✓ PAID'
+                  : nf.format(summary.remainingBalance),
+              color,
+            ),
 
             if (!summary.isFullyPaid) ...[
               const SizedBox(height: AppSpacing.xs),
-              _row(l10n.installment,
-                  nf.format(loan.monthlyPayment), AppColors.gold),
+              _row(
+                l10n.installment,
+                nf.format(loan.monthlyPayment),
+                AppColors.gold,
+              ),
               const SizedBox(height: AppSpacing.xs),
               _row(
                 l10n.paidThisMo,
@@ -83,8 +99,8 @@ class LoanCard extends StatelessWidget {
                 summary.paidThisMonth == 0
                     ? AppColors.dimGreen
                     : summary.isAheadThisMonth
-                        ? AppColors.safe
-                        : AppColors.caution,
+                    ? AppColors.safe
+                    : AppColors.caution,
               ),
               if (summary.paidThisMonth > loan.monthlyPayment) ...[
                 const SizedBox(height: AppSpacing.xxs),
@@ -94,26 +110,38 @@ class LoanCard extends StatelessWidget {
                 ),
               ],
               const SizedBox(height: AppSpacing.xs),
-              _row(l10n.monthsLeft,
-                  '${summary.monthsRemaining} MO', AppColors.dimGreen),
+              _row(
+                l10n.monthsLeft,
+                '${summary.monthsRemaining} MO',
+                AppColors.dimGreen,
+              ),
               const SizedBox(height: AppSpacing.sm),
-              LayoutBuilder(builder: (_, c) {
-                final filled = c.maxWidth * summary.repaidRatio;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Stack(children: [
-                      Container(height: 6, width: c.maxWidth,
-                          color: AppColors.panelBorder),
-                      Container(height: 6, width: filled,
-                          color: AppColors.gold),
-                    ]),
-                    const SizedBox(height: AppSpacing.xxs),
-                    Text('$pct${l10n.repaid}',
-                        style: AppTextStyles.small),
-                  ],
-                );
-              }),
+              LayoutBuilder(
+                builder: (_, c) {
+                  final filled = c.maxWidth * summary.repaidRatio;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Stack(
+                        children: [
+                          Container(
+                            height: 6,
+                            width: c.maxWidth,
+                            color: AppColors.panelBorder,
+                          ),
+                          Container(
+                            height: 6,
+                            width: filled,
+                            color: AppColors.gold,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text('$pct${l10n.repaid}', style: AppTextStyles.small),
+                    ],
+                  );
+                },
+              ),
             ],
           ],
         ),

@@ -19,6 +19,8 @@ final editTransactionUseCaseProvider = Provider<EditTransactionUseCase>((ref) {
   return EditTransactionUseCase(ref.watch(transactionRepositoryProvider));
 });
 
-final deleteTransactionUseCaseProvider = Provider<DeleteTransactionUseCase>((ref) {
+final deleteTransactionUseCaseProvider = Provider<DeleteTransactionUseCase>((
+  ref,
+) {
   return DeleteTransactionUseCase(ref.watch(transactionRepositoryProvider));
 });

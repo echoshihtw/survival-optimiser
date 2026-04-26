@@ -9,10 +9,10 @@ import 'package:data/data.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final db      = AppDatabase();
-  final txRepo  = DriftTransactionRepository(db);
+  final db = AppDatabase();
+  final txRepo = DriftTransactionRepository(db);
   final loanRepo = DriftLoanRepository(db);
-  final subRepo  = DriftSubscriptionRepository(db);
+  final subRepo = DriftSubscriptionRepository(db);
 
   runApp(
     ProviderScope(

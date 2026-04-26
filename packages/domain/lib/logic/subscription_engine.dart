@@ -27,8 +27,7 @@ double totalSubscriptionYearlyCost(List<Subscription> subscriptions) {
 /// Subscriptions sorted by next billing date
 List<Subscription> sortedByNextBilling(List<Subscription> subscriptions) {
   final active = subscriptions.where((s) => s.isActive).toList();
-  active.sort((a, b) =>
-      a.nextBillingDate.compareTo(b.nextBillingDate));
+  active.sort((a, b) => a.nextBillingDate.compareTo(b.nextBillingDate));
   return active;
 }
 
@@ -38,10 +37,10 @@ DateTime computeNextBillingDate(DateTime from, BillingCycle cycle) {
   DateTime next = from;
   while (next.isBefore(now)) {
     next = switch (cycle) {
-      BillingCycle.weekly    => next.add(const Duration(days: 7)),
-      BillingCycle.monthly   => DateTime(next.year, next.month + 1, next.day),
+      BillingCycle.weekly => next.add(const Duration(days: 7)),
+      BillingCycle.monthly => DateTime(next.year, next.month + 1, next.day),
       BillingCycle.quarterly => DateTime(next.year, next.month + 3, next.day),
-      BillingCycle.yearly    => DateTime(next.year + 1, next.month, next.day),
+      BillingCycle.yearly => DateTime(next.year + 1, next.month, next.day),
     };
   }
   return next;

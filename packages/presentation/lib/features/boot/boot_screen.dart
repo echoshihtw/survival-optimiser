@@ -9,8 +9,7 @@ class BootScreen extends StatefulWidget {
   State<BootScreen> createState() => _BootScreenState();
 }
 
-class _BootScreenState extends State<BootScreen>
-    with TickerProviderStateMixin {
+class _BootScreenState extends State<BootScreen> with TickerProviderStateMixin {
   final List<String> _lines = [
     '> INITIALIZING SURVIVAL.EXE...',
     '> LOADING ASSET DATABASE...',
@@ -56,15 +55,17 @@ class _BootScreenState extends State<BootScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Spacer(),
-                ..._visible.map((line) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                  child: Text(
-                    line,
-                    style: line.startsWith('SURVIVAL')
-                        ? AppTextStyles.metric
-                        : AppTextStyles.value,
+                ..._visible.map(
+                  (line) => Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                    child: Text(
+                      line,
+                      style: line.startsWith('SURVIVAL')
+                          ? AppTextStyles.metric
+                          : AppTextStyles.value,
+                    ),
                   ),
-                )),
+                ),
                 if (_showPrompt) ...[
                   const SizedBox(height: AppSpacing.lg),
                   _BlinkingCursor(),
@@ -107,10 +108,8 @@ class _BlinkingCursorState extends State<_BlinkingCursor>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _ctrl,
-      builder: (_, __) => Text(
-        _ctrl.value > 0.5 ? '█' : ' ',
-        style: AppTextStyles.value,
-      ),
+      builder: (_, __) =>
+          Text(_ctrl.value > 0.5 ? '█' : ' ', style: AppTextStyles.value),
     );
   }
 }

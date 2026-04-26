@@ -10,18 +10,33 @@ void main() {
 
     test('returns empty if only opening balance', () {
       final txs = [
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.openingBalance, amount: 1000000),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.openingBalance,
+          amount: 1000000,
+        ),
       ];
       expect(aggregateMonths(txs).first.balance, 1000000);
     });
 
     test('opening balance sets starting cash', () {
       final txs = [
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.openingBalance, amount: 1000000),
-        makeTx(year: 2025, month: 1, day: 15,
-            type: TransactionType.expense, amount: 50000),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.openingBalance,
+          amount: 1000000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 15,
+          type: TransactionType.expense,
+          amount: 50000,
+        ),
       ];
       final months = aggregateMonths(txs);
       expect(months.first.balance, 950000);
@@ -29,12 +44,27 @@ void main() {
 
     test('income is positive netFlow', () {
       final txs = [
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.openingBalance, amount: 500000),
-        makeTx(year: 2025, month: 2, day: 1,
-            type: TransactionType.income, amount: 80000),
-        makeTx(year: 2025, month: 2, day: 15,
-            type: TransactionType.expense, amount: 50000),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.openingBalance,
+          amount: 500000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 2,
+          day: 1,
+          type: TransactionType.income,
+          amount: 80000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 2,
+          day: 15,
+          type: TransactionType.expense,
+          amount: 50000,
+        ),
       ];
       final months = aggregateMonths(txs);
       final feb = months.firstWhere((m) => m.month.value.month == 2);
@@ -43,10 +73,20 @@ void main() {
 
     test('loan is treated as inflow', () {
       final txs = [
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.openingBalance, amount: 0),
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.loan, amount: 500000),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.openingBalance,
+          amount: 0,
+        ),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.loan,
+          amount: 500000,
+        ),
       ];
       final months = aggregateMonths(txs);
       expect(months.first.netFlow, 500000);
@@ -54,10 +94,20 @@ void main() {
 
     test('repayment is outflow', () {
       final txs = [
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.openingBalance, amount: 500000),
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.repayment, amount: 15000),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.openingBalance,
+          amount: 500000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.repayment,
+          amount: 15000,
+        ),
       ];
       final months = aggregateMonths(txs);
       expect(months.first.netFlow, -15000);
@@ -65,14 +115,34 @@ void main() {
 
     test('balance accumulates across months', () {
       final txs = [
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.openingBalance, amount: 1000000),
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.expense, amount: 50000),
-        makeTx(year: 2025, month: 2, day: 1,
-            type: TransactionType.expense, amount: 50000),
-        makeTx(year: 2025, month: 3, day: 1,
-            type: TransactionType.expense, amount: 50000),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.openingBalance,
+          amount: 1000000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.expense,
+          amount: 50000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 2,
+          day: 1,
+          type: TransactionType.expense,
+          amount: 50000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 3,
+          day: 1,
+          type: TransactionType.expense,
+          amount: 50000,
+        ),
       ];
       final months = aggregateMonths(txs);
       expect(months[0].balance, 950000);
@@ -82,14 +152,34 @@ void main() {
 
     test('months sorted chronologically', () {
       final txs = [
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.openingBalance, amount: 500000),
-        makeTx(year: 2025, month: 3, day: 1,
-            type: TransactionType.expense, amount: 10000),
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.expense, amount: 10000),
-        makeTx(year: 2025, month: 2, day: 1,
-            type: TransactionType.expense, amount: 10000),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.openingBalance,
+          amount: 500000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 3,
+          day: 1,
+          type: TransactionType.expense,
+          amount: 10000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.expense,
+          amount: 10000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 2,
+          day: 1,
+          type: TransactionType.expense,
+          amount: 10000,
+        ),
       ];
       final months = aggregateMonths(txs);
       final nums = months.map((m) => m.month.value.month).toList();
@@ -98,14 +188,34 @@ void main() {
 
     test('multiple transactions in same month aggregate correctly', () {
       final txs = [
-        makeTx(year: 2025, month: 1, day: 1,
-            type: TransactionType.openingBalance, amount: 1000000),
-        makeTx(year: 2025, month: 1, day: 5,
-            type: TransactionType.expense, amount: 20000),
-        makeTx(year: 2025, month: 1, day: 10,
-            type: TransactionType.expense, amount: 30000),
-        makeTx(year: 2025, month: 1, day: 15,
-            type: TransactionType.income, amount: 80000),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 1,
+          type: TransactionType.openingBalance,
+          amount: 1000000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 5,
+          type: TransactionType.expense,
+          amount: 20000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 10,
+          type: TransactionType.expense,
+          amount: 30000,
+        ),
+        makeTx(
+          year: 2025,
+          month: 1,
+          day: 15,
+          type: TransactionType.income,
+          amount: 80000,
+        ),
       ];
       final months = aggregateMonths(txs);
       expect(months.first.netFlow, 30000); // 80000 - 20000 - 30000

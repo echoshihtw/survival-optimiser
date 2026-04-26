@@ -16,8 +16,8 @@ class ScenarioState {
   }) {
     return ScenarioState(
       burnRateOverride: burnRateOverride ?? this.burnRateOverride,
-      simulatedIncome:  simulatedIncome  ?? this.simulatedIncome,
-      isActive:         isActive         ?? this.isActive,
+      simulatedIncome: simulatedIncome ?? this.simulatedIncome,
+      isActive: isActive ?? this.isActive,
     );
   }
 

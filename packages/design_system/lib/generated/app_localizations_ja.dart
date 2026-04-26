@@ -72,7 +72,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get loanAffectsInfo => '> 月間返済はプレッシャー比率と投資可能額に影響します';
 
   @override
-  String get transactionLog => '// 取引ログ';
+  String get transactionLog => '取引ログ';
 
   @override
   String get newEntry => '+ 新規';
@@ -111,7 +111,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get purgeEntry => '> このエントリーを削除？';
 
   @override
-  String get scenarioSimulator => '// シナリオシミュレーター';
+  String get scenarioSimulator => 'シナリオシミュレーター';
 
   @override
   String get overrideInputs => 'オーバーライド入力';

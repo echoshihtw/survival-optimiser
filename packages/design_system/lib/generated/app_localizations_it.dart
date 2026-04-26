@@ -73,7 +73,7 @@ class AppLocalizationsIt extends AppLocalizations {
       '> PRESTITO/MESE INFLUISCE SUL RATIO DI PRESSIONE E INVESTIBILE';
 
   @override
-  String get transactionLog => '// REGISTRO TRANSAZIONI';
+  String get transactionLog => 'REGISTRO TRANSAZIONI';
 
   @override
   String get newEntry => '+ NUOVO';
@@ -112,7 +112,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get purgeEntry => '> ELIMINARE QUESTA VOCE?';
 
   @override
-  String get scenarioSimulator => '// SIMULATORE DI SCENARI';
+  String get scenarioSimulator => 'SIMULATORE DI SCENARI';
 
   @override
   String get overrideInputs => 'INPUT DI SOSTITUZIONE';

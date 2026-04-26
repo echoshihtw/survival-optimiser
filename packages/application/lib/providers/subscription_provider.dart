@@ -6,7 +6,8 @@ import '../use_cases/delete_subscription_use_case.dart';
 
 final subscriptionRepositoryProvider = Provider<SubscriptionRepository>((ref) {
   throw UnimplementedError(
-      'subscriptionRepositoryProvider must be overridden in main.dart');
+    'subscriptionRepositoryProvider must be overridden in main.dart',
+  );
 });
 
 final subscriptionsProvider = StreamProvider<List<Subscription>>((ref) {
@@ -22,12 +23,14 @@ final addSubscriptionUseCaseProvider = Provider<AddSubscriptionUseCase>((ref) {
   return AddSubscriptionUseCase(ref.watch(subscriptionRepositoryProvider));
 });
 
-final editSubscriptionUseCaseProvider =
-    Provider<EditSubscriptionUseCase>((ref) {
+final editSubscriptionUseCaseProvider = Provider<EditSubscriptionUseCase>((
+  ref,
+) {
   return EditSubscriptionUseCase(ref.watch(subscriptionRepositoryProvider));
 });
 
-final deleteSubscriptionUseCaseProvider =
-    Provider<DeleteSubscriptionUseCase>((ref) {
+final deleteSubscriptionUseCaseProvider = Provider<DeleteSubscriptionUseCase>((
+  ref,
+) {
   return DeleteSubscriptionUseCase(ref.watch(subscriptionRepositoryProvider));
 });

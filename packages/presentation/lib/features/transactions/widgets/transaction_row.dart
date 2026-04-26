@@ -18,12 +18,21 @@ class TransactionRow extends ConsumerWidget {
   });
 
   Color get _typeColor => switch (transaction.type) {
-    TransactionType.income         => AppColors.safe,
-    TransactionType.openingBalance => AppColors.safe,
-    TransactionType.loan           => AppColors.safe,
-    TransactionType.expense        => AppColors.danger,
-    TransactionType.repayment      => AppColors.caution,
-    TransactionType.investment     => AppColors.gold,
+    TransactionType.income         => SC.txIncome,
+    TransactionType.openingBalance => SC.txOpeningBalance,
+    TransactionType.loan           => SC.txLoan,
+    TransactionType.expense        => SC.txExpense,
+    TransactionType.repayment      => SC.txRepayment,
+    TransactionType.investment     => SC.txInvestment,
+  };
+
+  IconData get _typeIcon => switch (transaction.type) {
+    TransactionType.income         => Icons.arrow_downward_rounded,
+    TransactionType.openingBalance => Icons.account_balance_rounded,
+    TransactionType.loan           => Icons.credit_score_rounded,
+    TransactionType.expense        => Icons.arrow_upward_rounded,
+    TransactionType.repayment      => Icons.replay_rounded,
+    TransactionType.investment     => Icons.trending_up_rounded,
   };
 
   String _typeLabel(AppLocalizations l10n) => switch (transaction.type) {
@@ -35,59 +44,89 @@ class TransactionRow extends ConsumerWidget {
     TransactionType.openingBalance => l10n.typeOpening,
   };
 
+  bool get _isPlanned =>
+      transaction.date.isAfter(DateTime.now());
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n      = context.l10n;
-    final currAsync = ref.watch(currencyProvider);
-    final symbol    = currAsync.value?.symbol ?? '¥';
-    final amount    = NumberFormat('#,##0', 'en_US')
+    final l10n   = context.l10n;
+    final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
+    final amount = NumberFormat('#,##0', 'en_US')
         .format(transaction.amount.value);
-    final sign      = transaction.type.isInflow ? '+' : '-';
-    final dateStr   = DateFormat('dd MMM yyyy')
-        .format(transaction.date).toUpperCase();
+    final sign   = transaction.type.isInflow ? '+' : '-';
+    final dateStr = DateFormat('dd MMM').format(transaction.date)
+        .toUpperCase();
+    final color  = _typeColor;
 
     return GestureDetector(
-      onLongPress: onDelete,
       onTap: onEdit,
+      onLongPress: onDelete,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
         ),
         decoration: const BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: AppColors.panelBorder, width: 1),
+            bottom: BorderSide(color: AppColors.cardBorder, width: 1),
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(dateStr, style: AppTextStyles.label),
-                Row(
-                  children: [
-                    Text(_typeLabel(l10n),
-                        style: AppTextStyles.label
-                            .copyWith(color: _typeColor)),
-                    const SizedBox(width: AppSpacing.md),
-                    Text('$sign$symbol $amount',
-                        style: AppTextStyles.value
-                            .copyWith(color: _typeColor)),
+            // Icon circle
+            Container(
+              width: 40, height: 40,
+              decoration: BoxDecoration(
+                color: color.withAlpha(18),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: color.withAlpha(40), width: 1),
+              ),
+              child: Icon(_typeIcon, color: color, size: 18),
+            ),
+            const SizedBox(width: AppSpacing.md),
+
+            // Label + note + date
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(children: [
+                    Text(_typeLabel(l10n).toUpperCase(),
+                        style: AppTextStyles.body
+                            .copyWith(fontWeight: FontWeight.w600)),
+                    if (_isPlanned) ...[
+                      const SizedBox(width: AppSpacing.xs),
+                      PixelBadge(
+                          label: 'PLANNED',
+                          color: AppColors.textDim),
+                    ],
+                  ]),
+                  if (transaction.note != null) ...[
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(transaction.note!,
+                        style: AppTextStyles.caption,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
                   ],
+                ],
+              ),
+            ),
+
+            // Amount + date
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '$sign$symbol $amount',
+                  style: AppTextStyles.metricSmall
+                      .copyWith(color: AppColors.textPrimary),
                 ),
+                const SizedBox(height: AppSpacing.xxs),
+                Text(dateStr,
+                    style: AppTextStyles.caption),
               ],
             ),
-            const SizedBox(height: AppSpacing.xxs),
-            Text('${l10n.calcMonth}: ${transaction.month}',
-                style: AppTextStyles.small
-                    .copyWith(color: AppColors.dimGreen)),
-            if (transaction.note != null) ...[
-              const SizedBox(height: AppSpacing.xxs),
-              Text('> ${transaction.note}',
-                  style: AppTextStyles.small),
-            ],
           ],
         ),
       ),

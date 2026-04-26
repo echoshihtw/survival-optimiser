@@ -8,17 +8,17 @@ import 'budget_provider.dart';
 
 final modelProvider = Provider<ModelState>((ref) {
   final asyncTransactions = ref.watch(transactionsProvider);
-  final monthlyPayment    = ref.watch(totalMonthlyLoanPaymentProvider);
-  final subscriptionCost  = ref.watch(subscriptionMonthlyTotalProvider);
-  final budget            = ref.watch(budgetProvider).value ?? const Budget();
+  final monthlyPayment = ref.watch(totalMonthlyLoanPaymentProvider);
+  final subscriptionCost = ref.watch(subscriptionMonthlyTotalProvider);
+  final budget = ref.watch(budgetProvider).value ?? const Budget();
 
   return asyncTransactions.when(
     data: (transactions) {
-      final months      = aggregateMonths(transactions);
-      final actualBurn  = _computeBurnRate(months) ?? 0.0;
+      final months = aggregateMonths(transactions);
+      final actualBurn = _computeBurnRate(months) ?? 0.0;
 
       // Budget baseline = rent + living only (subscr + debt added by engine)
-      final budgetBase  = budget.subtotal;
+      final budgetBase = budget.subtotal;
 
       // Effective variable burn = max(actual, budget baseline)
       final effectiveVarBurn = actualBurn > budgetBase
@@ -26,32 +26,31 @@ final modelProvider = Provider<ModelState>((ref) {
           : budgetBase;
 
       // Total burn passed to engine = variable + subscr + debt
-      final totalBurn = effectiveVarBurn +
-          subscriptionCost + monthlyPayment;
+      final totalBurn = effectiveVarBurn + subscriptionCost + monthlyPayment;
 
       return computeModel(
-        months:                  months,
-        monthlyPayment:          monthlyPayment,
+        months: months,
+        monthlyPayment: monthlyPayment,
         subscriptionMonthlyCost: subscriptionCost,
-        budgetBurnRate:          totalBurn > 0 ? totalBurn : null,
+        budgetBurnRate: totalBurn > 0 ? totalBurn : null,
       );
     },
     loading: () {
       final totalBurn = budget.subtotal + subscriptionCost + monthlyPayment;
       return computeModel(
-        months:                  [],
-        monthlyPayment:          monthlyPayment,
+        months: [],
+        monthlyPayment: monthlyPayment,
         subscriptionMonthlyCost: subscriptionCost,
-        budgetBurnRate:          totalBurn > 0 ? totalBurn : null,
+        budgetBurnRate: totalBurn > 0 ? totalBurn : null,
       );
     },
     error: (_, __) {
       final totalBurn = budget.subtotal + subscriptionCost + monthlyPayment;
       return computeModel(
-        months:                  [],
-        monthlyPayment:          monthlyPayment,
+        months: [],
+        monthlyPayment: monthlyPayment,
         subscriptionMonthlyCost: subscriptionCost,
-        budgetBurnRate:          totalBurn > 0 ? totalBurn : null,
+        budgetBurnRate: totalBurn > 0 ? totalBurn : null,
       );
     },
   );
@@ -59,50 +58,53 @@ final modelProvider = Provider<ModelState>((ref) {
 
 final projectedMonthsProvider = Provider<List<MonthlyState>>((ref) {
   final asyncTransactions = ref.watch(transactionsProvider);
-  final monthlyPayment    = ref.watch(totalMonthlyLoanPaymentProvider);
-  final subscriptionCost  = ref.watch(subscriptionMonthlyTotalProvider);
-  final budget            = ref.watch(budgetProvider).value ?? const Budget();
+  final monthlyPayment = ref.watch(totalMonthlyLoanPaymentProvider);
+  final subscriptionCost = ref.watch(subscriptionMonthlyTotalProvider);
+  final budget = ref.watch(budgetProvider).value ?? const Budget();
 
   return asyncTransactions.whenOrNull(
-    data: (transactions) {
-      final months      = aggregateMonths(transactions);
-      if (months.isEmpty) return <MonthlyState>[];
-      final actualBurn  = _computeBurnRate(months) ?? 0.0;
-      final budgetBase  = budget.subtotal;
-      final effectiveVar = actualBurn > budgetBase ? actualBurn : budgetBase;
-      final totalOutflow = effectiveVar + subscriptionCost + monthlyPayment;
-      return projectMonthsForward(known: months, burnRate: totalOutflow);
-    },
-  ) ?? [];
+        data: (transactions) {
+          final months = aggregateMonths(transactions);
+          if (months.isEmpty) return <MonthlyState>[];
+          final actualBurn = _computeBurnRate(months) ?? 0.0;
+          final budgetBase = budget.subtotal;
+          final effectiveVar = actualBurn > budgetBase
+              ? actualBurn
+              : budgetBase;
+          final totalOutflow = effectiveVar + subscriptionCost + monthlyPayment;
+          return projectMonthsForward(known: months, burnRate: totalOutflow);
+        },
+      ) ??
+      [];
 });
 
 final scenarioModelProvider = Provider<ModelState?>((ref) {
-  final scenario      = ref.watch(scenarioProvider);
+  final scenario = ref.watch(scenarioProvider);
   if (!scenario.isActive) return null;
 
   final asyncTransactions = ref.watch(transactionsProvider);
-  final monthlyPayment    = ref.watch(totalMonthlyLoanPaymentProvider);
-  final subscriptionCost  = ref.watch(subscriptionMonthlyTotalProvider);
+  final monthlyPayment = ref.watch(totalMonthlyLoanPaymentProvider);
+  final subscriptionCost = ref.watch(subscriptionMonthlyTotalProvider);
 
   return asyncTransactions.whenOrNull(
     data: (transactions) {
-      final realMonths      = aggregateMonths(transactions);
-      final currentCash     = realMonths.isEmpty ? 0.0 : realMonths.last.balance;
-      final realBurnRate    = _computeBurnRate(realMonths) ?? 0.0;
-      final effectiveBurn   = scenario.burnRateOverride ?? realBurnRate;
+      final realMonths = aggregateMonths(transactions);
+      final currentCash = realMonths.isEmpty ? 0.0 : realMonths.last.balance;
+      final realBurnRate = _computeBurnRate(realMonths) ?? 0.0;
+      final effectiveBurn = scenario.burnRateOverride ?? realBurnRate;
       final effectiveIncome = scenario.simulatedIncome ?? 0.0;
-      final netMonthlyFlow  = effectiveIncome - effectiveBurn;
+      final netMonthlyFlow = effectiveIncome - effectiveBurn;
 
       final projected = _projectFromCash(
-        startingCash:   currentCash,
+        startingCash: currentCash,
         netMonthlyFlow: netMonthlyFlow,
-        fromDate:       DateTime.now(),
-        maxMonths:      120,
+        fromDate: DateTime.now(),
+        maxMonths: 120,
       );
 
       return computeModel(
-        months:                  projected,
-        monthlyPayment:          monthlyPayment,
+        months: projected,
+        monthlyPayment: monthlyPayment,
         subscriptionMonthlyCost: subscriptionCost,
       );
     },
@@ -124,14 +126,14 @@ List<MonthlyState> _projectFromCash({
   required DateTime fromDate,
   required int maxMonths,
 }) {
-  final result   = <MonthlyState>[];
+  final result = <MonthlyState>[];
   double balance = startingCash;
   for (int i = 0; i < maxMonths; i++) {
-    final month = SurvivalMonth(
-        DateTime(fromDate.year, fromDate.month + i));
-    balance    += netMonthlyFlow;
-    result.add(MonthlyState(
-        month: month, netFlow: netMonthlyFlow, balance: balance));
+    final month = SurvivalMonth(DateTime(fromDate.year, fromDate.month + i));
+    balance += netMonthlyFlow;
+    result.add(
+      MonthlyState(month: month, netFlow: netMonthlyFlow, balance: balance),
+    );
     if (balance <= 0) break;
   }
   return result;

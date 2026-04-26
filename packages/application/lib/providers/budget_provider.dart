@@ -3,7 +3,7 @@ import 'package:domain/domain.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _rentKey   = 'budget_rent';
+const _rentKey = 'budget_rent';
 const _livingKey = 'budget_living';
 
 class BudgetNotifier extends AsyncNotifier<Budget> {
@@ -11,7 +11,7 @@ class BudgetNotifier extends AsyncNotifier<Budget> {
   Future<Budget> build() async {
     final prefs = await SharedPreferences.getInstance();
     return Budget(
-      rent:   prefs.getDouble(_rentKey)   ?? 0,
+      rent: prefs.getDouble(_rentKey) ?? 0,
       living: prefs.getDouble(_livingKey) ?? 0,
     );
   }
@@ -36,5 +36,6 @@ class BudgetNotifier extends AsyncNotifier<Budget> {
   }
 }
 
-final budgetProvider =
-    AsyncNotifierProvider<BudgetNotifier, Budget>(BudgetNotifier.new);
+final budgetProvider = AsyncNotifierProvider<BudgetNotifier, Budget>(
+  BudgetNotifier.new,
+);

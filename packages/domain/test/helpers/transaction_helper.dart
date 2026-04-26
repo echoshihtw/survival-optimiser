@@ -11,12 +11,12 @@ Transaction makeTx({
 }) {
   final now = DateTime.now();
   return Transaction(
-    id:        '$year-$month-$day-${type.name}',
-    date:      DateTime(year, month, day),
-    type:      type,
-    amount:    Money(amount),
-    note:      note,
-    loanId:    loanId,
+    id: '$year-$month-$day-${type.name}',
+    date: DateTime(year, month, day),
+    type: type,
+    amount: Money(amount),
+    note: note,
+    loanId: loanId,
     createdAt: now,
     updatedAt: now,
   );
@@ -32,14 +32,14 @@ Loan makeLoan({
 }) {
   final now = DateTime.now();
   return Loan(
-    id:             id,
-    name:           name,
-    source:         source,
+    id: id,
+    name: name,
+    source: source,
     originalAmount: originalAmount,
     monthlyPayment: monthlyPayment,
-    startDate:      now,
-    isActive:       isActive,
-    createdAt:      now,
-    updatedAt:      now,
+    startDate: now,
+    isActive: isActive,
+    createdAt: now,
+    updatedAt: now,
   );
 }

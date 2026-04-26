@@ -9,9 +9,9 @@ class DriftTransactionRepository implements domain.TransactionRepository {
 
   @override
   Stream<List<domain.Transaction>> watchAll() {
-    return _db.transactionDao
-        .watchAll()
-        .map((rows) => rows.map((r) => r.toDomain()).toList());
+    return _db.transactionDao.watchAll().map(
+      (rows) => rows.map((r) => r.toDomain()).toList(),
+    );
   }
 
   @override
@@ -22,14 +22,12 @@ class DriftTransactionRepository implements domain.TransactionRepository {
 
   @override
   Future<void> add(domain.Transaction transaction) async {
-    await _db.transactionDao
-        .insertTransaction(transaction.toCompanion());
+    await _db.transactionDao.insertTransaction(transaction.toCompanion());
   }
 
   @override
   Future<void> update(domain.Transaction transaction) async {
-    await _db.transactionDao
-        .updateTransaction(transaction.toCompanion());
+    await _db.transactionDao.updateTransaction(transaction.toCompanion());
   }
 
   @override

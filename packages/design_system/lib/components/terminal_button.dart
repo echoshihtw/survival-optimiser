@@ -30,7 +30,6 @@ class _TerminalButtonState extends State<TerminalButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late Animation<double> _fillAnim;
-  bool _pressed = false;
 
   @override
   void initState() {
@@ -54,19 +53,18 @@ class _TerminalButtonState extends State<TerminalButton>
 
   void _onTapDown(TapDownDetails _) {
     HapticFeedback.selectionClick();
-    setState(() => _pressed = true);
+
     _ctrl.forward();
   }
 
   void _onTapUp(TapUpDetails _) {
     _ctrl.reverse();
-    setState(() => _pressed = false);
+
     widget.onPressed?.call();
   }
 
   void _onTapCancel() {
     _ctrl.reverse();
-    setState(() => _pressed = false);
   }
 
   @override
@@ -87,9 +85,7 @@ class _TerminalButtonState extends State<TerminalButton>
           ),
           decoration: BoxDecoration(
             border: Border.all(
-              color: disabled
-                  ? AppColors.dimGreen
-                  : _borderColor,
+              color: disabled ? AppColors.dimGreen : _borderColor,
               width: 1,
             ),
             color: disabled
@@ -103,11 +99,13 @@ class _TerminalButtonState extends State<TerminalButton>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (widget.icon != null) ...[
-                Text(widget.icon!,
-                    style: TextStyle(
-                      color: disabled ? AppColors.dimGreen : _borderColor,
-                      fontSize: 14,
-                    )),
+                Text(
+                  widget.icon!,
+                  style: TextStyle(
+                    color: disabled ? AppColors.dimGreen : _borderColor,
+                    fontSize: 14,
+                  ),
+                ),
                 const SizedBox(width: AppSpacing.xs),
               ],
               Text(

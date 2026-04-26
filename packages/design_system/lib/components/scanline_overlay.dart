@@ -39,10 +39,7 @@ class _ScanlinePainter extends CustomPainter {
   final double lineHeight;
   final double lineSpacing;
 
-  const _ScanlinePainter({
-    required this.lineHeight,
-    required this.lineSpacing,
-  });
+  const _ScanlinePainter({required this.lineHeight, required this.lineSpacing});
 
   @override
   void paint(Canvas canvas, Size size) {

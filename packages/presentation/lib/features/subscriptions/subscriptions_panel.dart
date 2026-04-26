@@ -12,66 +12,69 @@ class SubscriptionsPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n      = context.l10n;
-    final asyncSubs = ref.watch(subscriptionsProvider);
-    final currAsync = ref.watch(currencyProvider);
-    final symbol    = currAsync.value?.symbol ?? '¥';
-    final nf        = NumberFormat('#,##0', 'en_US');
-    final subs      = asyncSubs.value ?? [];
-    final active    = subs.where((s) => s.isActive).toList();
-    final monthly   = totalSubscriptionMonthlyCost(active);
-    final yearly    = totalSubscriptionYearlyCost(active);
+    final l10n   = context.l10n;
+    final subs   = ref.watch(subscriptionsProvider).value ?? [];
+    final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
+    final nf     = NumberFormat('#,##0', 'en_US');
+    final active = subs.where((s) => s.isActive).toList();
+    final monthly = totalSubscriptionMonthlyCost(active);
+    final yearly  = totalSubscriptionYearlyCost(active);
 
-    return TerminalPanel(
-      title: l10n.subscriptions,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Add button
-          Align(
-            alignment: Alignment.centerRight,
-            child: TerminalButton(
-              label: l10n.newSubscription,
-              color: AppColors.safe,
-              onPressed: () => _showForm(context, ref, null),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-
-          if (active.isEmpty)
-            Text(l10n.noSubscriptions, style: AppTextStyles.small)
-          else ...[
-            ...sortedByNextBilling(active).map((s) =>
-                _SubscriptionRow(
-                  subscription: s,
-                  symbol: symbol,
-                  nf: nf,
-                  onTap: () => _showForm(context, ref, s),
-                  onDelete: () => _confirmDelete(context, ref, s),
-                )),
-            const TerminalDivider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final summary = active.isEmpty
+        ? Text('No active subscriptions',
+            style: AppTextStyles.bodySmall)
+        : Row(children: [
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.totalPerMonth, style: AppTextStyles.label),
+                Text('SUBSCR/MO', style: AppTextStyles.label),
+                const SizedBox(height: AppSpacing.xxs),
                 Text('$symbol ${nf.format(monthly)}',
-                    style: AppTextStyles.value
-                        .copyWith(color: AppColors.safe)),
+                    style: AppTextStyles.metric
+                        .copyWith(color: SC.metricSubscr)),
               ],
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            )),
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.totalPerYear, style: AppTextStyles.label),
+                Text('SUBSCR/YR', style: AppTextStyles.label),
+                const SizedBox(height: AppSpacing.xxs),
                 Text('$symbol ${nf.format(yearly)}',
-                    style: AppTextStyles.value
-                        .copyWith(color: AppColors.dimGreen)),
+                    style: AppTextStyles.metric
+                        .copyWith(color: AppColors.textSecondary)),
               ],
-            ),
-          ],
+            )),
+          ]);
+
+    final details = Column(
+      children: [
+        // Add button
+        NeoButton(
+          label: '+ SUBSCRIPTION',
+          variant: NeoButtonVariant.ghost,
+          fullWidth: true,
+          onPressed: () => _showForm(context, ref, null),
+        ),
+        if (active.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.sm),
+          ...sortedByNextBilling(active).map((s) =>
+              _SubRow(
+                sub: s,
+                symbol: symbol,
+                nf: nf,
+                onTap: () => _showForm(context, ref, s),
+                onDelete: () => _delete(context, ref, s),
+              )),
         ],
-      ),
+      ],
+    );
+
+    return NeoExpandableCard(
+      title: l10n.subscriptions,
+      accentColor: AppColors.purple,
+      initiallyExpanded: false,
+      summary: summary,
+      details: details,
     );
   }
 
@@ -80,61 +83,58 @@ class SubscriptionsPanel extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.background,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppSpacing.cardRadius)),
+      ),
       builder: (_) => SubscriptionForm(
         existing: existing,
         onSubmit: (name, category, amount, cycle, startDate, note) async {
           final now  = DateTime.now();
           final next = computeNextBillingDate(startDate, cycle);
           if (existing == null) {
-            final sub = Subscription(
-              id:              const Uuid().v4(),
-              name:            name,
-              category:        category,
-              amount:          amount,
-              cycle:           cycle,
-              startDate:       startDate,
-              nextBillingDate: next,
-              note:            note,
-              createdAt:       now,
-              updatedAt:       now,
+            await ref.read(addSubscriptionUseCaseProvider).execute(
+              Subscription(
+                id: const Uuid().v4(),
+                name: name, category: category,
+                amount: amount, cycle: cycle,
+                startDate: startDate, nextBillingDate: next,
+                note: note, createdAt: now, updatedAt: now,
+              ),
             );
-            await ref.read(addSubscriptionUseCaseProvider).execute(sub);
           } else {
-            final sub = existing.copyWith(
-              name:            name,
-              category:        category,
-              amount:          amount,
-              cycle:           cycle,
-              startDate:       startDate,
-              nextBillingDate: next,
-              note:            note,
-              updatedAt:       now,
+            await ref.read(editSubscriptionUseCaseProvider).execute(
+              existing.copyWith(
+                name: name, category: category,
+                amount: amount, cycle: cycle,
+                startDate: startDate, nextBillingDate: next,
+                note: note, updatedAt: now,
+              ),
             );
-            await ref.read(editSubscriptionUseCaseProvider).execute(sub);
           }
         },
       ),
     );
   }
 
-  void _confirmDelete(
+  void _delete(
       BuildContext context, WidgetRef ref, Subscription sub) {
-    final l10n = context.l10n;
     showDialog(
       context: context,
-      useRootNavigator: false,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.background,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        title: Text(l10n.purgeEntry, style: AppTextStyles.title),
-        content: Text(sub.name.toUpperCase(),
-            style: AppTextStyles.value.copyWith(color: AppColors.safe)),
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSpacing.cardRadius)),
+        title: Text('Remove subscription?',
+            style: AppTextStyles.title),
+        content: Text(sub.name,
+            style: AppTextStyles.body
+                .copyWith(color: SC.metricSubscr)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('[ N ]', style: AppTextStyles.value),
+            child: Text('Cancel', style: AppTextStyles.body),
           ),
           TextButton(
             onPressed: () async {
@@ -143,9 +143,9 @@ class SubscriptionsPanel extends ConsumerWidget {
                   .read(deleteSubscriptionUseCaseProvider)
                   .execute(sub.id);
             },
-            child: Text('[ Y ]',
-                style: AppTextStyles.value
-                    .copyWith(color: AppColors.danger)),
+            child: Text('Remove',
+                style: AppTextStyles.body
+                    .copyWith(color: AppColors.red)),
           ),
         ],
       ),
@@ -153,29 +153,25 @@ class SubscriptionsPanel extends ConsumerWidget {
   }
 }
 
-class _SubscriptionRow extends StatelessWidget {
-  final Subscription subscription;
+class _SubRow extends StatelessWidget {
+  final Subscription sub;
   final String symbol;
   final NumberFormat nf;
   final VoidCallback onTap;
   final VoidCallback onDelete;
 
-  const _SubscriptionRow({
-    required this.subscription,
-    required this.symbol,
-    required this.nf,
-    required this.onTap,
+  const _SubRow({
+    required this.sub, required this.symbol,
+    required this.nf, required this.onTap,
     required this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
-    final l10n     = context.l10n;
-    final s        = subscription;
-    final monthly  = nf.format(s.monthlyEquivalent);
-    final original = nf.format(s.amount);
-    final days     = s.daysUntilNextBilling;
-    final cycleLabel = _cycleLabel(s.cycle, l10n);
+    final days = sub.daysUntilNextBilling;
+    final daysColor = days <= 7
+        ? AppColors.red
+        : days <= 14 ? AppColors.gold : AppColors.textDim;
 
     return GestureDetector(
       onTap: onTap,
@@ -185,68 +181,48 @@ class _SubscriptionRow extends StatelessWidget {
             vertical: AppSpacing.sm),
         decoration: const BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: AppColors.panelBorder, width: 1),
+            bottom: BorderSide(color: AppColors.cardBorder),
           ),
         ),
-        child: Row(
-          children: [
-            // Category indicator
-            Container(
-              width: 3,
-              height: 36,
-              color: s.category == SubscriptionCategory.personal
-                  ? AppColors.safe
-                  : AppColors.gold,
-              margin: const EdgeInsets.only(right: AppSpacing.sm),
+        child: Row(children: [
+          Container(
+            width: 3, height: 36,
+            decoration: BoxDecoration(
+              color: sub.category == SubscriptionCategory.personal
+                  ? AppColors.purple : AppColors.blue,
+              borderRadius: BorderRadius.circular(2),
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(s.name.toUpperCase(),
-                          style: AppTextStyles.value
-                              .copyWith(color: AppColors.safe)),
-                      Text('$symbol $original / $cycleLabel',
-                          style: AppTextStyles.small),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xxs),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '≈ $symbol $monthly /${l10n.monthly}',
-                        style: AppTextStyles.small
-                            .copyWith(color: AppColors.dimGreen),
-                      ),
-                      Text(
-                        '$days ${l10n.subscriptionDaysLeft}',
-                        style: AppTextStyles.small.copyWith(
-                          color: days <= 7
-                              ? AppColors.danger
-                              : days <= 14
-                                  ? AppColors.caution
-                                  : AppColors.dimGreen,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+            margin: const EdgeInsets.only(right: AppSpacing.sm),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(sub.name.toUpperCase(),
+                    style: AppTextStyles.body),
+                Text(
+                  '${sub.cycle.label} · '
+                  '$symbol ${nf.format(sub.amount)}',
+                  style: AppTextStyles.caption,
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '$symbol ${nf.format(sub.monthlyEquivalent)}/MO',
+                style: AppTextStyles.bodySmall
+                    .copyWith(color: AppColors.purple),
               ),
-            ),
-          ],
-        ),
+              Text('$days DAYS',
+                  style: AppTextStyles.caption
+                      .copyWith(color: daysColor)),
+            ],
+          ),
+        ]),
       ),
     );
   }
-
-  String _cycleLabel(BillingCycle c, AppLocalizations l10n) => switch (c) {
-    BillingCycle.weekly    => l10n.weekly,
-    BillingCycle.monthly   => l10n.monthly,
-    BillingCycle.quarterly => l10n.quarterly,
-    BillingCycle.yearly    => l10n.yearly,
-  };
 }

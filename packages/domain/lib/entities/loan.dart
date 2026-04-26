@@ -39,17 +39,17 @@ class Loan {
     DateTime? updatedAt,
   }) {
     return Loan(
-      id:                 id                 ?? this.id,
-      name:               name               ?? this.name,
-      source:             source             ?? this.source,
-      originalAmount:     originalAmount     ?? this.originalAmount,
-      monthlyPayment:     monthlyPayment     ?? this.monthlyPayment,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      source: source ?? this.source,
+      originalAmount: originalAmount ?? this.originalAmount,
+      monthlyPayment: monthlyPayment ?? this.monthlyPayment,
       originalTermMonths: originalTermMonths ?? this.originalTermMonths,
-      startDate:          startDate          ?? this.startDate,
-      note:               note               ?? this.note,
-      isActive:           isActive           ?? this.isActive,
-      createdAt:          createdAt          ?? this.createdAt,
-      updatedAt:          updatedAt          ?? this.updatedAt,
+      startDate: startDate ?? this.startDate,
+      note: note ?? this.note,
+      isActive: isActive ?? this.isActive,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }

@@ -73,7 +73,7 @@ class AppLocalizationsEn extends AppLocalizations {
       '> LOAN/MO AFFECTS PRESSURE RATIO AND INVESTABLE CASH';
 
   @override
-  String get transactionLog => '// TRANSACTION LOG';
+  String get transactionLog => 'TRANSACTION LOG';
 
   @override
   String get newEntry => '+ NEW';
@@ -112,7 +112,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get purgeEntry => '> PURGE ENTRY?';
 
   @override
-  String get scenarioSimulator => '// SCENARIO SIMULATOR';
+  String get scenarioSimulator => 'SCENARIO SIMULATOR';
 
   @override
   String get overrideInputs => 'OVERRIDE INPUTS';

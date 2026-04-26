@@ -8,21 +8,22 @@ class ScenarioNotifier extends Notifier<ScenarioState> {
   void setBurnRateOverride(double? value) {
     state = ScenarioState(
       burnRateOverride: value,
-      simulatedIncome:  state.simulatedIncome,
-      isActive: true,  // always activate when user touches input
+      simulatedIncome: state.simulatedIncome,
+      isActive: true, // always activate when user touches input
     );
   }
 
   void setSimulatedIncome(double? value) {
     state = ScenarioState(
       burnRateOverride: state.burnRateOverride,
-      simulatedIncome:  value,
-      isActive: true,  // always activate when user touches input
+      simulatedIncome: value,
+      isActive: true, // always activate when user touches input
     );
   }
 
   void reset() => state = const ScenarioState();
 }
 
-final scenarioProvider =
-    NotifierProvider<ScenarioNotifier, ScenarioState>(ScenarioNotifier.new);
+final scenarioProvider = NotifierProvider<ScenarioNotifier, ScenarioState>(
+  ScenarioNotifier.new,
+);

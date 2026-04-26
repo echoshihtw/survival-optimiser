@@ -4,8 +4,8 @@ enum SurvivalStatus {
   critical;
 
   String get label => switch (this) {
-    SurvivalStatus.stable   => 'STABLE',
-    SurvivalStatus.caution  => 'CAUTION',
+    SurvivalStatus.stable => 'STABLE',
+    SurvivalStatus.caution => 'CAUTION',
     SurvivalStatus.critical => 'CRITICAL',
   };
 }

@@ -49,17 +49,17 @@ class Subscription {
     DateTime? updatedAt,
   }) {
     return Subscription(
-      id:             id             ?? this.id,
-      name:           name           ?? this.name,
-      category:       category       ?? this.category,
-      amount:         amount         ?? this.amount,
-      cycle:          cycle          ?? this.cycle,
-      startDate:      startDate      ?? this.startDate,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      category: category ?? this.category,
+      amount: amount ?? this.amount,
+      cycle: cycle ?? this.cycle,
+      startDate: startDate ?? this.startDate,
       nextBillingDate: nextBillingDate ?? this.nextBillingDate,
-      note:           note           ?? this.note,
-      isActive:       isActive       ?? this.isActive,
-      createdAt:      createdAt      ?? this.createdAt,
-      updatedAt:      updatedAt      ?? this.updatedAt,
+      note: note ?? this.note,
+      isActive: isActive ?? this.isActive,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }

@@ -236,7 +236,7 @@ abstract class AppLocalizations {
   /// No description provided for @transactionLog.
   ///
   /// In en, this message translates to:
-  /// **'// TRANSACTION LOG'**
+  /// **'TRANSACTION LOG'**
   String get transactionLog;
 
   /// No description provided for @newEntry.
@@ -314,7 +314,7 @@ abstract class AppLocalizations {
   /// No description provided for @scenarioSimulator.
   ///
   /// In en, this message translates to:
-  /// **'// SCENARIO SIMULATOR'**
+  /// **'SCENARIO SIMULATOR'**
   String get scenarioSimulator;
 
   /// No description provided for @overrideInputs.

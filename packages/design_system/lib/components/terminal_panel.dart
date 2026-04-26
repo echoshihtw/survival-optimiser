@@ -45,14 +45,9 @@ class TerminalPanel extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: borderColor, width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: borderColor, width: 1)),
       ),
-      child: Text(
-        '// $title',
-        style: AppTextStyles.title,
-      ),
+      child: Text('// $title', style: AppTextStyles.title),
     );
   }
 }

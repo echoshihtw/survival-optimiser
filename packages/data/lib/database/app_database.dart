@@ -14,7 +14,7 @@ part 'app_database.g.dart';
 
 @DriftDatabase(
   tables: [Transactions, Loans, Subscriptions],
-  daos:   [TransactionDao, LoanDao, SubscriptionDao],
+  daos: [TransactionDao, LoanDao, SubscriptionDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -43,7 +43,7 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final dir  = await getApplicationDocumentsDirectory();
+    final dir = await getApplicationDocumentsDirectory();
     final file = File(p.join(dir.path, 'survival.db'));
     return NativeDatabase.createInBackground(file);
   });

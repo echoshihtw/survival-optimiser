@@ -9,7 +9,7 @@ class Transaction {
   final TransactionType type;
   final Money amount;
   final String? note;
-  final String? loanId;       // links REPAY to a specific loan
+  final String? loanId; // links REPAY to a specific loan
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -24,8 +24,7 @@ class Transaction {
     required this.updatedAt,
   }) : month = SurvivalMonth(date);
 
-  double get signedAmount =>
-      type.isInflow ? amount.value : -amount.value;
+  double get signedAmount => type.isInflow ? amount.value : -amount.value;
 
   Transaction copyWith({
     String? id,
@@ -38,12 +37,12 @@ class Transaction {
     DateTime? updatedAt,
   }) {
     return Transaction(
-      id:        id        ?? this.id,
-      date:      date      ?? this.date,
-      type:      type      ?? this.type,
-      amount:    amount    ?? this.amount,
-      note:      note      ?? this.note,
-      loanId:    loanId    ?? this.loanId,
+      id: id ?? this.id,
+      date: date ?? this.date,
+      type: type ?? this.type,
+      amount: amount ?? this.amount,
+      note: note ?? this.note,
+      loanId: loanId ?? this.loanId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

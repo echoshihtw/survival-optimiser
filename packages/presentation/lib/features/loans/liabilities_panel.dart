@@ -7,8 +7,6 @@ import 'package:domain/domain.dart';
 import 'package:intl/intl.dart';
 import 'loan_card.dart';
 
-const _uuid = Uuid();
-
 class LiabilitiesPanel extends ConsumerWidget {
   const LiabilitiesPanel({super.key});
 
@@ -16,69 +14,71 @@ class LiabilitiesPanel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n      = context.l10n;
     final summaries = ref.watch(loanSummariesProvider);
-    final totalMo   = ref.watch(totalMonthlyLoanPaymentProvider);
-    final currAsync = ref.watch(currencyProvider);
-    final symbol    = currAsync.value?.symbol ?? '¥';
+    final symbol    = ref.watch(currencyProvider).value?.symbol ?? '¥';
     final nf        = NumberFormat('#,##0', 'en_US');
-    final active    = summaries.where((s) => !s.isFullyPaid).toList();
-    final paid      = summaries.where((s) => s.isFullyPaid).toList();
+    final total     = ref.watch(totalMonthlyLoanPaymentProvider);
+    final active    = summaries.where((s) => s.loan.isActive).toList();
 
-    return TerminalPanel(
-      title: l10n.liabilities,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (summaries.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-              child: Text(l10n.noActiveLoans, style: AppTextStyles.small),
-            )
-          else ...[
-            ...active.map((s) => LoanCard(
-              summary: s,
-              onTap: () {},
-              onRepay: () => _showRepayForm(context, ref, s),
-            )),
-            if (paid.isNotEmpty) ...[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-                child: Text(l10n.settled, style: AppTextStyles.label),
-              ),
-              ...paid.map((s) => LoanCard(
-                summary: s,
-                onTap: () {},
-                onRepay: () {},
-              )),
-            ],
-            const TerminalDivider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final summary = active.isEmpty
+        ? Text('No active loans', style: AppTextStyles.bodySmall)
+        : Row(children: [
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.totalDebtPerMonth, style: AppTextStyles.label),
-                Text('$symbol ${nf.format(totalMo)}',
-                    style: AppTextStyles.value
+                Text('DEBT/MO', style: AppTextStyles.label),
+                const SizedBox(height: AppSpacing.xxs),
+                Text('$symbol ${nf.format(total)}',
+                    style: AppTextStyles.metric
                         .copyWith(color: AppColors.gold)),
               ],
-            ),
-          ],
-        ],
-      ),
+            )),
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('LOANS', style: AppTextStyles.label),
+                const SizedBox(height: AppSpacing.xxs),
+                Text('${active.length} ACTIVE',
+                    style: AppTextStyles.metric
+                        .copyWith(color: AppColors.textSecondary)),
+              ],
+            )),
+          ]);
+
+    final details = active.isEmpty
+        ? null
+        : Column(
+            children: active.map((s) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: LoanCard(
+                summary: s,
+                onTap: () {},
+                onRepay: () => _showRepay(context, ref, s),
+              ),
+            )).toList(),
+          );
+
+    return NeoExpandableCard(
+      title: l10n.liabilities,
+      accentColor: AppColors.gold,
+      initiallyExpanded: false,
+      summary: summary,
+      details: details,
     );
   }
 
-  void _showRepayForm(
+  void _showRepay(
       BuildContext context, WidgetRef ref, LoanSummary summary) {
-    final l10n   = context.l10n;
-    final ctrl   = TextEditingController(
+    final amountCtrl = TextEditingController(
         text: summary.loan.monthlyPayment.toStringAsFixed(0));
-    final symbol = ref.read(currencyProvider).value?.symbol ?? '¥';
-    final nf     = NumberFormat('#,##0', 'en_US');
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.background,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppSpacing.cardRadius)),
+      ),
       builder: (ctx) => Padding(
         padding: EdgeInsets.only(
           left: AppSpacing.lg,
@@ -90,69 +90,54 @@ class LiabilitiesPanel extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${l10n.repayTitle}: ${summary.loan.name.toUpperCase()}',
-                style: AppTextStyles.title),
-            const TerminalDivider(),
-            Text(
-              '${l10n.remaining}: $symbol ${nf.format(summary.remainingBalance)}',
-              style: AppTextStyles.value.copyWith(color: AppColors.gold),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            TerminalInput(
-              label: l10n.installment,
-              controller: ctrl,
+            Text('REPAY LOAN', style: AppTextStyles.title
+                .copyWith(color: AppColors.gold)),
+            const SizedBox(height: AppSpacing.xs),
+            Text(summary.loan.name.toUpperCase(),
+                style: AppTextStyles.bodySmall),
+            const SizedBox(height: AppSpacing.lg),
+            NeoInput(
+              label: 'REPAYMENT AMOUNT',
+              controller: amountCtrl,
               keyboardType: TextInputType.number,
               hint: summary.loan.monthlyPayment.toStringAsFixed(0),
-              maxLength: 13,
-              inputFormatters: [AppInputFormatters.amount],
-              onChanged: (_) {},
             ),
             const SizedBox(height: AppSpacing.lg),
             Row(children: [
               Expanded(
-                child: TerminalButton(
-                  label: l10n.confirm,
+                child: NeoButton(
+                  label: 'CONFIRM',
+                  variant: NeoButtonVariant.primary,
                   color: AppColors.gold,
+                  fullWidth: true,
                   onPressed: () async {
-                    final amount = double.tryParse(ctrl.text.trim());
+                    final amount = double.tryParse(
+                        amountCtrl.text.trim());
                     if (amount == null || amount <= 0) return;
-                    try {
-                      final now = DateTime.now();
-                      final tx  = Transaction(
-                        id:        _uuid.v4(),
-                        date:      now,
-                        type:      TransactionType.repayment,
-                        amount:    Money(amount),
-                        note:      '${l10n.repay}: ${summary.loan.name}',
-                        loanId:    summary.loan.id,
-                        createdAt: now,
-                        updatedAt: now,
-                      );
-                      await ref
-                          .read(addTransactionUseCaseProvider)
-                          .execute(tx);
-                      if (ctx.mounted) Navigator.of(ctx).pop();
-                    } on DomainFailure catch (f) {
-                      if (ctx.mounted) {
-                        ScaffoldMessenger.of(ctx).showSnackBar(
-                          SnackBar(content: Text(f.message, style: AppTextStyles.danger)),
-                        );
-                      }
-                    } catch (_) {
-                      if (ctx.mounted) {
-                        ScaffoldMessenger.of(ctx).showSnackBar(
-                          SnackBar(content: Text('OPERATION FAILED', style: AppTextStyles.danger)),
-                        );
-                      }
-                    }
+                    Navigator.of(ctx).pop();
+                    final now = DateTime.now();
+                    final tx  = Transaction(
+                      id:        const Uuid().v4(),
+                      date:      now,
+                      type:      TransactionType.repayment,
+                      amount:    Money(amount),
+                      loanId:    summary.loan.id,
+                      note:      'Repayment — ${summary.loan.name}',
+                      createdAt: now,
+                      updatedAt: now,
+                    );
+                    await ref
+                        .read(addTransactionUseCaseProvider)
+                        .execute(tx);
                   },
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
-                child: TerminalButton(
-                  label: l10n.abort,
-                  isDestructive: true,
+                child: NeoButton(
+                  label: 'CANCEL',
+                  variant: NeoButtonVariant.ghost,
+                  fullWidth: true,
                   onPressed: () => Navigator.of(ctx).pop(),
                 ),
               ),

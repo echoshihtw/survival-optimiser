@@ -7,11 +7,7 @@ class CashChart extends StatelessWidget {
   final List<MonthlyState> months;
   final double safetyCash;
 
-  const CashChart({
-    super.key,
-    required this.months,
-    required this.safetyCash,
-  });
+  const CashChart({super.key, required this.months, required this.safetyCash});
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +15,23 @@ class CashChart extends StatelessWidget {
       return const SizedBox(
         height: 160,
         child: Center(
-          child: Text('NO DATA', style: TextStyle(
-            color: AppColors.dimGreen,
-            fontFamily: 'JetBrainsMono',
-            fontSize: 12,
-          )),
+          child: Text(
+            'NO DATA',
+            style: TextStyle(
+              color: AppColors.dimGreen,
+              fontFamily: 'JetBrainsMono',
+              fontSize: 12,
+            ),
+          ),
         ),
       );
     }
 
-    final spots = months.asMap().entries.map((e) =>
-        FlSpot(e.key.toDouble(), e.value.balance)).toList();
+    final spots = months
+        .asMap()
+        .entries
+        .map((e) => FlSpot(e.key.toDouble(), e.value.balance))
+        .toList();
 
     final maxY = months.map((m) => m.balance).reduce((a, b) => a > b ? a : b);
     final minY = months.map((m) => m.balance).reduce((a, b) => a < b ? a : b);
@@ -41,14 +43,10 @@ class CashChart extends StatelessWidget {
           backgroundColor: AppColors.background,
           gridData: FlGridData(
             show: true,
-            getDrawingHorizontalLine: (_) => FlLine(
-              color: AppColors.panelBorder,
-              strokeWidth: 1,
-            ),
-            getDrawingVerticalLine: (_) => FlLine(
-              color: AppColors.panelBorder,
-              strokeWidth: 1,
-            ),
+            getDrawingHorizontalLine: (_) =>
+                FlLine(color: AppColors.panelBorder, strokeWidth: 1),
+            getDrawingVerticalLine: (_) =>
+                FlLine(color: AppColors.panelBorder, strokeWidth: 1),
           ),
           borderData: FlBorderData(show: false),
           titlesData: const FlTitlesData(show: false),
@@ -65,10 +63,7 @@ class CashChart extends StatelessWidget {
             ),
             // Zero line
             LineChartBarData(
-              spots: [
-                FlSpot(0, 0),
-                FlSpot(months.length - 1.0, 0),
-              ],
+              spots: [FlSpot(0, 0), FlSpot(months.length - 1.0, 0)],
               isCurved: false,
               color: AppColors.danger,
               barWidth: 1,

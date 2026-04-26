@@ -13,21 +13,22 @@ class LoanSummary {
     required this.paidThisMonth,
   });
 
-  double get repaidRatio =>
-      loan.originalAmount > 0
-          ? (totalRepaid / loan.originalAmount).clamp(0.0, 1.0)
-          : 0.0;
+  double get repaidRatio => loan.originalAmount > 0
+      ? (totalRepaid / loan.originalAmount).clamp(0.0, 1.0)
+      : 0.0;
 
   bool get isFullyPaid => remainingBalance <= 0;
 
   int get monthsRemaining {
     if (isFullyPaid) return 0;
     if (loan.originalTermMonths > 0) {
-      final now     = DateTime.now();
-      final start   = loan.startDate;
-      final elapsed = (now.year - start.year) * 12 +
-          (now.month - start.month);
-      return (loan.originalTermMonths - elapsed).clamp(0, loan.originalTermMonths);
+      final now = DateTime.now();
+      final start = loan.startDate;
+      final elapsed = (now.year - start.year) * 12 + (now.month - start.month);
+      return (loan.originalTermMonths - elapsed).clamp(
+        0,
+        loan.originalTermMonths,
+      );
     }
     return loan.monthlyPayment > 0
         ? (remainingBalance / loan.monthlyPayment).ceil().clamp(0, 9999)

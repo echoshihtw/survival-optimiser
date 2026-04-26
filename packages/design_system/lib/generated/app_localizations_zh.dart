@@ -72,7 +72,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get loanAffectsInfo => '> 月還款影響壓力比例和可投資金額';
 
   @override
-  String get transactionLog => '// 交易記錄';
+  String get transactionLog => '交易記錄';
 
   @override
   String get newEntry => '+ 新增';
@@ -111,7 +111,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get purgeEntry => '> 刪除此記錄？';
 
   @override
-  String get scenarioSimulator => '// 情境模擬器';
+  String get scenarioSimulator => '情境模擬器';
 
   @override
   String get overrideInputs => '覆蓋輸入';
@@ -425,7 +425,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get loanAffectsInfo => '> 月還款影響壓力比例和可投資金額';
 
   @override
-  String get transactionLog => '// 交易記錄';
+  String get transactionLog => '交易記錄';
 
   @override
   String get newEntry => '+ 新增';
@@ -464,7 +464,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get purgeEntry => '> 刪除此記錄？';
 
   @override
-  String get scenarioSimulator => '// 情境模擬器';
+  String get scenarioSimulator => '情境模擬器';
 
   @override
   String get overrideInputs => '覆蓋輸入';

@@ -19,13 +19,13 @@ class TransactionState {
     String? errorMessage,
   }) {
     return TransactionState(
-      transactions:  transactions  ?? this.transactions,
-      status:        status        ?? this.status,
-      errorMessage:  errorMessage  ?? this.errorMessage,
+      transactions: transactions ?? this.transactions,
+      status: status ?? this.status,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
   bool get isLoading => status == TransactionStateStatus.loading;
-  bool get hasError  => status == TransactionStateStatus.error;
-  bool get isEmpty   => transactions.isEmpty;
+  bool get hasError => status == TransactionStateStatus.error;
+  bool get isEmpty => transactions.isEmpty;
 }

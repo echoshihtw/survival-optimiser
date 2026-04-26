@@ -15,7 +15,7 @@ class SurvivalMonth {
       SurvivalMonth(DateTime(value.year, value.month + 1, 1));
 
   bool isBefore(SurvivalMonth other) => value.isBefore(other.value);
-  bool isAfter(SurvivalMonth other)  => value.isAfter(other.value);
+  bool isAfter(SurvivalMonth other) => value.isAfter(other.value);
 
   bool operator <(SurvivalMonth other) => isBefore(other);
   bool operator >(SurvivalMonth other) => isAfter(other);

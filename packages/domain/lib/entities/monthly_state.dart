@@ -4,7 +4,7 @@ class MonthlyState {
   final SurvivalMonth month;
   final double netFlow;
   final double balance;
-  final double grossOutflow;  // expenses + repayments only, no income
+  final double grossOutflow; // expenses + repayments only, no income
 
   const MonthlyState({
     required this.month,

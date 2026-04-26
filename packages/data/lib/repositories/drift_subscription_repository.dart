@@ -7,16 +7,13 @@ class DriftSubscriptionRepository implements domain.SubscriptionRepository {
   const DriftSubscriptionRepository(this._db);
 
   @override
-  Stream<List<domain.Subscription>> watchAll() =>
-      _db.subscriptionDao
-          .watchAll()
-          .map((rows) => rows.map((r) => r.toDomain()).toList());
+  Stream<List<domain.Subscription>> watchAll() => _db.subscriptionDao
+      .watchAll()
+      .map((rows) => rows.map((r) => r.toDomain()).toList());
 
   @override
   Future<List<domain.Subscription>> getAll() async =>
-      (await _db.subscriptionDao.getAll())
-          .map((r) => r.toDomain())
-          .toList();
+      (await _db.subscriptionDao.getAll()).map((r) => r.toDomain()).toList();
 
   @override
   Future<void> add(domain.Subscription subscription) =>
@@ -27,6 +24,5 @@ class DriftSubscriptionRepository implements domain.SubscriptionRepository {
       _db.subscriptionDao.updateSubscription(subscription.toCompanion());
 
   @override
-  Future<void> delete(String id) =>
-      _db.subscriptionDao.deleteSubscription(id);
+  Future<void> delete(String id) => _db.subscriptionDao.deleteSubscription(id);
 }

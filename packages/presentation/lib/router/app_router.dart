@@ -9,32 +9,34 @@ import '../features/scenarios/scenarios_screen.dart';
 final appRouter = GoRouter(
   initialLocation: '/boot',
   routes: [
-    GoRoute(
-      path: '/boot',
-      builder: (_, __) => const BootScreen(),
-    ),
+    GoRoute(path: '/boot', builder: (_, __) => const BootScreen()),
     StatefulShellRoute.indexedStack(
-      builder: (context, state, shell) =>
-          _ScaffoldWithNav(shell: shell),
+      builder: (context, state, shell) => _ScaffoldWithNav(shell: shell),
       branches: [
-        StatefulShellBranch(routes: [
-          GoRoute(
-            path: '/dashboard',
-            builder: (_, __) => const DashboardScreen(),
-          ),
-        ]),
-        StatefulShellBranch(routes: [
-          GoRoute(
-            path: '/transactions',
-            builder: (_, __) => const TransactionsScreen(),
-          ),
-        ]),
-        StatefulShellBranch(routes: [
-          GoRoute(
-            path: '/scenarios',
-            builder: (_, __) => const ScenariosScreen(),
-          ),
-        ]),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/dashboard',
+              builder: (_, __) => const DashboardScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/transactions',
+              builder: (_, __) => const TransactionsScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/scenarios',
+              builder: (_, __) => const ScenariosScreen(),
+            ),
+          ],
+        ),
       ],
     ),
   ],
@@ -60,10 +62,7 @@ class _TerminalNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  const _TerminalNavBar({
-    required this.currentIndex,
-    required this.onTap,
-  });
+  const _TerminalNavBar({required this.currentIndex, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -78,17 +77,13 @@ class _TerminalNavBar extends StatelessWidget {
       height: 56,
       decoration: const BoxDecoration(
         color: AppColors.background,
-        border: Border(
-          top: BorderSide(color: AppColors.panelBorder, width: 1),
-        ),
+        border: Border(top: BorderSide(color: AppColors.panelBorder, width: 1)),
       ),
       child: Row(
         children: List.generate(items.length, (i) {
-          final item   = items[i];
+          final item = items[i];
           final active = i == currentIndex;
-          final color  = active
-              ? AppColors.primaryGreen
-              : AppColors.dimGreen;
+          final color = active ? AppColors.primaryGreen : AppColors.dimGreen;
           return Expanded(
             child: GestureDetector(
               onTap: () => onTap(i),
@@ -96,16 +91,17 @@ class _TerminalNavBar extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(item.icon,
-                      style: TextStyle(color: color, fontSize: 16)),
+                  Text(item.icon, style: TextStyle(color: color, fontSize: 16)),
                   const SizedBox(height: 2),
-                  Text(item.label,
-                      style: TextStyle(
-                        color: color,
-                        fontSize: 10,
-                        letterSpacing: 1.5,
-                        fontFamily: 'JetBrainsMono',
-                      )),
+                  Text(
+                    item.label,
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 10,
+                      letterSpacing: 1.5,
+                      fontFamily: 'JetBrainsMono',
+                    ),
+                  ),
                 ],
               ),
             ),

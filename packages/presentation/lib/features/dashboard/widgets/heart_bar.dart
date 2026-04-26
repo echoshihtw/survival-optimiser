@@ -5,19 +5,15 @@ class HeartBar extends StatelessWidget {
   final int filled;
   final int total;
 
-  const HeartBar({
-    super.key,
-    required this.filled,
-    this.total = 12,
-  });
+  const HeartBar({super.key, required this.filled, this.total = 12});
 
   @override
   Widget build(BuildContext context) {
     final color = filled >= 8
         ? AppColors.gold
         : filled >= 4
-            ? AppColors.caution
-            : AppColors.danger;
+        ? AppColors.caution
+        : AppColors.danger;
 
     return Wrap(
       spacing: AppSpacing.xs,

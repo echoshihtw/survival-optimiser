@@ -1,64 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 abstract final class AppTextStyles {
-  static const _family = 'JetBrainsMono';
-
-  static const TextStyle label = TextStyle(
-    fontFamily: _family,
-    fontSize: 10,
-    color: AppColors.dimGreen,
-    letterSpacing: 1.5,
-    fontWeight: FontWeight.w400,
+  // ── Hero numbers (JetBrains Mono) ────────────
+  static TextStyle get heroLarge => GoogleFonts.jetBrainsMono(
+    fontSize: 42, fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary, letterSpacing: -1.0,
   );
 
-  static const TextStyle value = TextStyle(
-    fontFamily: _family,
-    fontSize: 14,
-    color: AppColors.primaryGreen,
-    fontWeight: FontWeight.w400,
+  static TextStyle get hero => GoogleFonts.jetBrainsMono(
+    fontSize: 32, fontWeight: FontWeight.w600,
+    color: AppColors.textPrimary, letterSpacing: -0.5,
   );
 
-  static const TextStyle metric = TextStyle(
-    fontFamily: _family,
-    fontSize: 18,
-    color: AppColors.primaryGreen,
-    fontWeight: FontWeight.w700,
+  static TextStyle get metric => GoogleFonts.jetBrainsMono(
+    fontSize: 20, fontWeight: FontWeight.w500,
+    color: AppColors.textPrimary,
   );
 
-  static const TextStyle title = TextStyle(
-    fontFamily: _family,
-    fontSize: 12,
-    color: AppColors.primaryGreen,
-    letterSpacing: 2.0,
-    fontWeight: FontWeight.w700,
+  static TextStyle get metricSmall => GoogleFonts.jetBrainsMono(
+    fontSize: 15, fontWeight: FontWeight.w400,
+    color: AppColors.textPrimary,
   );
 
-  static const TextStyle danger = TextStyle(
-    fontFamily: _family,
-    fontSize: 14,
-    color: AppColors.danger,
-    fontWeight: FontWeight.w700,
+  // ── Labels (Inter — clean) ───────────────────
+  static TextStyle get label => GoogleFonts.inter(
+    fontSize: 11, fontWeight: FontWeight.w500,
+    color: AppColors.textSecondary, letterSpacing: 1.0,
   );
 
-  static const TextStyle gold = TextStyle(
-    fontFamily: _family,
-    fontSize: 14,
-    color: AppColors.gold,
-    fontWeight: FontWeight.w700,
+  static TextStyle get sectionTitle => GoogleFonts.inter(
+    fontSize: 12, fontWeight: FontWeight.w600,
+    color: AppColors.textSecondary, letterSpacing: 1.2,
   );
 
-  static const TextStyle safe = TextStyle(
-    fontFamily: _family,
-    fontSize: 14,
-    color: AppColors.safe,
-    fontWeight: FontWeight.w700,
+  static TextStyle get title => GoogleFonts.inter(
+    fontSize: 17, fontWeight: FontWeight.w600,
+    color: AppColors.textPrimary, letterSpacing: -0.3,
   );
 
-  static const TextStyle small = TextStyle(
-    fontFamily: _family,
-    fontSize: 10,
-    color: AppColors.dimGreen,
-    fontWeight: FontWeight.w400,
+  static TextStyle get body => GoogleFonts.inter(
+    fontSize: 15, fontWeight: FontWeight.w400,
+    color: AppColors.textPrimary,
   );
+
+  static TextStyle get bodySmall => GoogleFonts.inter(
+    fontSize: 13, fontWeight: FontWeight.w400,
+    color: AppColors.textSecondary,
+  );
+
+  static TextStyle get caption => GoogleFonts.inter(
+    fontSize: 11, fontWeight: FontWeight.w400,
+    color: AppColors.textDim,
+  );
+
+  static TextStyle get button => GoogleFonts.inter(
+    fontSize: 14, fontWeight: FontWeight.w600,
+    color: AppColors.textPrimary, letterSpacing: 0.2,
+  );
+
+  // ── Legacy aliases ────────────────────────────
+  static TextStyle get value    => metricSmall;
+  static TextStyle get small    => bodySmall;
+  static TextStyle get mono     => metricSmall;
+  static TextStyle get danger   =>
+      body.copyWith(color: AppColors.red);
 }

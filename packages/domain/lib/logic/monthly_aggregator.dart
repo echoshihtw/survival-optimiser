@@ -14,14 +14,13 @@ List<MonthlyState> aggregateMonths(List<Transaction> transactions) {
       .where((t) => t.type != TransactionType.openingBalance)
       .toList();
 
-  // Only opening balance — return one synthetic month so currentCash is set
   if (regular.isEmpty && opening > 0) {
     final now = DateTime.now();
     return [
       MonthlyState(
-        month:        SurvivalMonth(now),
-        netFlow:      0,
-        balance:      opening,
+        month: SurvivalMonth(now),
+        netFlow: 0,
+        balance: opening,
         grossOutflow: 0,
       ),
     ];
@@ -35,22 +34,24 @@ List<MonthlyState> aggregateMonths(List<Transaction> transactions) {
   }
 
   final sortedKeys = byMonth.keys.toList()..sort();
-  double balance   = opening;
-  final result     = <MonthlyState>[];
+  double balance = opening;
+  final result = <MonthlyState>[];
 
   for (final key in sortedKeys) {
-    final monthTxs    = byMonth[key]!;
-    final netFlow     = monthTxs.fold(0.0, (sum, t) => sum + t.signedAmount);
+    final monthTxs = byMonth[key]!;
+    final netFlow = monthTxs.fold(0.0, (sum, t) => sum + t.signedAmount);
     final grossOutflow = monthTxs
         .where((t) => !t.type.isInflow && t.type != TransactionType.investment)
         .fold(0.0, (sum, t) => sum + t.amount.value);
     balance += netFlow;
-    result.add(MonthlyState(
-      month:        monthTxs.first.month,
-      netFlow:      netFlow,
-      balance:      balance,
-      grossOutflow: grossOutflow,
-    ));
+    result.add(
+      MonthlyState(
+        month: monthTxs.first.month,
+        netFlow: netFlow,
+        balance: balance,
+        grossOutflow: grossOutflow,
+      ),
+    );
   }
 
   return result;

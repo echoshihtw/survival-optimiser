@@ -7,8 +7,9 @@ class DriftLoanRepository implements domain.LoanRepository {
   const DriftLoanRepository(this._db);
 
   @override
-  Stream<List<domain.Loan>> watchAll() =>
-      _db.loanDao.watchAll().map((rows) => rows.map((r) => r.toDomain()).toList());
+  Stream<List<domain.Loan>> watchAll() => _db.loanDao.watchAll().map(
+    (rows) => rows.map((r) => r.toDomain()).toList(),
+  );
 
   @override
   Future<List<domain.Loan>> getAll() async =>
@@ -23,6 +24,5 @@ class DriftLoanRepository implements domain.LoanRepository {
       _db.loanDao.updateLoan(loan.toCompanion());
 
   @override
-  Future<void> delete(String id) =>
-      _db.loanDao.deleteLoan(id);
+  Future<void> delete(String id) => _db.loanDao.deleteLoan(id);
 }

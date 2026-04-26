@@ -19,7 +19,7 @@ class Money {
   Money operator -(Money other) => Money._(value - other.value);
   Money operator *(double factor) => Money._(value * factor);
 
-  bool get isZero     => value == 0;
+  bool get isZero => value == 0;
   bool get isPositive => value > 0;
 
   @override

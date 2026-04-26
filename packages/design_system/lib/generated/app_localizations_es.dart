@@ -73,7 +73,7 @@ class AppLocalizationsEs extends AppLocalizations {
       '> PRÉSTAMO/MES AFECTA RATIO DE PRESIÓN E INVERTIBLE';
 
   @override
-  String get transactionLog => '// REGISTRO DE TRANSACCIONES';
+  String get transactionLog => 'REGISTRO DE TRANSACCIONES';
 
   @override
   String get newEntry => '+ NUEVO';
@@ -112,7 +112,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get purgeEntry => '> ¿ELIMINAR ESTA ENTRADA?';
 
   @override
-  String get scenarioSimulator => '// SIMULADOR DE ESCENARIOS';
+  String get scenarioSimulator => 'SIMULADOR DE ESCENARIOS';
 
   @override
   String get overrideInputs => 'ENTRADAS DE REEMPLAZO';

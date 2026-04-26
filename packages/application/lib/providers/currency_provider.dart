@@ -29,7 +29,7 @@ const supportedCurrencies = [
 // Maps device locale to default currency
 CurrencyConfig _defaultForLocale(Locale? locale) {
   if (locale == null) return supportedCurrencies[0];
-  final lang    = locale.languageCode;
+  final lang = locale.languageCode;
   final country = locale.countryCode ?? '';
 
   if (lang == 'ja') return supportedCurrencies[0]; // JPY
@@ -37,15 +37,16 @@ CurrencyConfig _defaultForLocale(Locale? locale) {
   if (lang == 'zh') return supportedCurrencies[5]; // CNY
   if (lang == 'en' && country == 'US') return supportedCurrencies[2]; // USD
   if (lang == 'en') return supportedCurrencies[2]; // USD
-  if (lang == 'fr' || lang == 'it' || lang == 'es') return supportedCurrencies[3]; // EUR
+  if (lang == 'fr' || lang == 'it' || lang == 'es')
+    return supportedCurrencies[3]; // EUR
   return supportedCurrencies[2]; // default USD
 }
 
 class CurrencyNotifier extends AsyncNotifier<CurrencyConfig> {
   @override
   Future<CurrencyConfig> build() async {
-    final prefs  = await SharedPreferences.getInstance();
-    final saved  = prefs.getString(_currencyKey);
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString(_currencyKey);
     if (saved != null) {
       final match = supportedCurrencies
           .where((c) => c.code == saved)

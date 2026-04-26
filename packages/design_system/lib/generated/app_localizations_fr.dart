@@ -73,7 +73,7 @@ class AppLocalizationsFr extends AppLocalizations {
       '> LE PRÊT/MO AFFECTE LE RATIO DE PRESSION ET L\'INVESTISSABLE';
 
   @override
-  String get transactionLog => '// JOURNAL DES TRANSACTIONS';
+  String get transactionLog => 'JOURNAL DES TRANSACTIONS';
 
   @override
   String get newEntry => '+ NOUVEAU';
@@ -113,7 +113,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get purgeEntry => '> SUPPRIMER CETTE ENTRÉE?';
 
   @override
-  String get scenarioSimulator => '// SIMULATEUR DE SCÉNARIO';
+  String get scenarioSimulator => 'SIMULATEUR DE SCÉNARIO';
 
   @override
   String get overrideInputs => 'ENTRÉES DE REMPLACEMENT';
