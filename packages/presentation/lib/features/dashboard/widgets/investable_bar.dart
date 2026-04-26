@@ -33,7 +33,7 @@ class InvestableBar extends ConsumerWidget {
               Text(
                 '$symbol ${nf.format(investable)}',
                 style: AppTextStyles.metric.copyWith(
-                  color: SC.metricInvestable,
+                  color: AppColors.turkishBlue,
                 ),
               ),
             ],
@@ -48,7 +48,7 @@ class InvestableBar extends ConsumerWidget {
               Text(
                 '$symbol ${nf.format(safety)}',
                 style: AppTextStyles.metric.copyWith(
-                  color: SC.metricSafetyFund,
+                  color: SC.metricSafety,
                 ),
               ),
             ],
@@ -110,7 +110,7 @@ class InvestableBar extends ConsumerWidget {
 
     return NeoExpandableCard(
       title: 'INVESTABLE',
-      accentColor: SC.accentInvestable,
+      accentColor: SC.accentNeutral,
       initiallyExpanded: false,
       summary: summary,
       details: details,

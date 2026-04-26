@@ -12,19 +12,22 @@ class SubscriptionForm extends StatefulWidget {
     BillingCycle cycle,
     DateTime startDate,
     String? note,
-  )
-  onSubmit;
+  ) onSubmit;
 
-  const SubscriptionForm({super.key, this.existing, required this.onSubmit});
+  const SubscriptionForm({
+    super.key,
+    this.existing,
+    required this.onSubmit,
+  });
 
   @override
   State<SubscriptionForm> createState() => _SubscriptionFormState();
 }
 
 class _SubscriptionFormState extends State<SubscriptionForm> {
-  final _nameCtrl = TextEditingController();
+  final _nameCtrl   = TextEditingController();
   final _amountCtrl = TextEditingController();
-  final _noteCtrl = TextEditingController();
+  final _noteCtrl   = TextEditingController();
 
   late SubscriptionCategory _category;
   late BillingCycle _cycle;
@@ -33,12 +36,13 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
   @override
   void initState() {
     super.initState();
-    _category = widget.existing?.category ?? SubscriptionCategory.personal;
-    _cycle = widget.existing?.cycle ?? BillingCycle.monthly;
+    _category  = widget.existing?.category  ?? SubscriptionCategory.personal;
+    _cycle     = widget.existing?.cycle     ?? BillingCycle.monthly;
     _startDate = widget.existing?.startDate ?? DateTime.now();
-    _nameCtrl.text = widget.existing?.name ?? '';
-    _amountCtrl.text = widget.existing?.amount.toStringAsFixed(0) ?? '';
-    _noteCtrl.text = widget.existing?.note ?? '';
+    _nameCtrl.text   = widget.existing?.name ?? '';
+    _amountCtrl.text =
+        widget.existing?.amount.toStringAsFixed(0) ?? '';
+    _noteCtrl.text   = widget.existing?.note ?? '';
   }
 
   @override
@@ -58,8 +62,8 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
       builder: (ctx, child) => Theme(
         data: ThemeData.dark().copyWith(
           colorScheme: const ColorScheme.dark(
-            primary: AppColors.safe,
-            surface: AppColors.background,
+            primary: AppColors.neonGreen,
+            surface: AppColors.surface,
           ),
         ),
         child: child!,
@@ -69,15 +73,11 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
   }
 
   void _submit() {
-    final name = _nameCtrl.text.trim();
+    final name   = _nameCtrl.text.trim();
     final amount = double.tryParse(_amountCtrl.text.trim());
     if (name.isEmpty || amount == null || amount <= 0) return;
     widget.onSubmit(
-      name,
-      _category,
-      amount,
-      _cycle,
-      _startDate,
+      name, _category, amount, _cycle, _startDate,
       _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim(),
     );
     Navigator.of(context).pop();
@@ -85,66 +85,87 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final dateStr = DateFormat('dd MMM yyyy').format(_startDate).toUpperCase();
+    final l10n    = context.l10n;
+    final dateStr = DateFormat('dd MMM yyyy')
+        .format(_startDate).toUpperCase();
 
     return Container(
-      color: AppColors.background,
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppSpacing.cardRadius)),
+      ),
       padding: EdgeInsets.only(
-        left: AppSpacing.lg,
-        right: AppSpacing.lg,
-        top: AppSpacing.lg,
-        bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.lg,
+        left: AppSpacing.lg, right: AppSpacing.lg,
+        top: AppSpacing.md,
+        bottom: MediaQuery.of(context).viewInsets.bottom +
+            AppSpacing.lg,
       ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Handle
+            Center(
+              child: Container(
+                width: 36, height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.cardBorder,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+
             Text(
               widget.existing == null
-                  ? l10n.addSubscription
-                  : l10n.editSubscription,
-              style: AppTextStyles.title.copyWith(color: AppColors.safe),
+                  ? l10n.addSubscription.toUpperCase()
+                  : l10n.editSubscription.toUpperCase(),
+              style: AppTextStyles.title
+                  .copyWith(color: AppColors.purple),
             ),
-            const TerminalDivider(),
+            const SizedBox(height: AppSpacing.lg),
 
             // Category
-            Text(l10n.subscriptionCategory, style: AppTextStyles.label),
+            Text(l10n.subscriptionCategory,
+                style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xs),
             Row(
               children: SubscriptionCategory.values.map((c) {
                 final active = c == _category;
+                final label  = c == SubscriptionCategory.personal
+                    ? l10n.personal : l10n.business;
                 return Expanded(
                   child: GestureDetector(
                     onTap: () => setState(() => _category = c),
                     child: Container(
                       margin: EdgeInsets.only(
                         right: c != SubscriptionCategory.values.last
-                            ? AppSpacing.xs
-                            : 0,
+                            ? AppSpacing.xs : 0,
                       ),
                       padding: const EdgeInsets.symmetric(
-                        vertical: AppSpacing.sm,
-                      ),
+                          vertical: AppSpacing.sm),
                       decoration: BoxDecoration(
+                        color: active
+                            ? AppColors.purple.withAlpha(20)
+                            : AppColors.surfaceHigh,
+                        borderRadius: BorderRadius.circular(50),
                         border: Border.all(
-                          color: active ? AppColors.safe : AppColors.dimGreen,
+                          color: active
+                              ? AppColors.purple
+                              : AppColors.cardBorder,
                           width: active ? 1.5 : 1,
                         ),
-                        color: active
-                            ? AppColors.safe.withAlpha(20)
-                            : AppColors.background,
                       ),
                       child: Center(
-                        child: Text(
-                          c == SubscriptionCategory.personal
-                              ? l10n.personal
-                              : l10n.business,
-                          style: AppTextStyles.small.copyWith(
-                            color: active ? AppColors.safe : AppColors.dimGreen,
-                          ),
-                        ),
+                        child: Text(label,
+                            style: AppTextStyles.caption.copyWith(
+                              color: active
+                                  ? AppColors.purple
+                                  : AppColors.textSecondary,
+                              fontWeight: FontWeight.w600,
+                            )),
                       ),
                     ),
                   ),
@@ -154,7 +175,7 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
             const SizedBox(height: AppSpacing.md),
 
             // Name
-            TerminalInput(
+            NeoInput(
               label: l10n.subscriptionName,
               controller: _nameCtrl,
               hint: 'Netflix',
@@ -163,7 +184,7 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
             const SizedBox(height: AppSpacing.md),
 
             // Amount
-            TerminalInput(
+            NeoInput(
               label: l10n.subscriptionAmount,
               controller: _amountCtrl,
               keyboardType: TextInputType.number,
@@ -173,59 +194,66 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
             const SizedBox(height: AppSpacing.md),
 
             // Billing cycle
-            Text(l10n.subscriptionCycle, style: AppTextStyles.label),
+            Text(l10n.subscriptionCycle,
+                style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xs),
             Wrap(
               spacing: AppSpacing.xs,
               runSpacing: AppSpacing.xs,
               children: BillingCycle.values.map((c) {
                 final active = c == _cycle;
+                final label  = _cycleLabel(c, l10n);
                 return GestureDetector(
                   onTap: () => setState(() => _cycle = c),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: AppSpacing.xs,
-                    ),
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.xs + 2),
                     decoration: BoxDecoration(
+                      color: active
+                          ? AppColors.purple.withAlpha(20)
+                          : AppColors.surfaceHigh,
+                      borderRadius: BorderRadius.circular(50),
                       border: Border.all(
-                        color: active ? AppColors.safe : AppColors.dimGreen,
+                        color: active
+                            ? AppColors.purple
+                            : AppColors.cardBorder,
                         width: active ? 1.5 : 1,
                       ),
-                      color: active
-                          ? AppColors.safe.withAlpha(20)
-                          : AppColors.background,
                     ),
-                    child: Text(
-                      _cycleLabel(c, l10n),
-                      style: AppTextStyles.small.copyWith(
-                        color: active ? AppColors.safe : AppColors.dimGreen,
-                      ),
-                    ),
+                    child: Text(label,
+                        style: AppTextStyles.caption.copyWith(
+                          color: active
+                              ? AppColors.purple
+                              : AppColors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        )),
                   ),
                 );
               }).toList(),
             ),
             const SizedBox(height: AppSpacing.md),
 
-            // Start date
+            // Date
             Text(l10n.date, style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xs),
             GestureDetector(
               onTap: _pickDate,
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.sm,
-                ),
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm + 2),
                 decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.dimGreen),
+                  color: AppColors.surfaceHigh,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.cardBorder),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(dateStr, style: AppTextStyles.value),
-                    Text('[ ${l10n.change} ]', style: AppTextStyles.small),
+                    Text(dateStr, style: AppTextStyles.body),
+                    const Icon(Icons.calendar_today_rounded,
+                        color: AppColors.textSecondary, size: 16),
                   ],
                 ),
               ),
@@ -233,7 +261,7 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
             const SizedBox(height: AppSpacing.md),
 
             // Note
-            TerminalInput(
+            NeoInput(
               label: l10n.noteOptional,
               controller: _noteCtrl,
               hint: 'streaming service',
@@ -241,37 +269,37 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
             ),
             const SizedBox(height: AppSpacing.lg),
 
-            Row(
-              children: [
-                Expanded(
-                  child: TerminalButton(
-                    label: l10n.confirm,
-                    fullWidth: true,
-                    color: AppColors.safe,
-                    onPressed: _submit,
-                  ),
+            // Actions
+            Row(children: [
+              Expanded(
+                child: NeoButton(
+                  label: l10n.confirm,
+                  variant: NeoButtonVariant.primary,
+                  fullWidth: true,
+                  onPressed: _submit,
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: TerminalButton(
-                    label: l10n.abort,
-                    fullWidth: true,
-                    isDestructive: true,
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: NeoButton(
+                  label: l10n.abort,
+                  variant: NeoButtonVariant.ghost,
+                  fullWidth: true,
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
-              ],
-            ),
+              ),
+            ]),
           ],
         ),
       ),
     );
   }
 
-  String _cycleLabel(BillingCycle c, AppLocalizations l10n) => switch (c) {
-    BillingCycle.weekly => l10n.weekly,
-    BillingCycle.monthly => l10n.monthly,
+  String _cycleLabel(BillingCycle c, AppLocalizations l10n) =>
+      switch (c) {
+    BillingCycle.weekly    => l10n.weekly,
+    BillingCycle.monthly   => l10n.monthly,
     BillingCycle.quarterly => l10n.quarterly,
-    BillingCycle.yearly => l10n.yearly,
+    BillingCycle.yearly    => l10n.yearly,
   };
 }

@@ -101,7 +101,7 @@ class MetricsPanel extends ConsumerWidget {
 
     return NeoExpandableCard(
       title: 'BREAKDOWN',
-      accentColor: SC.accentMetrics,
+      accentColor: SC.accentLife,
       initiallyExpanded: false,
       summary: summary,
       details: details,

@@ -50,7 +50,9 @@ class LifeForceCard extends ConsumerWidget {
     String fmtDate(DateTime? d) =>
         d == null ? '—' : DateFormat('MMM yyyy').format(d).toUpperCase();
 
+    final glassEnabled = ref.watch(displayProvider).value ?? false;
     return LiquidGlassContainer(
+      glassEnabled: glassEnabled,
       accentColor: color,
       child: Column(
         children: [

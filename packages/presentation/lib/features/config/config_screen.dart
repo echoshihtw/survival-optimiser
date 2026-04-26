@@ -347,6 +347,69 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                         }).toList(),
                       ),
                     ),
+                    const SizedBox(height: AppSpacing.cardGap),
+
+                    // ── DISPLAY ───────────────────────
+                    NeoCard(
+                      title: 'DISPLAY',
+                      accentColor: AppColors.turkishBlue,
+                      child: Consumer(
+                        builder: (context, ref, _) {
+                          final glass = ref.watch(displayProvider).value ?? false;
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('GLASS EFFECT',
+                                      style: AppTextStyles.body),
+                                  Text('GPU intensive — disable on older devices',
+                                      style: AppTextStyles.caption),
+                                ],
+                              ),
+                              GestureDetector(
+                                onTap: () => ref
+                                    .read(displayProvider.notifier)
+                                    .toggle(),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  width: 44, height: 24,
+                                  decoration: BoxDecoration(
+                                    color: glass
+                                        ? AppColors.neonGreen
+                                        : AppColors.surfaceHigh,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: glass
+                                          ? AppColors.neonGreen
+                                          : AppColors.cardBorder,
+                                    ),
+                                  ),
+                                  child: AnimatedAlign(
+                                    duration: const Duration(milliseconds: 200),
+                                    alignment: glass
+                                        ? Alignment.centerRight
+                                        : Alignment.centerLeft,
+                                    child: Container(
+                                      width: 20, height: 20,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 2),
+                                      decoration: BoxDecoration(
+                                        color: glass
+                                            ? AppColors.background
+                                            : AppColors.textSecondary,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                     const SizedBox(height: AppSpacing.xxxl),
                   ],
                 ),

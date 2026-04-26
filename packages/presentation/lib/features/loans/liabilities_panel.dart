@@ -32,7 +32,7 @@ class LiabilitiesPanel extends ConsumerWidget {
                     Text(
                       '$symbol ${nf.format(total)}',
                       style: AppTextStyles.metric.copyWith(
-                        color: SC.numberPrimary,
+                        color: AppColors.gold,
                       ),
                     ),
                   ],
@@ -75,7 +75,7 @@ class LiabilitiesPanel extends ConsumerWidget {
 
     return NeoExpandableCard(
       title: l10n.liabilities,
-      accentColor: SC.accentLiabilities,
+      accentColor: SC.accentCost,
       initiallyExpanded: false,
       summary: summary,
       details: details,

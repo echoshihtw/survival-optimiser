@@ -21,70 +21,11 @@ class DashboardScreen extends ConsumerWidget {
     return GradientScaffold(
       body: CustomScrollView(
         slivers: [
-          // App bar
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.sm,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'SURVIVAL.EXE',
-                        style: AppTextStyles.sectionTitle.copyWith(
-                          color: AppColors.neonGreen,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                      Text(
-                        'FINANCIAL INTELLIGENCE',
-                        style: AppTextStyles.caption,
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () => _showConfig(context),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.xs + 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceHigh,
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(color: AppColors.cardBorder),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.tune_rounded,
-                            color: AppColors.textSecondary,
-                            size: 13,
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          Text(
-                            'CONFIG',
-                            style: AppTextStyles.caption.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            child: _DashboardHeader(onConfig: () => _showConfig(context)),
           ),
 
-          // Cards
+                    // Cards
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
             sliver: SliverList(
@@ -101,7 +42,7 @@ class DashboardScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.cardGap),
                 NeoExpandableCard(
                   title: 'CASH TIMELINE',
-                  accentColor: SC.accentTimeline,
+                  accentColor: SC.accentNeutral,
                   initiallyExpanded: false,
                   summary: Text(
                     months.isEmpty
