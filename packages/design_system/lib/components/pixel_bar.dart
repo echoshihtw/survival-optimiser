@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../tokens/app_colors.dart';
 
 class PixelBar extends StatelessWidget {
-  final double value;   // 0.0 to 1.0
+  final double value; // 0.0 to 1.0
   final Color color;
   final int segments;
   final double height;
@@ -25,12 +25,9 @@ class PixelBar extends StatelessWidget {
         return Expanded(
           child: Container(
             height: height,
-            margin: EdgeInsets.only(
-                right: i < segments - 1 ? 2 : 0),
+            margin: EdgeInsets.only(right: i < segments - 1 ? 2 : 0),
             decoration: BoxDecoration(
-              color: active
-                  ? color
-                  : AppColors.surfaceHigh,
+              color: active ? color : AppColors.surfaceHigh,
               borderRadius: BorderRadius.circular(1),
             ),
           ),

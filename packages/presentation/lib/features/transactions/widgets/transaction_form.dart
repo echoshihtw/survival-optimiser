@@ -10,13 +10,10 @@ class TransactionForm extends StatefulWidget {
     double amount,
     DateTime date,
     String? note,
-  ) onSubmit;
+  )
+  onSubmit;
 
-  const TransactionForm({
-    super.key,
-    this.existing,
-    required this.onSubmit,
-  });
+  const TransactionForm({super.key, this.existing, required this.onSubmit});
 
   @override
   State<TransactionForm> createState() => _TransactionFormState();
@@ -24,7 +21,7 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final _amountCtrl = TextEditingController();
-  final _noteCtrl   = TextEditingController();
+  final _noteCtrl = TextEditingController();
 
   late TransactionType _type;
   late DateTime _date;
@@ -42,8 +39,7 @@ class _TransactionFormState extends State<TransactionForm> {
     super.initState();
     _type = widget.existing?.type ?? TransactionType.expense;
     _date = widget.existing?.date ?? DateTime.now();
-    _amountCtrl.text =
-        widget.existing?.amount.value.toStringAsFixed(0) ?? '';
+    _amountCtrl.text = widget.existing?.amount.value.toStringAsFixed(0) ?? '';
     _noteCtrl.text = widget.existing?.note ?? '';
   }
 
@@ -55,21 +51,20 @@ class _TransactionFormState extends State<TransactionForm> {
   }
 
   Color _typeColor(TransactionType t) => switch (t) {
-    TransactionType.income         => AppColors.green,
+    TransactionType.income => AppColors.green,
     TransactionType.openingBalance => AppColors.blue,
-    TransactionType.loan           => AppColors.blue,
-    TransactionType.expense        => AppColors.red,
-    TransactionType.repayment      => AppColors.gold,
-    TransactionType.investment     => AppColors.purple,
+    TransactionType.loan => AppColors.blue,
+    TransactionType.expense => AppColors.red,
+    TransactionType.repayment => AppColors.gold,
+    TransactionType.investment => AppColors.purple,
   };
 
-  String _typeLabel(TransactionType t, AppLocalizations l10n) =>
-      switch (t) {
-    TransactionType.expense        => l10n.typeExpense,
-    TransactionType.income         => l10n.typeIncome,
-    TransactionType.loan           => l10n.typeLoan,
-    TransactionType.investment     => l10n.typeInvest,
-    TransactionType.repayment      => l10n.typeRepay,
+  String _typeLabel(TransactionType t, AppLocalizations l10n) => switch (t) {
+    TransactionType.expense => l10n.typeExpense,
+    TransactionType.income => l10n.typeIncome,
+    TransactionType.loan => l10n.typeLoan,
+    TransactionType.investment => l10n.typeInvest,
+    TransactionType.repayment => l10n.typeRepay,
     TransactionType.openingBalance => l10n.typeOpening,
   };
 
@@ -96,7 +91,9 @@ class _TransactionFormState extends State<TransactionForm> {
     final amount = double.tryParse(_amountCtrl.text.trim());
     if (amount == null || amount <= 0) return;
     widget.onSubmit(
-      _type, amount, _date,
+      _type,
+      amount,
+      _date,
       _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim(),
     );
     Navigator.of(context).pop();
@@ -104,21 +101,21 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n    = context.l10n;
-    final dateStr = DateFormat('dd MMM yyyy')
-        .format(_date).toUpperCase();
+    final l10n = context.l10n;
+    final dateStr = DateFormat('dd MMM yyyy').format(_date).toUpperCase();
 
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppSpacing.cardRadius)),
+          top: Radius.circular(AppSpacing.cardRadius),
+        ),
       ),
       padding: EdgeInsets.only(
-        left: AppSpacing.lg, right: AppSpacing.lg,
+        left: AppSpacing.lg,
+        right: AppSpacing.lg,
         top: AppSpacing.lg,
-        bottom: MediaQuery.of(context).viewInsets.bottom +
-            AppSpacing.lg,
+        bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.lg,
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -128,7 +125,8 @@ class _TransactionFormState extends State<TransactionForm> {
             // Handle bar
             Center(
               child: Container(
-                width: 36, height: 4,
+                width: 36,
+                height: 4,
                 decoration: BoxDecoration(
                   color: AppColors.cardBorder,
                   borderRadius: BorderRadius.circular(2),
@@ -153,7 +151,7 @@ class _TransactionFormState extends State<TransactionForm> {
               runSpacing: AppSpacing.xs,
               children: _types.map((t) {
                 final active = t == _type;
-                final color  = _typeColor(t);
+                final color = _typeColor(t);
                 return GestureDetector(
                   onTap: () => setState(() => _type = t),
                   child: Container(
@@ -209,12 +207,14 @@ class _TransactionFormState extends State<TransactionForm> {
                   border: Border.all(color: AppColors.cardBorder),
                 ),
                 child: Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(dateStr, style: AppTextStyles.body),
-                    const Icon(Icons.calendar_today_rounded,
-                        color: AppColors.textSecondary, size: 16),
+                    const Icon(
+                      Icons.calendar_today_rounded,
+                      color: AppColors.textSecondary,
+                      size: 16,
+                    ),
                   ],
                 ),
               ),
@@ -230,25 +230,27 @@ class _TransactionFormState extends State<TransactionForm> {
             const SizedBox(height: AppSpacing.lg),
 
             // Actions
-            Row(children: [
-              Expanded(
-                child: NeoButton(
-                  label: l10n.confirm,
-                  variant: NeoButtonVariant.primary,
-                  fullWidth: true,
-                  onPressed: _submit,
+            Row(
+              children: [
+                Expanded(
+                  child: NeoButton(
+                    label: l10n.confirm,
+                    variant: NeoButtonVariant.primary,
+                    fullWidth: true,
+                    onPressed: _submit,
+                  ),
                 ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: NeoButton(
-                  label: l10n.abort,
-                  variant: NeoButtonVariant.ghost,
-                  fullWidth: true,
-                  onPressed: () => Navigator.of(context).pop(),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: NeoButton(
+                    label: l10n.abort,
+                    variant: NeoButtonVariant.ghost,
+                    fullWidth: true,
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
                 ),
-              ),
-            ]),
+              ],
+            ),
           ],
         ),
       ),

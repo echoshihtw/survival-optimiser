@@ -13,16 +13,16 @@ class ConfigScreen extends ConsumerStatefulWidget {
 }
 
 class _ConfigScreenState extends ConsumerState<ConfigScreen> {
-  final _rentCtrl   = TextEditingController();
+  final _rentCtrl = TextEditingController();
   final _livingCtrl = TextEditingController();
   bool _editingBudget = false;
 
   static const _languages = [
-    (label: 'ENGLISH',  locale: Locale('en')),
-    (label: '繁中',      locale: Locale('zh', 'TW')),
+    (label: 'ENGLISH', locale: Locale('en')),
+    (label: '繁中', locale: Locale('zh', 'TW')),
     (label: 'FRANÇAIS', locale: Locale('fr')),
-    (label: '日本語',    locale: Locale('ja')),
-    (label: 'ESPAÑOL',  locale: Locale('es')),
+    (label: '日本語', locale: Locale('ja')),
+    (label: 'ESPAÑOL', locale: Locale('es')),
     (label: 'ITALIANO', locale: Locale('it')),
   ];
 
@@ -34,15 +34,15 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
   }
 
   void _startEditing(Budget budget) {
-    _rentCtrl.text   = budget.rent   > 0
-        ? budget.rent.toStringAsFixed(0)   : '';
+    _rentCtrl.text = budget.rent > 0 ? budget.rent.toStringAsFixed(0) : '';
     _livingCtrl.text = budget.living > 0
-        ? budget.living.toStringAsFixed(0) : '';
+        ? budget.living.toStringAsFixed(0)
+        : '';
     setState(() => _editingBudget = true);
   }
 
   Future<void> _saveBudget() async {
-    final rent   = double.tryParse(_rentCtrl.text.trim())   ?? 0;
+    final rent = double.tryParse(_rentCtrl.text.trim()) ?? 0;
     final living = double.tryParse(_livingCtrl.text.trim()) ?? 0;
     await ref.read(budgetProvider.notifier).setRent(rent);
     await ref.read(budgetProvider.notifier).setLiving(living);
@@ -60,23 +60,21 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n        = context.l10n;
+    final l10n = context.l10n;
     final localeAsync = ref.watch(localeProvider);
-    final currAsync   = ref.watch(currencyProvider);
+    final currAsync = ref.watch(currencyProvider);
     final budgetAsync = ref.watch(budgetProvider);
-    final subCost     = ref.watch(subscriptionMonthlyTotalProvider);
-    final debtCost    = ref.watch(totalMonthlyLoanPaymentProvider);
+    final subCost = ref.watch(subscriptionMonthlyTotalProvider);
+    final debtCost = ref.watch(totalMonthlyLoanPaymentProvider);
 
     final currentLocale = localeAsync.value;
-    final currentCurr   = currAsync.value;
-    final budget        = budgetAsync.value ?? const Budget();
-    final symbol        = currentCurr?.symbol ?? '¥';
-    final nf            = NumberFormat('#,##0', 'en_US');
+    final currentCurr = currAsync.value;
+    final budget = budgetAsync.value ?? const Budget();
+    final symbol = currentCurr?.symbol ?? '¥';
+    final nf = NumberFormat('#,##0', 'en_US');
 
     return Container(
-      decoration: const BoxDecoration(
-        gradient: AppColors.gradientBackground,
-      ),
+      decoration: const BoxDecoration(gradient: AppColors.gradientBackground),
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,18 +82,32 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
             // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg, AppSpacing.lg,
-                  AppSpacing.lg, AppSpacing.sm),
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.sm,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l10n.config,
-                          style: AppTextStyles.title.copyWith(color: AppColors.textPrimary, fontSize: 22, fontWeight: FontWeight.w700)),
-                      Text('PREFERENCES & BUDGET',
-                          style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary, letterSpacing: 1.5)),
+                      Text(
+                        l10n.config,
+                        style: AppTextStyles.title.copyWith(
+                          color: AppColors.textPrimary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        'PREFERENCES & BUDGET',
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textSecondary,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
                     ],
                   ),
                   GestureDetector(
@@ -108,12 +120,15 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                       decoration: BoxDecoration(
                         color: AppColors.surfaceHigh,
                         borderRadius: BorderRadius.circular(50),
-                        border: Border.all(
-                            color: AppColors.cardBorder),
+                        border: Border.all(color: AppColors.cardBorder),
                       ),
-                      child: Text('CLOSE',
-                          style: AppTextStyles.caption.copyWith(
-                              color: AppColors.textPrimary, letterSpacing: 1.0)),
+                      child: Text(
+                        'CLOSE',
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textPrimary,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -127,41 +142,51 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     // ── MONTHLY BUDGET ────────────────
                     NeoCard(
                       title: 'MONTHLY BUDGET',
                       accentColor: AppColors.green,
                       child: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (!_editingBudget) ...[
-                            _budgetRow('RENT / FIXED',
-                                budget.rent > 0
-                                    ? '$symbol ${nf.format(budget.rent)}'
-                                    : '—',
-                                AppColors.textPrimary),
-                            _budgetRow('LIVING EXPENSES',
-                                budget.living > 0
-                                    ? '$symbol ${nf.format(budget.living)}'
-                                    : '—',
-                                AppColors.textPrimary),
+                            _budgetRow(
+                              'RENT / FIXED',
+                              budget.rent > 0
+                                  ? '$symbol ${nf.format(budget.rent)}'
+                                  : '—',
+                              AppColors.textPrimary,
+                            ),
+                            _budgetRow(
+                              'LIVING EXPENSES',
+                              budget.living > 0
+                                  ? '$symbol ${nf.format(budget.living)}'
+                                  : '—',
+                              AppColors.textPrimary,
+                            ),
                             const Divider(
-                                color: AppColors.cardBorder,
-                                height: AppSpacing.lg),
-                            _budgetRow('SUBTOTAL',
-                                '$symbol ${nf.format(budget.subtotal)}',
-                                AppColors.green),
-                            _budgetRow('+ SUBSCR/MO',
-                                '$symbol ${nf.format(subCost)}',
-                                AppColors.purple),
-                            _budgetRow('+ DEBT/MO',
-                                '$symbol ${nf.format(debtCost)}',
-                                AppColors.gold),
+                              color: AppColors.cardBorder,
+                              height: AppSpacing.lg,
+                            ),
+                            _budgetRow(
+                              'SUBTOTAL',
+                              '$symbol ${nf.format(budget.subtotal)}',
+                              AppColors.green,
+                            ),
+                            _budgetRow(
+                              '+ SUBSCR/MO',
+                              '$symbol ${nf.format(subCost)}',
+                              AppColors.purple,
+                            ),
+                            _budgetRow(
+                              '+ DEBT/MO',
+                              '$symbol ${nf.format(debtCost)}',
+                              AppColors.gold,
+                            ),
                             const Divider(
-                                color: AppColors.cardBorder,
-                                height: AppSpacing.lg),
+                              color: AppColors.cardBorder,
+                              height: AppSpacing.lg,
+                            ),
                             _budgetRow(
                               'TOTAL BUDGET/MO',
                               '$symbol ${nf.format(budget.subtotal + subCost + debtCost)}',
@@ -176,8 +201,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                                       ? l10n.edit
                                       : 'SET BUDGET',
                                   variant: NeoButtonVariant.secondary,
-                                  onPressed: () =>
-                                      _startEditing(budget),
+                                  onPressed: () => _startEditing(budget),
                                 ),
                               ],
                             ),
@@ -201,25 +225,27 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                               style: AppTextStyles.caption,
                             ),
                             const SizedBox(height: AppSpacing.md),
-                            Row(children: [
-                              Expanded(
-                                child: NeoButton(
-                                  label: l10n.save,
-                                  variant: NeoButtonVariant.primary,
-                                  fullWidth: true,
-                                  onPressed: _saveBudget,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: NeoButton(
+                                    label: l10n.save,
+                                    variant: NeoButtonVariant.primary,
+                                    fullWidth: true,
+                                    onPressed: _saveBudget,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: AppSpacing.sm),
-                              Expanded(
-                                child: NeoButton(
-                                  label: l10n.clear,
-                                  variant: NeoButtonVariant.danger,
-                                  fullWidth: true,
-                                  onPressed: _clearBudget,
+                                const SizedBox(width: AppSpacing.sm),
+                                Expanded(
+                                  child: NeoButton(
+                                    label: l10n.clear,
+                                    variant: NeoButtonVariant.danger,
+                                    fullWidth: true,
+                                    onPressed: _clearBudget,
+                                  ),
                                 ),
-                              ),
-                            ]),
+                              ],
+                            ),
                           ],
                         ],
                       ),
@@ -253,8 +279,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                                 color: active
                                     ? AppColors.green.withAlpha(20)
                                     : AppColors.surfaceHigh,
-                                borderRadius:
-                                    BorderRadius.circular(50),
+                                borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
                                   color: active
                                       ? AppColors.green
@@ -262,14 +287,15 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                                   width: active ? 1.5 : 1,
                                 ),
                               ),
-                              child: Text(lang.label,
-                                  style: AppTextStyles.button
-                                      .copyWith(
-                                    color: active
-                                        ? AppColors.green
-                                        : AppColors.textSecondary,
-                                    fontSize: 13,
-                                  )),
+                              child: Text(
+                                lang.label,
+                                style: AppTextStyles.button.copyWith(
+                                  color: active
+                                      ? AppColors.green
+                                      : AppColors.textSecondary,
+                                  fontSize: 13,
+                                ),
+                              ),
                             ),
                           );
                         }).toList(),
@@ -285,8 +311,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                         spacing: AppSpacing.xs,
                         runSpacing: AppSpacing.xs,
                         children: supportedCurrencies.map((curr) {
-                          final active =
-                              currentCurr?.code == curr.code;
+                          final active = currentCurr?.code == curr.code;
                           return GestureDetector(
                             onTap: () => ref
                                 .read(currencyProvider.notifier)
@@ -300,8 +325,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                                 color: active
                                     ? AppColors.gold.withAlpha(20)
                                     : AppColors.surfaceHigh,
-                                borderRadius:
-                                    BorderRadius.circular(50),
+                                borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
                                   color: active
                                       ? AppColors.gold
@@ -311,8 +335,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                               ),
                               child: Text(
                                 '${curr.symbol}  ${curr.code}',
-                                style: AppTextStyles.button
-                                    .copyWith(
+                                style: AppTextStyles.button.copyWith(
                                   color: active
                                       ? AppColors.gold
                                       : AppColors.textSecondary,
@@ -337,15 +360,12 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
 
   Widget _budgetRow(String label, String value, Color color) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          vertical: AppSpacing.xs),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: AppTextStyles.label),
-          Text(value,
-              style: AppTextStyles.metricSmall
-                  .copyWith(color: color)),
+          Text(value, style: AppTextStyles.metricSmall.copyWith(color: color)),
         ],
       ),
     );

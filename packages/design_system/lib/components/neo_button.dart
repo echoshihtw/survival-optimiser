@@ -36,11 +36,14 @@ class _NeoButtonState extends State<NeoButton>
   @override
   void initState() {
     super.initState();
-    _ctrl  = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 100));
-    _scale = Tween<double>(begin: 1.0, end: 0.96)
-        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 0.96,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
   }
 
   @override
@@ -50,44 +53,45 @@ class _NeoButtonState extends State<NeoButton>
   }
 
   Color get _bgColor => switch (widget.variant) {
-    NeoButtonVariant.primary   =>
-        widget.color ?? AppColors.green,
+    NeoButtonVariant.primary => widget.color ?? AppColors.neonGreen,
     NeoButtonVariant.secondary => AppColors.surfaceHigh,
-    NeoButtonVariant.ghost     => Colors.transparent,
-    NeoButtonVariant.danger    =>
-        AppColors.red.withAlpha(20),
+    NeoButtonVariant.ghost => Colors.transparent,
+    NeoButtonVariant.danger => AppColors.hotPink.withAlpha(20),
   };
 
   Color get _borderColor => switch (widget.variant) {
-    NeoButtonVariant.primary   => Colors.transparent,
-    NeoButtonVariant.secondary => widget.color != null 
-        ? widget.color!.withAlpha(120) 
-        : AppColors.cardBorder,
-    NeoButtonVariant.ghost     => AppColors.cardBorder,
-    NeoButtonVariant.danger    => AppColors.red.withAlpha(80),
+    NeoButtonVariant.primary => Colors.transparent,
+    NeoButtonVariant.secondary =>
+      widget.color != null
+          ? widget.color!.withAlpha(120)
+          : AppColors.cardBorder,
+    NeoButtonVariant.ghost => AppColors.cardBorder,
+    NeoButtonVariant.danger => AppColors.red.withAlpha(80),
   };
 
   Color get _textColor => switch (widget.variant) {
-    NeoButtonVariant.primary   =>
-        widget.color != null ? AppColors.background
-            : AppColors.background,
+    NeoButtonVariant.primary => AppColors.background,
     NeoButtonVariant.secondary => AppColors.textPrimary,
-    NeoButtonVariant.ghost     => AppColors.textSecondary,
-    NeoButtonVariant.danger    => AppColors.red,
+    NeoButtonVariant.ghost => AppColors.textSecondary,
+    NeoButtonVariant.danger => AppColors.hotPink,
   };
 
   @override
   Widget build(BuildContext context) {
     final disabled = widget.onPressed == null;
     return GestureDetector(
-      onTapDown: disabled ? null : (_) {
-        HapticFeedback.selectionClick();
-        _ctrl.forward();
-      },
-      onTapUp: disabled ? null : (_) {
-        _ctrl.reverse();
-        widget.onPressed?.call();
-      },
+      onTapDown: disabled
+          ? null
+          : (_) {
+              HapticFeedback.selectionClick();
+              _ctrl.forward();
+            },
+      onTapUp: disabled
+          ? null
+          : (_) {
+              _ctrl.reverse();
+              widget.onPressed?.call();
+            },
       onTapCancel: () => _ctrl.reverse(),
       child: ScaleTransition(
         scale: _scale,
@@ -104,23 +108,25 @@ class _NeoButtonState extends State<NeoButton>
               color: _bgColor,
               // Pill shape — Kraken style
               borderRadius: BorderRadius.circular(50),
-              border: Border.all(
-                  color: _borderColor, width: 1),
+              border: Border.all(color: _borderColor, width: 1),
             ),
             child: Row(
               mainAxisSize: widget.fullWidth
-                  ? MainAxisSize.max : MainAxisSize.min,
+                  ? MainAxisSize.max
+                  : MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (widget.icon != null) ...[
-                  Text(widget.icon!,
-                      style: TextStyle(
-                          color: _textColor, fontSize: 14)),
+                  Text(
+                    widget.icon!,
+                    style: TextStyle(color: _textColor, fontSize: 14),
+                  ),
                   const SizedBox(width: AppSpacing.xs),
                 ],
-                Text(widget.label,
-                    style: AppTextStyles.button
-                        .copyWith(color: _textColor)),
+                Text(
+                  widget.label,
+                  style: AppTextStyles.button.copyWith(color: _textColor),
+                ),
               ],
             ),
           ),

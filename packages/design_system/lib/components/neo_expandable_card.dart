@@ -41,9 +41,11 @@ class _NeoExpandableCardState extends State<NeoExpandableCard>
       duration: const Duration(milliseconds: 280),
       value: _expanded ? 1.0 : 0.0,
     );
-    _rotate = Tween<double>(begin: 0.0, end: 0.5)
-        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
-    _fade   = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _rotate = Tween<double>(
+      begin: 0.0,
+      end: 0.5,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
   }
 
   @override
@@ -77,41 +79,49 @@ class _NeoExpandableCardState extends State<NeoExpandableCard>
                 horizontal: AppSpacing.cardPadding,
                 vertical: AppSpacing.sm + 2,
               ),
-              child: Row(children: [
-                if (widget.accentColor != null) ...[
-                  Container(
-                    width: 3, height: 14,
-                    decoration: BoxDecoration(
-                      color: widget.accentColor,
-                      borderRadius: BorderRadius.circular(2),
+              child: Row(
+                children: [
+                  if (widget.accentColor != null) ...[
+                    Container(
+                      width: 3,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: widget.accentColor,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
+                    const SizedBox(width: AppSpacing.sm),
+                  ],
+                  Text(
+                    widget.title.toUpperCase(),
+                    style: AppTextStyles.sectionTitle,
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                ],
-                Text(widget.title.toUpperCase(),
-                    style: AppTextStyles.sectionTitle),
-                const Spacer(),
-                if (widget.trailing != null) ...[
-                  widget.trailing!,
-                  const SizedBox(width: AppSpacing.sm),
-                ],
-                if (widget.details != null)
-                  RotationTransition(
-                    turns: _rotate,
-                    child: const Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: AppColors.textDim, size: 18,
+                  const Spacer(),
+                  if (widget.trailing != null) ...[
+                    widget.trailing!,
+                    const SizedBox(width: AppSpacing.sm),
+                  ],
+                  if (widget.details != null)
+                    RotationTransition(
+                      turns: _rotate,
+                      child: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: AppColors.textDim,
+                        size: 18,
+                      ),
                     ),
-                  ),
-              ]),
+                ],
+              ),
             ),
           ),
 
           // Summary
           Padding(
             padding: const EdgeInsets.fromLTRB(
-              AppSpacing.cardPadding, 0,
-              AppSpacing.cardPadding, AppSpacing.cardPadding,
+              AppSpacing.cardPadding,
+              0,
+              AppSpacing.cardPadding,
+              AppSpacing.cardPadding,
             ),
             child: widget.summary,
           ),
@@ -122,15 +132,15 @@ class _NeoExpandableCardState extends State<NeoExpandableCard>
               sizeFactor: _fade,
               child: FadeTransition(
                 opacity: _fade,
-                child: Column(children: [
-                  const Divider(
-                      color: AppColors.cardBorder, height: 1),
-                  Padding(
-                    padding: const EdgeInsets.all(
-                        AppSpacing.cardPadding),
-                    child: widget.details!,
-                  ),
-                ]),
+                child: Column(
+                  children: [
+                    const Divider(color: AppColors.cardBorder, height: 1),
+                    Padding(
+                      padding: const EdgeInsets.all(AppSpacing.cardPadding),
+                      child: widget.details!,
+                    ),
+                  ],
+                ),
               ),
             ),
         ],

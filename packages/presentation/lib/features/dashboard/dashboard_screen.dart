@@ -15,7 +15,7 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final model  = ref.watch(modelProvider);
+    final model = ref.watch(modelProvider);
     final months = ref.watch(projectedMonthsProvider);
 
     return GradientScaffold(
@@ -25,20 +25,28 @@ class DashboardScreen extends ConsumerWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg, AppSpacing.lg,
-                  AppSpacing.lg, AppSpacing.sm),
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.sm,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('SURVIVAL.EXE',
-                          style: AppTextStyles.sectionTitle
-                              .copyWith(color: AppColors.green,
-                                  letterSpacing: 2)),
-                      Text('FINANCIAL INTELLIGENCE',
-                          style: AppTextStyles.caption),
+                      Text(
+                        'SURVIVAL.EXE',
+                        style: AppTextStyles.sectionTitle.copyWith(
+                          color: AppColors.neonGreen,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      Text(
+                        'FINANCIAL INTELLIGENCE',
+                        style: AppTextStyles.caption,
+                      ),
                     ],
                   ),
                   GestureDetector(
@@ -51,18 +59,24 @@ class DashboardScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: AppColors.surfaceHigh,
                         borderRadius: BorderRadius.circular(50),
-                        border: Border.all(
-                            color: AppColors.cardBorder),
+                        border: Border.all(color: AppColors.cardBorder),
                       ),
-                      child: Row(children: [
-                        const Icon(Icons.tune_rounded,
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.tune_rounded,
                             color: AppColors.textSecondary,
-                            size: 13),
-                        const SizedBox(width: AppSpacing.xs),
-                        Text('CONFIG',
+                            size: 13,
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          Text(
+                            'CONFIG',
                             style: AppTextStyles.caption.copyWith(
-                                color: AppColors.textSecondary)),
-                      ]),
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -72,8 +86,7 @@ class DashboardScreen extends ConsumerWidget {
 
           // Cards
           SliverPadding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 LifeForceCard(model: model),
@@ -98,10 +111,7 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                   details: months.isEmpty
                       ? null
-                      : CashChart(
-                          months: months,
-                          safetyCash: model.safetyCash,
-                        ),
+                      : CashChart(months: months, safetyCash: model.safetyCash),
                 ),
                 const SizedBox(height: AppSpacing.xxxl),
               ]),
@@ -119,11 +129,132 @@ class DashboardScreen extends ConsumerWidget {
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppSpacing.cardRadius)),
+          top: Radius.circular(AppSpacing.cardRadius),
+        ),
       ),
-      builder: (_) => const FractionallySizedBox(
-        heightFactor: 0.9,
-        child: ConfigScreen(),
+      builder: (_) =>
+          const FractionallySizedBox(heightFactor: 0.9, child: ConfigScreen()),
+    );
+  }
+}
+
+class _DashboardHeader extends StatelessWidget {
+  final VoidCallback onConfig;
+  const _DashboardHeader({required this.onConfig});
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final weekday = [
+      'SUN',
+      'MON',
+      'TUE',
+      'WED',
+      'THU',
+      'FRI',
+      'SAT',
+    ][now.weekday % 7];
+    final months = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC',
+    ];
+    final dateStr = '${now.day} ${months[now.month - 1]} ${now.year}, $weekday';
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.sm,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Logo mark
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: AppColors.neonGreen.withAlpha(15),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: AppColors.neonGreen.withAlpha(60),
+                width: 1,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                '◈',
+                style: TextStyle(color: AppColors.neonGreen, fontSize: 16),
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+
+          // Title + date
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'SURVIVAL.EXE',
+                  style: AppTextStyles.body.copyWith(
+                    color: AppColors.neonGreen,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.5,
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  dateStr,
+                  style: AppTextStyles.caption.copyWith(letterSpacing: 0.5),
+                ),
+              ],
+            ),
+          ),
+
+          // Config button
+          GestureDetector(
+            onTap: onConfig,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.xs + 2,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceHigh,
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(color: AppColors.cardBorder),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.tune_rounded,
+                    color: AppColors.textSecondary,
+                    size: 13,
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  Text(
+                    'CONFIG',
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

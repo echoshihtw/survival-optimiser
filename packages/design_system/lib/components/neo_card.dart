@@ -37,8 +37,7 @@ class NeoCard extends StatelessWidget {
           children: [
             if (title != null) _buildHeader(),
             Padding(
-              padding: padding ??
-                  const EdgeInsets.all(AppSpacing.cardPadding),
+              padding: padding ?? const EdgeInsets.all(AppSpacing.cardPadding),
               child: child,
             ),
           ],
@@ -54,15 +53,14 @@ class NeoCard extends StatelessWidget {
         vertical: AppSpacing.sm + 2,
       ),
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: AppColors.cardBorder),
-        ),
+        border: Border(bottom: BorderSide(color: AppColors.cardBorder)),
       ),
       child: Row(
         children: [
           if (accentColor != null) ...[
             Container(
-              width: 3, height: 14,
+              width: 3,
+              height: 14,
               decoration: BoxDecoration(
                 color: accentColor,
                 borderRadius: BorderRadius.circular(2),
@@ -70,8 +68,7 @@ class NeoCard extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
           ],
-          Text(title!.toUpperCase(),
-              style: AppTextStyles.sectionTitle),
+          Text(title!.toUpperCase(), style: AppTextStyles.sectionTitle),
           const Spacer(),
           if (trailing != null) trailing!,
         ],

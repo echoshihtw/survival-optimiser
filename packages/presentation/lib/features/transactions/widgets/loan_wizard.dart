@@ -9,7 +9,8 @@ class LoanWizard extends StatefulWidget {
     int termMonths,
     DateTime date,
     String? note,
-  ) onSubmit;
+  )
+  onSubmit;
 
   const LoanWizard({super.key, required this.onSubmit});
 
@@ -23,30 +24,32 @@ class _LoanWizardState extends State<LoanWizard>
   late AnimationController _slideCtrl;
   late Animation<Offset> _slideAnim;
 
-  final _amountCtrl  = TextEditingController();
-  final _nameCtrl    = TextEditingController();
-  final _rateCtrl    = TextEditingController();
-  final _monthsCtrl  = TextEditingController();
+  final _amountCtrl = TextEditingController();
+  final _nameCtrl = TextEditingController();
+  final _rateCtrl = TextEditingController();
+  final _monthsCtrl = TextEditingController();
   final _paymentCtrl = TextEditingController();
-  final _noteCtrl    = TextEditingController();
+  final _noteCtrl = TextEditingController();
 
-  DateTime _date        = DateTime.now();
+  DateTime _date = DateTime.now();
   bool _overridePayment = false;
   double? _computedPayment;
-  String _source        = 'BANK';
+  String _source = 'BANK';
 
   static const _totalSteps = 3;
-  static const _sources    = ['BANK', 'FRIEND', 'FAMILY', 'OTHER'];
+  static const _sources = ['BANK', 'FRIEND', 'FAMILY', 'OTHER'];
 
   @override
   void initState() {
     super.initState();
     _slideCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 250));
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
     _slideAnim = Tween<Offset>(
-            begin: const Offset(1, 0), end: Offset.zero)
-        .animate(CurvedAnimation(
-            parent: _slideCtrl, curve: Curves.easeOut));
+      begin: const Offset(1, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _slideCtrl, curve: Curves.easeOut));
     _slideCtrl.forward();
   }
 
@@ -77,7 +80,7 @@ class _LoanWizardState extends State<LoanWizard>
   void _compute() {
     final amount = double.tryParse(_amountCtrl.text.trim());
     final months = int.tryParse(_monthsCtrl.text.trim());
-    final rate   = double.tryParse(_rateCtrl.text.trim());
+    final rate = double.tryParse(_rateCtrl.text.trim());
     if (amount == null || months == null || months == 0) {
       setState(() => _computedPayment = null);
       return;
@@ -87,7 +90,7 @@ class _LoanWizardState extends State<LoanWizard>
       payment = amount / months;
     } else {
       final mr = rate / 100 / 12;
-      payment  = amount * (mr * pow(1 + mr, months)) / (pow(1 + mr, months) - 1);
+      payment = amount * (mr * pow(1 + mr, months)) / (pow(1 + mr, months) - 1);
     }
     setState(() {
       _computedPayment = payment;
@@ -104,7 +107,9 @@ class _LoanWizardState extends State<LoanWizard>
       builder: (ctx, child) => Theme(
         data: ThemeData.dark().copyWith(
           colorScheme: const ColorScheme.dark(
-            primary: AppColors.gold, surface: AppColors.surface),
+            primary: AppColors.gold,
+            surface: AppColors.surface,
+          ),
         ),
         child: child!,
       ),
@@ -118,15 +123,18 @@ class _LoanWizardState extends State<LoanWizard>
   bool get _step1Valid => int.tryParse(_monthsCtrl.text.trim()) != null;
   bool get _step2Valid => double.tryParse(_paymentCtrl.text.trim()) != null;
   bool get _valid => switch (_step) {
-    0 => _step0Valid, 1 => _step1Valid, _ => _step2Valid,
+    0 => _step0Valid,
+    1 => _step1Valid,
+    _ => _step2Valid,
   };
 
   void _submit() {
-    final amount  = double.tryParse(_amountCtrl.text.trim());
+    final amount = double.tryParse(_amountCtrl.text.trim());
     final payment = double.tryParse(_paymentCtrl.text.trim());
-    final termMo  = int.tryParse(_monthsCtrl.text.trim()) ?? 0;
+    final termMo = int.tryParse(_monthsCtrl.text.trim()) ?? 0;
     if (amount == null || payment == null) return;
-    final note = '$_source — ${_nameCtrl.text.trim()}'
+    final note =
+        '$_source — ${_nameCtrl.text.trim()}'
         '${_noteCtrl.text.trim().isNotEmpty ? " | ${_noteCtrl.text.trim()}" : ""}';
     widget.onSubmit(amount, payment, termMo, _date, note);
     Navigator.of(context).pop();
@@ -138,196 +146,372 @@ class _LoanWizardState extends State<LoanWizard>
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSpacing.cardRadius)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppSpacing.cardRadius),
+        ),
       ),
       padding: EdgeInsets.only(
-        left: AppSpacing.lg, right: AppSpacing.lg, top: AppSpacing.md,
+        left: AppSpacing.lg,
+        right: AppSpacing.lg,
+        top: AppSpacing.md,
         bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.lg,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(child: Container(width: 36, height: 4,
-            decoration: BoxDecoration(color: AppColors.cardBorder,
-                borderRadius: BorderRadius.circular(2)))),
-          const SizedBox(height: AppSpacing.md),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text(l10n.loanWizardTitle.toUpperCase(),
-                style: AppTextStyles.title.copyWith(color: AppColors.gold)),
-            Text('${_step + 1} / $_totalSteps', style: AppTextStyles.caption),
-          ]),
-          const SizedBox(height: AppSpacing.sm),
-          Row(children: List.generate(_totalSteps, (i) => Expanded(
-            child: Container(height: 2,
-              margin: EdgeInsets.only(right: i < _totalSteps - 1 ? AppSpacing.xs : 0),
+          Center(
+            child: Container(
+              width: 36,
+              height: 4,
               decoration: BoxDecoration(
-                color: i <= _step ? AppColors.gold : AppColors.cardBorder,
-                borderRadius: BorderRadius.circular(1))),
-          ))),
+                color: AppColors.cardBorder,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                l10n.loanWizardTitle.toUpperCase(),
+                style: AppTextStyles.title.copyWith(color: AppColors.gold),
+              ),
+              Text('${_step + 1} / $_totalSteps', style: AppTextStyles.caption),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: List.generate(
+              _totalSteps,
+              (i) => Expanded(
+                child: Container(
+                  height: 2,
+                  margin: EdgeInsets.only(
+                    right: i < _totalSteps - 1 ? AppSpacing.xs : 0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: i <= _step ? AppColors.gold : AppColors.cardBorder,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: AppSpacing.lg),
           SlideTransition(position: _slideAnim, child: _buildStep(l10n)),
           const SizedBox(height: AppSpacing.lg),
-          Row(children: [
-            if (_step > 0) ...[
-              NeoButton(label: l10n.back, variant: NeoButtonVariant.ghost, onPressed: _prev),
-              const SizedBox(width: AppSpacing.sm),
+          Row(
+            children: [
+              if (_step > 0) ...[
+                NeoButton(
+                  label: l10n.back,
+                  variant: NeoButtonVariant.ghost,
+                  onPressed: _prev,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+              ],
+              Expanded(
+                child: _step < _totalSteps - 1
+                    ? NeoButton(
+                        label: '${l10n.next} →',
+                        variant: NeoButtonVariant.primary,
+                        color: AppColors.gold,
+                        fullWidth: true,
+                        onPressed: _valid ? _next : null,
+                      )
+                    : NeoButton(
+                        label: l10n.confirm,
+                        variant: NeoButtonVariant.primary,
+                        color: AppColors.gold,
+                        fullWidth: true,
+                        onPressed: _step2Valid ? _submit : null,
+                      ),
+              ),
             ],
-            Expanded(child: _step < _totalSteps - 1
-              ? NeoButton(label: '${l10n.next} →', variant: NeoButtonVariant.primary,
-                  color: AppColors.gold, fullWidth: true, onPressed: _valid ? _next : null)
-              : NeoButton(label: l10n.confirm, variant: NeoButtonVariant.primary,
-                  color: AppColors.gold, fullWidth: true, onPressed: _step2Valid ? _submit : null)),
-          ]),
+          ),
           const SizedBox(height: AppSpacing.xs),
-          NeoButton(label: l10n.abort, variant: NeoButtonVariant.danger,
-              fullWidth: true, onPressed: () => Navigator.of(context).pop()),
+          NeoButton(
+            label: l10n.abort,
+            variant: NeoButtonVariant.danger,
+            fullWidth: true,
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildStep(AppLocalizations l10n) => switch (_step) {
-    0 => _step0(l10n), 1 => _step1(l10n), _ => _step2(l10n),
+    0 => _step0(l10n),
+    1 => _step1(l10n),
+    _ => _step2(l10n),
   };
 
   Widget _step0(AppLocalizations l10n) {
-    final months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-    final dateStr = '${_date.day.toString().padLeft(2,"0")} ${months[_date.month - 1]} ${_date.year}';
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l10n.whoAndHowMuch.toUpperCase(),
-          style: AppTextStyles.label.copyWith(color: AppColors.gold)),
-      const SizedBox(height: AppSpacing.md),
-      Text(l10n.source, style: AppTextStyles.label),
-      const SizedBox(height: AppSpacing.xs),
-      Wrap(spacing: AppSpacing.xs, children: _sources.map((s) {
-        final active = s == _source;
-        return GestureDetector(
-          onTap: () => setState(() => _source = s),
+    final months = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC',
+    ];
+    final dateStr =
+        '${_date.day.toString().padLeft(2, "0")} ${months[_date.month - 1]} ${_date.year}';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.whoAndHowMuch.toUpperCase(),
+          style: AppTextStyles.label.copyWith(color: AppColors.gold),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Text(l10n.source, style: AppTextStyles.label),
+        const SizedBox(height: AppSpacing.xs),
+        Wrap(
+          spacing: AppSpacing.xs,
+          children: _sources.map((s) {
+            final active = s == _source;
+            return GestureDetector(
+              onTap: () => setState(() => _source = s),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: AppSpacing.xs),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.xs + 2,
+                ),
+                decoration: BoxDecoration(
+                  color: active
+                      ? AppColors.gold.withAlpha(20)
+                      : AppColors.surfaceHigh,
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(
+                    color: active ? AppColors.gold : AppColors.cardBorder,
+                    width: active ? 1.5 : 1,
+                  ),
+                ),
+                child: Text(
+                  s,
+                  style: AppTextStyles.caption.copyWith(
+                    color: active ? AppColors.gold : AppColors.textSecondary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        NeoInput(
+          label: l10n.nameLender,
+          controller: _nameCtrl,
+          hint: _source == "BANK" ? "Fubon" : "John",
+          onChanged: (_) => setState(() {}),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        NeoInput(
+          label: l10n.loanAmount,
+          controller: _amountCtrl,
+          keyboardType: TextInputType.number,
+          hint: "1880000",
+          onChanged: (_) {
+            setState(() {});
+            _compute();
+          },
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Text(l10n.date, style: AppTextStyles.label),
+        const SizedBox(height: AppSpacing.xs),
+        GestureDetector(
+          onTap: _pickDate,
           child: Container(
-            margin: const EdgeInsets.only(bottom: AppSpacing.xs),
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs + 2),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm + 2,
+            ),
             decoration: BoxDecoration(
-              color: active ? AppColors.gold.withAlpha(20) : AppColors.surfaceHigh,
-              borderRadius: BorderRadius.circular(50),
-              border: Border.all(color: active ? AppColors.gold : AppColors.cardBorder,
-                  width: active ? 1.5 : 1)),
-            child: Text(s, style: AppTextStyles.caption.copyWith(
-              color: active ? AppColors.gold : AppColors.textSecondary,
-              fontWeight: FontWeight.w600))),
-        );
-      }).toList()),
-      const SizedBox(height: AppSpacing.md),
-      NeoInput(label: l10n.nameLender, controller: _nameCtrl,
-          hint: _source == "BANK" ? "Fubon" : "John", onChanged: (_) => setState(() {})),
-      const SizedBox(height: AppSpacing.md),
-      NeoInput(label: l10n.loanAmount, controller: _amountCtrl,
-          keyboardType: TextInputType.number, hint: "1880000",
-          onChanged: (_) { setState(() {}); _compute(); }),
-      const SizedBox(height: AppSpacing.md),
-      Text(l10n.date, style: AppTextStyles.label),
-      const SizedBox(height: AppSpacing.xs),
-      GestureDetector(onTap: _pickDate, child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
-        decoration: BoxDecoration(color: AppColors.surfaceHigh,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.cardBorder)),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(dateStr, style: AppTextStyles.body),
-          const Icon(Icons.calendar_today_rounded, color: AppColors.textSecondary, size: 16),
-        ]),
-      )),
-    ]);
+              color: AppColors.surfaceHigh,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.cardBorder),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(dateStr, style: AppTextStyles.body),
+                const Icon(
+                  Icons.calendar_today_rounded,
+                  color: AppColors.textSecondary,
+                  size: 16,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _step1(AppLocalizations l10n) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l10n.loanTerms.toUpperCase(),
-          style: AppTextStyles.label.copyWith(color: AppColors.gold)),
-      const SizedBox(height: AppSpacing.md),
-      NeoInput(label: l10n.annualRate, controller: _rateCtrl,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          hint: "3.3", onChanged: (_) => _compute()),
-      const SizedBox(height: AppSpacing.md),
-      NeoInput(label: l10n.repaymentMonths, controller: _monthsCtrl,
-          keyboardType: TextInputType.number, hint: "84",
-          onChanged: (_) { setState(() {}); _compute(); }),
-      if (_computedPayment != null) ...[
-        const SizedBox(height: AppSpacing.lg),
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(color: AppColors.gold.withAlpha(12),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.gold.withAlpha(60))),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(l10n.computedInstallment, style: AppTextStyles.label),
-              Text("/ MONTH", style: AppTextStyles.caption),
-            ]),
-            Text(_computedPayment!.toStringAsFixed(0),
-                style: AppTextStyles.metric.copyWith(color: AppColors.gold)),
-          ]),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.loanTerms.toUpperCase(),
+          style: AppTextStyles.label.copyWith(color: AppColors.gold),
         ),
+        const SizedBox(height: AppSpacing.md),
+        NeoInput(
+          label: l10n.annualRate,
+          controller: _rateCtrl,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          hint: "3.3",
+          onChanged: (_) => _compute(),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        NeoInput(
+          label: l10n.repaymentMonths,
+          controller: _monthsCtrl,
+          keyboardType: TextInputType.number,
+          hint: "84",
+          onChanged: (_) {
+            setState(() {});
+            _compute();
+          },
+        ),
+        if (_computedPayment != null) ...[
+          const SizedBox(height: AppSpacing.lg),
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: AppColors.gold.withAlpha(12),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.gold.withAlpha(60)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.computedInstallment, style: AppTextStyles.label),
+                    Text("/ MONTH", style: AppTextStyles.caption),
+                  ],
+                ),
+                Text(
+                  _computedPayment!.toStringAsFixed(0),
+                  style: AppTextStyles.metric.copyWith(color: AppColors.gold),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
-    ]);
+    );
   }
 
   Widget _step2(AppLocalizations l10n) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l10n.confirmPayment.toUpperCase(),
-          style: AppTextStyles.label.copyWith(color: AppColors.gold)),
-      const SizedBox(height: AppSpacing.md),
-      Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: BoxDecoration(color: AppColors.surfaceHigh,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.confirmPayment.toUpperCase(),
+          style: AppTextStyles.label.copyWith(color: AppColors.gold),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceHigh,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.cardBorder)),
-        child: Column(children: [
-          _summaryRow(l10n.source, _source),
-          _summaryRow(l10n.lender, _nameCtrl.text.toUpperCase()),
-          _summaryRow(l10n.loanAmount, _amountCtrl.text),
-          _summaryRow(l10n.repaymentMonths, _monthsCtrl.text),
-          if (_rateCtrl.text.isNotEmpty && _rateCtrl.text != "0")
-            _summaryRow(l10n.rate, "${_rateCtrl.text}%"),
-        ]),
-      ),
-      const SizedBox(height: AppSpacing.md),
-      GestureDetector(
-        onTap: () => setState(() {
-          _overridePayment = !_overridePayment;
-          if (!_overridePayment && _computedPayment != null)
-            _paymentCtrl.text = _computedPayment!.toStringAsFixed(0);
-        }),
-        child: Row(children: [
-          Container(width: 18, height: 18,
-            decoration: BoxDecoration(
-              color: _overridePayment ? AppColors.gold.withAlpha(40) : AppColors.surfaceHigh,
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: _overridePayment ? AppColors.gold : AppColors.cardBorder)),
-            child: _overridePayment
-                ? const Icon(Icons.check_rounded, size: 12, color: AppColors.gold) : null),
-          const SizedBox(width: AppSpacing.xs),
-          Text(l10n.overrideInstallment, style: AppTextStyles.caption),
-        ]),
-      ),
-      const SizedBox(height: AppSpacing.md),
-      NeoInput(label: l10n.monthlyInstallment, controller: _paymentCtrl,
+            border: Border.all(color: AppColors.cardBorder),
+          ),
+          child: Column(
+            children: [
+              _summaryRow(l10n.source, _source),
+              _summaryRow(l10n.lender, _nameCtrl.text.toUpperCase()),
+              _summaryRow(l10n.loanAmount, _amountCtrl.text),
+              _summaryRow(l10n.repaymentMonths, _monthsCtrl.text),
+              if (_rateCtrl.text.isNotEmpty && _rateCtrl.text != "0")
+                _summaryRow(l10n.rate, "${_rateCtrl.text}%"),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        GestureDetector(
+          onTap: () => setState(() {
+            _overridePayment = !_overridePayment;
+            if (!_overridePayment && _computedPayment != null)
+              _paymentCtrl.text = _computedPayment!.toStringAsFixed(0);
+          }),
+          child: Row(
+            children: [
+              Container(
+                width: 18,
+                height: 18,
+                decoration: BoxDecoration(
+                  color: _overridePayment
+                      ? AppColors.gold.withAlpha(40)
+                      : AppColors.surfaceHigh,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: _overridePayment
+                        ? AppColors.gold
+                        : AppColors.cardBorder,
+                  ),
+                ),
+                child: _overridePayment
+                    ? const Icon(
+                        Icons.check_rounded,
+                        size: 12,
+                        color: AppColors.gold,
+                      )
+                    : null,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Text(l10n.overrideInstallment, style: AppTextStyles.caption),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        NeoInput(
+          label: l10n.monthlyInstallment,
+          controller: _paymentCtrl,
           keyboardType: TextInputType.number,
           hint: _computedPayment?.toStringAsFixed(0) ?? "0",
-          onChanged: (_) => setState(() {})),
-      const SizedBox(height: AppSpacing.md),
-      NeoInput(label: l10n.noteOptional, controller: _noteCtrl,
-          hint: "study loan", onChanged: (_) {}),
-    ]);
+          onChanged: (_) => setState(() {}),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        NeoInput(
+          label: l10n.noteOptional,
+          controller: _noteCtrl,
+          hint: "study loan",
+          onChanged: (_) {},
+        ),
+      ],
+    );
   }
 
   Widget _summaryRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(label, style: AppTextStyles.label),
-        Text(value, style: AppTextStyles.caption.copyWith(color: AppColors.gold)),
-      ]),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: AppTextStyles.label),
+          Text(
+            value,
+            style: AppTextStyles.caption.copyWith(color: AppColors.gold),
+          ),
+        ],
+      ),
     );
   }
 }

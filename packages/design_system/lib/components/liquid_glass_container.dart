@@ -18,8 +18,7 @@ class LiquidGlassContainer extends StatefulWidget {
   });
 
   @override
-  State<LiquidGlassContainer> createState() =>
-      _LiquidGlassContainerState();
+  State<LiquidGlassContainer> createState() => _LiquidGlassContainerState();
 }
 
 class _LiquidGlassContainerState extends State<LiquidGlassContainer>
@@ -47,10 +46,9 @@ class _LiquidGlassContainerState extends State<LiquidGlassContainer>
       animation: _ctrl,
       builder: (_, child) {
         return ClipRRect(
-          borderRadius:
-              BorderRadius.circular(widget.borderRadius),
+          borderRadius: BorderRadius.circular(widget.borderRadius),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 35, sigmaY: 35),
+            filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
             child: CustomPaint(
               foregroundPainter: _RimPainter(
                 t: _ctrl.value,
@@ -61,10 +59,7 @@ class _LiquidGlassContainerState extends State<LiquidGlassContainer>
                 t: _ctrl.value,
                 accentColor: widget.accentColor,
               ),
-              child: Padding(
-                padding: widget.padding,
-                child: child,
-              ),
+              child: Padding(padding: widget.padding, child: child),
             ),
           ),
         );
@@ -82,61 +77,70 @@ class _BodyPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rect  = Offset.zero & size;
+    final rect = Offset.zero & size;
 
     // Base fill
-    canvas.drawRect(rect, Paint()
-      ..color = const Color(0xFF111318).withAlpha(80));
+    canvas.drawRect(
+      rect,
+      Paint()..color = const Color(0xFF111318).withAlpha(35),
+    );
 
     // Top light scatter
-    canvas.drawRect(rect, Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        stops: const [0.0, 0.5, 1.0],
-        colors: [
-          Colors.white.withAlpha(14),
-          Colors.white.withAlpha(4),
-          Colors.white.withAlpha(0),
-        ],
-      ).createShader(rect));
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: const [0.0, 0.5, 1.0],
+          colors: [
+            Colors.white.withAlpha(8),
+            Colors.white.withAlpha(2),
+            Colors.white.withAlpha(0),
+          ],
+        ).createShader(rect),
+    );
 
     // Accent tint
-    canvas.drawRect(rect, Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(0, -0.8),
-        radius: 1.0,
-        colors: [
-          accentColor.withAlpha(18),
-          accentColor.withAlpha(0),
-        ],
-      ).createShader(rect));
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(0, -0.8),
+          radius: 1.0,
+          colors: [accentColor.withAlpha(18), accentColor.withAlpha(0)],
+        ).createShader(rect),
+    );
 
     // Bottom depth shadow
-    canvas.drawRect(rect, Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.bottomCenter,
-        end: Alignment.topCenter,
-        stops: const [0.0, 0.25],
-        colors: [
-          Colors.black.withAlpha(25),
-          Colors.black.withAlpha(0),
-        ],
-      ).createShader(rect));
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          stops: const [0.0, 0.25],
+          colors: [Colors.black.withAlpha(25), Colors.black.withAlpha(0)],
+        ).createShader(rect),
+    );
 
     // Slow shimmer
     final sx = 0.5 + cos(t * 2 * pi) * 0.25;
     final sy = 0.35 + sin(t * pi) * 0.15;
-    canvas.drawRect(rect, Paint()
-      ..shader = RadialGradient(
-        center: Alignment(sx * 2 - 1, sy * 2 - 1),
-        radius: 0.7,
-        colors: [
-          Colors.white.withAlpha(
-              (10 * (0.5 + 0.5 * sin(t * 2 * pi))).round()),
-          Colors.white.withAlpha(0),
-        ],
-      ).createShader(rect));
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = RadialGradient(
+          center: Alignment(sx * 2 - 1, sy * 2 - 1),
+          radius: 0.7,
+          colors: [
+            Colors.white.withAlpha(
+              (10 * (0.5 + 0.5 * sin(t * 2 * pi))).round(),
+            ),
+            Colors.white.withAlpha(0),
+          ],
+        ).createShader(rect),
+    );
   }
 
   @override
@@ -156,9 +160,8 @@ class _RimPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rect  = Offset.zero & size;
-    final rrect = RRect.fromRectAndRadius(
-        rect, Radius.circular(radius));
+    final rect = Offset.zero & size;
+    final rrect = RRect.fromRectAndRadius(rect, Radius.circular(radius));
 
     // Outer rim — sweep gradient, light from upper-left 45°
     canvas.drawRRect(
@@ -204,14 +207,12 @@ class _RimPainter extends CustomPainter {
             Colors.white.withAlpha(3),
             Colors.white.withAlpha(70),
           ],
-        ).createShader(
-            Rect.fromLTWH(1, 1, size.width - 2, size.height - 2)),
+        ).createShader(Rect.fromLTWH(1, 1, size.width - 2, size.height - 2)),
     );
 
     // Top edge bright line
     final topLine = RRect.fromRectAndRadius(
-      Rect.fromLTWH(radius * 0.5, 0.5,
-          size.width - radius, 0.5),
+      Rect.fromLTWH(radius * 0.5, 0.5, size.width - radius, 0.5),
       const Radius.circular(1),
     );
     canvas.drawRRect(
@@ -230,8 +231,7 @@ class _RimPainter extends CustomPainter {
 
     // Left edge bright line
     final leftLine = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0.5, radius * 0.5,
-          0.5, size.height - radius),
+      Rect.fromLTWH(0.5, radius * 0.5, 0.5, size.height - radius),
       const Radius.circular(1),
     );
     canvas.drawRRect(
@@ -247,8 +247,7 @@ class _RimPainter extends CustomPainter {
             Colors.white.withAlpha(20),
             Colors.white.withAlpha(0),
           ],
-        ).createShader(
-            Rect.fromLTWH(0, 0, 1, size.height)),
+        ).createShader(Rect.fromLTWH(0, 0, 1, size.height)),
     );
   }
 

@@ -1,60 +1,65 @@
 import 'app_colors.dart';
-import 'package:flutter/material.dart';
 
-/// Semantic color system — use these instead of raw AppColors
-/// Change meaning here, propagates everywhere automatically
+/// Semantic color system
+/// Mint #B2FFCA = primary (life, growth, positive)
+/// Pink #FFB2D0 = secondary (danger, burn, alerts)
+/// Turkish Blue #007FAE = supporting (info, neutral)
 abstract final class SC {
-  // ── Numbers & amounts ─────────────────────────
-  static const numberPrimary  = AppColors.textPrimary;  // neutral facts
-  static const numberPositive = AppColors.green;         // inflow, good
-  static const numberNegative = AppColors.red;           // outflow, burn
-  static const numberWarning  = AppColors.gold;          // debt, caution
-  static const numberInfo     = AppColors.blue;          // investable, neutral
-  static const numberSpecial  = AppColors.purple;        // subscriptions
+  // ── Primary = Mint ────────────────────────────
+  static const primary = AppColors.neonGreen; // #B2FFCA
+  static const secondary = AppColors.hotPink; // #FFB2D0
+  static const info = AppColors.turkishBlue; // #007FAE
+
+  // ── Numbers ───────────────────────────────────
+  static const numberPrimary = AppColors.textPrimary;
+  static const numberPositive = AppColors.neonGreen; // mint — inflow
+  static const numberNegative = AppColors.hotPink; // pink — outflow
+  static const numberWarning = AppColors.gold;
+  static const numberInfo = AppColors.turkishBlue;
+  static const numberSpecial = AppColors.purple;
 
   // ── Status ────────────────────────────────────
-  static const statusStable   = AppColors.green;
-  static const statusCaution  = AppColors.gold;
-  static const statusCritical = AppColors.red;
+  static const statusStable = AppColors.neonGreen; // mint
+  static const statusCaution = AppColors.gold;
+  static const statusCritical = AppColors.hotPink; // pink
 
-  // ── Section accents (card left bar) ──────────
-  static const accentMetrics      = AppColors.blue;
-  static const accentInvestable   = AppColors.blue;
-  static const accentLiabilities  = AppColors.gold;
-  static const accentSubscription = AppColors.purple;
-  static const accentTimeline     = AppColors.blue;
-  static const accentConfig       = AppColors.green;
-  static const accentSimulator    = AppColors.purple;
+  // ── Section accents ───────────────────────────
+  static const accentMetrics = AppColors.neonGreen; // mint — your survival
+  static const accentInvestable = AppColors.turkishBlue; // blue — your future
+  static const accentLiabilities = AppColors.hotPink; // pink — your costs
+  static const accentSubscription = AppColors.hotPink; // pink — your costs
+  static const accentTimeline = AppColors.turkishBlue; // blue — your future
+  static const accentConfig = AppColors.neonGreen; // mint — your survival
+  static const accentSimulator = AppColors.turkishBlue; // blue — your future
 
-  // ── Transaction types ─────────────────────────
-  static const txExpense        = AppColors.red;
-  static const txIncome         = AppColors.green;
-  static const txLoan           = AppColors.blue;
-  static const txInvestment     = AppColors.purple;
-  static const txRepayment      = AppColors.gold;
-  static const txOpeningBalance = AppColors.blue;
+  // ── Transaction icons ─────────────────────────
+  static const txExpense = AppColors.hotPink;
+  static const txIncome = AppColors.neonGreen;
+  static const txLoan = AppColors.turkishBlue;
+  static const txInvestment = AppColors.purple;
+  static const txRepayment = AppColors.gold;
+  static const txOpeningBalance = AppColors.turkishBlue;
 
   // ── Buttons ───────────────────────────────────
-  static const btnPrimary     = AppColors.green;
-  static const btnLoan        = AppColors.gold;
-  static const btnDestructive = AppColors.red;
+  static const btnPrimary = AppColors.neonGreen; // mint
+  static const btnSecondary = AppColors.hotPink; // pink
+  static const btnLoan = AppColors.gold;
+  static const btnDestructive = AppColors.hotPink;
 
   // ── Specific metrics ──────────────────────────
-  static const metricCash        = numberPrimary;   // cash is neutral fact
-  static const metricRunway      = numberPrimary;   // overridden by status
-  static const metricBurnRate    = numberNegative;  // always outflow
-  static const metricBudget      = numberNegative;  // always outflow
-  static const metricDebt        = numberWarning;   // fixed obligation
-  static const metricSubscr      = numberSpecial;   // unique category
-  static const metricTotal       = numberNegative;  // always outflow
-  static const metricInvestable  = numberInfo;      // deployable capital
-  static const metricSafetyFund  = numberWarning;   // reserved/locked
-  static const metricRunOut      = AppColors.textSecondary; // date fact
+  static const metricCash = AppColors.neonGreen; // mint — it\'s good
+  static const metricRunway = numberPrimary; // overridden by status
+  static const metricBurnRate = AppColors.hotPink; // pink — outflow
+  static const metricBudget = AppColors.hotPink; // pink — outflow
+  static const metricDebt = AppColors.gold;
+  static const metricSubscr = AppColors.purple;
+  static const metricTotal = AppColors.hotPink; // pink — total burn
+  static const metricInvestable = AppColors.neonGreen; // mint — deployable
+  static const metricSafetyFund = AppColors.turkishBlue;
+  static const metricRunOut = AppColors.textSecondary;
 
-  // ── UI elements ───────────────────────────────
-  static const labelColor    = AppColors.textSecondary;
-  static const captionColor  = AppColors.textDim;
-  static const dividerColor  = AppColors.cardBorder;
-  static const surfaceColor  = AppColors.surface;
-  static const cardColor     = AppColors.surface;
+  // ── UI ────────────────────────────────────────
+  static const labelColor = AppColors.textSecondary;
+  static const captionColor = AppColors.textDim;
+  static const dividerColor = AppColors.cardBorder;
 }

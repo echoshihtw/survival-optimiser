@@ -30,17 +30,22 @@ class PixelBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 5, height: 5,
+            width: 5,
+            height: 5,
             decoration: BoxDecoration(
               color: color,
               borderRadius: BorderRadius.circular(1),
             ),
           ),
           const SizedBox(width: AppSpacing.xs),
-          Text(label,
-              style: AppTextStyles.caption
-                  .copyWith(color: color, fontWeight: FontWeight.w600,
-                      letterSpacing: 1.0)),
+          Text(
+            label,
+            style: AppTextStyles.caption.copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.0,
+            ),
+          ),
         ],
       ),
     );

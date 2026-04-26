@@ -15,10 +15,9 @@ List<MonthlyState> aggregateMonths(List<Transaction> transactions) {
       .toList();
 
   if (regular.isEmpty && opening > 0) {
-    final now = DateTime.now();
     return [
       MonthlyState(
-        month: SurvivalMonth(now),
+        month: SurvivalMonth(DateTime.now()),
         netFlow: 0,
         balance: opening,
         grossOutflow: 0,

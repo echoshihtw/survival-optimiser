@@ -11,10 +11,10 @@ class MetricsPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n   = context.l10n;
+    final l10n = context.l10n;
     final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
     final budget = ref.watch(budgetProvider).value;
-    final nf     = NumberFormat('#,##0', 'en_US');
+    final nf = NumberFormat('#,##0', 'en_US');
 
     String fmt(double v) => '$symbol ${nf.format(v.abs())}';
 
@@ -30,9 +30,10 @@ class MetricsPanel extends ConsumerWidget {
           children: [
             Text('TOTAL / MO', style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xxs),
-            Text('-${fmt(model.totalMonthlyOutflow)}',
-                style: AppTextStyles.metric
-                    .copyWith(color: SC.metricTotal)),
+            Text(
+              '-${fmt(model.totalMonthlyOutflow)}',
+              style: AppTextStyles.metric.copyWith(color: SC.numberPrimary),
+            ),
           ],
         ),
         Column(
@@ -40,9 +41,10 @@ class MetricsPanel extends ConsumerWidget {
           children: [
             Text('CASH', style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xxs),
-            Text(fmt(model.currentCash),
-                style: AppTextStyles.metric
-                    .copyWith(color: SC.metricCash)),
+            Text(
+              fmt(model.currentCash),
+              style: AppTextStyles.metric.copyWith(color: SC.numberPrimary),
+            ),
           ],
         ),
       ],
@@ -52,20 +54,25 @@ class MetricsPanel extends ConsumerWidget {
     final details = Column(
       children: [
         if (hasActual)
-          _row(model.isOverBudget
-              ? '${l10n.burnPerMonth} ▲'
-              : l10n.burnPerMonth,
-              '-${fmt(model.burnRate)}', AppColors.red),
+          _row(
+            model.isOverBudget ? '${l10n.burnPerMonth} ▲' : l10n.burnPerMonth,
+            '-${fmt(model.burnRate)}',
+            AppColors.red,
+          ),
         if (hasBudget && !hasActual)
-          _row('BUDGET/MO',
-              '-${fmt(budget.subtotal)}', AppColors.gold),
+          _row('BUDGET/MO', '-${fmt(budget.subtotal)}', AppColors.gold),
         if (model.subscriptionMonthlyCost > 0)
-          _row(l10n.subscrPerMonth,
-              '-${fmt(model.subscriptionMonthlyCost)}',
-              SC.metricSubscr),
+          _row(
+            l10n.subscrPerMonth,
+            '-${fmt(model.subscriptionMonthlyCost)}',
+            SC.metricSubscr,
+          ),
         if (model.monthlyPayment > 0)
-          _row(l10n.loanPerMonth,
-              '-${fmt(model.monthlyPayment)}', AppColors.gold),
+          _row(
+            l10n.loanPerMonth,
+            '-${fmt(model.monthlyPayment)}',
+            AppColors.gold,
+          ),
         const SizedBox(height: AppSpacing.xs),
         Container(
           padding: const EdgeInsets.symmetric(
@@ -80,9 +87,12 @@ class MetricsPanel extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('TOTAL / MO', style: AppTextStyles.label),
-              Text('-${fmt(model.totalMonthlyOutflow)}',
-                  style: AppTextStyles.metricSmall
-                      .copyWith(color: SC.metricTotal)),
+              Text(
+                '-${fmt(model.totalMonthlyOutflow)}',
+                style: AppTextStyles.metricSmall.copyWith(
+                  color: SC.numberPrimary,
+                ),
+              ),
             ],
           ),
         ),
@@ -91,7 +101,7 @@ class MetricsPanel extends ConsumerWidget {
 
     return NeoExpandableCard(
       title: 'BREAKDOWN',
-      accentColor: AppColors.blue,
+      accentColor: SC.accentMetrics,
       initiallyExpanded: false,
       summary: summary,
       details: details,
@@ -105,9 +115,7 @@ class MetricsPanel extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label.toUpperCase(), style: AppTextStyles.label),
-          Text(value,
-              style: AppTextStyles.metricSmall
-                  .copyWith(color: color)),
+          Text(value, style: AppTextStyles.metricSmall.copyWith(color: color)),
         ],
       ),
     );

@@ -49,8 +49,9 @@ class _ScaffoldWithNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: shell,
-      bottomNavigationBar: _TerminalNavBar(
+      bottomNavigationBar: _NavBar(
         currentIndex: shell.currentIndex,
         onTap: (i) => shell.goBranch(i),
       ),
@@ -58,55 +59,85 @@ class _ScaffoldWithNav extends StatelessWidget {
   }
 }
 
-class _TerminalNavBar extends StatelessWidget {
+class _NavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
-
-  const _TerminalNavBar({required this.currentIndex, required this.onTap});
+  const _NavBar({required this.currentIndex, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final items = [
-      (label: l10n.navHud, icon: '◈'),
-      (label: l10n.navLog, icon: '≡'),
-      (label: l10n.navSim, icon: '◇'),
+      (label: l10n.navHud, icon: Icons.space_dashboard_rounded),
+      (label: l10n.navLog, icon: Icons.receipt_long_rounded),
+      (label: l10n.navSim, icon: Icons.science_rounded),
     ];
 
     return Container(
-      height: 56,
-      decoration: const BoxDecoration(
-        color: AppColors.background,
-        border: Border(top: BorderSide(color: AppColors.panelBorder, width: 1)),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: const Border(
+          top: BorderSide(color: AppColors.cardBorder, width: 1),
+        ),
       ),
-      child: Row(
-        children: List.generate(items.length, (i) {
-          final item = items[i];
-          final active = i == currentIndex;
-          final color = active ? AppColors.primaryGreen : AppColors.dimGreen;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => onTap(i),
-              behavior: HitTestBehavior.opaque,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(item.icon, style: TextStyle(color: color, fontSize: 16)),
-                  const SizedBox(height: 2),
-                  Text(
-                    item.label,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 10,
-                      letterSpacing: 1.5,
-                      fontFamily: 'JetBrainsMono',
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
+          ),
+          child: Row(
+            children: List.generate(items.length, (i) {
+              final item = items[i];
+              final active = i == currentIndex;
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => onTap(i),
+                  behavior: HitTestBehavior.opaque,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.xs + 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: active
+                          ? AppColors.neonGreen.withAlpha(15)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          item.icon,
+                          color: active
+                              ? AppColors.neonGreen
+                              : AppColors.textSecondary,
+                          size: 20,
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          item.label.toUpperCase(),
+                          style: AppTextStyles.caption.copyWith(
+                            color: active
+                                ? AppColors.neonGreen
+                                : AppColors.textSecondary,
+                            letterSpacing: 1.0,
+                            fontWeight: active
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          );
-        }),
+                ),
+              );
+            }),
+          ),
+        ),
       ),
     );
   }

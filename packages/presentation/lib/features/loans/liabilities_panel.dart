@@ -12,64 +12,80 @@ class LiabilitiesPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n      = context.l10n;
+    final l10n = context.l10n;
     final summaries = ref.watch(loanSummariesProvider);
-    final symbol    = ref.watch(currencyProvider).value?.symbol ?? '¥';
-    final nf        = NumberFormat('#,##0', 'en_US');
-    final total     = ref.watch(totalMonthlyLoanPaymentProvider);
-    final active    = summaries.where((s) => s.loan.isActive).toList();
+    final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
+    final nf = NumberFormat('#,##0', 'en_US');
+    final total = ref.watch(totalMonthlyLoanPaymentProvider);
+    final active = summaries.where((s) => s.loan.isActive).toList();
 
     final summary = active.isEmpty
         ? Text('No active loans', style: AppTextStyles.bodySmall)
-        : Row(children: [
-            Expanded(child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('DEBT/MO', style: AppTextStyles.label),
-                const SizedBox(height: AppSpacing.xxs),
-                Text('$symbol ${nf.format(total)}',
-                    style: AppTextStyles.metric
-                        .copyWith(color: AppColors.gold)),
-              ],
-            )),
-            Expanded(child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('LOANS', style: AppTextStyles.label),
-                const SizedBox(height: AppSpacing.xxs),
-                Text('${active.length} ACTIVE',
-                    style: AppTextStyles.metric
-                        .copyWith(color: AppColors.textSecondary)),
-              ],
-            )),
-          ]);
+        : Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('DEBT/MO', style: AppTextStyles.label),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(
+                      '$symbol ${nf.format(total)}',
+                      style: AppTextStyles.metric.copyWith(
+                        color: SC.numberPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('LOANS', style: AppTextStyles.label),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(
+                      '${active.length} ACTIVE',
+                      style: AppTextStyles.metric.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
 
     final details = active.isEmpty
         ? null
         : Column(
-            children: active.map((s) => Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-              child: LoanCard(
-                summary: s,
-                onTap: () {},
-                onRepay: () => _showRepay(context, ref, s),
-              ),
-            )).toList(),
+            children: active
+                .map(
+                  (s) => Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                    child: LoanCard(
+                      summary: s,
+                      onTap: () {},
+                      onRepay: () => _showRepay(context, ref, s),
+                    ),
+                  ),
+                )
+                .toList(),
           );
 
     return NeoExpandableCard(
       title: l10n.liabilities,
-      accentColor: AppColors.gold,
+      accentColor: SC.accentLiabilities,
       initiallyExpanded: false,
       summary: summary,
       details: details,
     );
   }
 
-  void _showRepay(
-      BuildContext context, WidgetRef ref, LoanSummary summary) {
+  void _showRepay(BuildContext context, WidgetRef ref, LoanSummary summary) {
     final amountCtrl = TextEditingController(
-        text: summary.loan.monthlyPayment.toStringAsFixed(0));
+      text: summary.loan.monthlyPayment.toStringAsFixed(0),
+    );
 
     showModalBottomSheet(
       context: context,
@@ -77,7 +93,8 @@ class LiabilitiesPanel extends ConsumerWidget {
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppSpacing.cardRadius)),
+          top: Radius.circular(AppSpacing.cardRadius),
+        ),
       ),
       builder: (ctx) => Padding(
         padding: EdgeInsets.only(
@@ -90,11 +107,15 @@ class LiabilitiesPanel extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('REPAY LOAN', style: AppTextStyles.title
-                .copyWith(color: AppColors.gold)),
+            Text(
+              'REPAY LOAN',
+              style: AppTextStyles.title.copyWith(color: SC.numberPrimary),
+            ),
             const SizedBox(height: AppSpacing.xs),
-            Text(summary.loan.name.toUpperCase(),
-                style: AppTextStyles.bodySmall),
+            Text(
+              summary.loan.name.toUpperCase(),
+              style: AppTextStyles.bodySmall,
+            ),
             const SizedBox(height: AppSpacing.lg),
             NeoInput(
               label: 'REPAYMENT AMOUNT',
@@ -103,45 +124,44 @@ class LiabilitiesPanel extends ConsumerWidget {
               hint: summary.loan.monthlyPayment.toStringAsFixed(0),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Row(children: [
-              Expanded(
-                child: NeoButton(
-                  label: 'CONFIRM',
-                  variant: NeoButtonVariant.primary,
-                  color: AppColors.gold,
-                  fullWidth: true,
-                  onPressed: () async {
-                    final amount = double.tryParse(
-                        amountCtrl.text.trim());
-                    if (amount == null || amount <= 0) return;
-                    Navigator.of(ctx).pop();
-                    final now = DateTime.now();
-                    final tx  = Transaction(
-                      id:        const Uuid().v4(),
-                      date:      now,
-                      type:      TransactionType.repayment,
-                      amount:    Money(amount),
-                      loanId:    summary.loan.id,
-                      note:      'Repayment — ${summary.loan.name}',
-                      createdAt: now,
-                      updatedAt: now,
-                    );
-                    await ref
-                        .read(addTransactionUseCaseProvider)
-                        .execute(tx);
-                  },
+            Row(
+              children: [
+                Expanded(
+                  child: NeoButton(
+                    label: 'CONFIRM',
+                    variant: NeoButtonVariant.primary,
+                    color: AppColors.gold,
+                    fullWidth: true,
+                    onPressed: () async {
+                      final amount = double.tryParse(amountCtrl.text.trim());
+                      if (amount == null || amount <= 0) return;
+                      Navigator.of(ctx).pop();
+                      final now = DateTime.now();
+                      final tx = Transaction(
+                        id: const Uuid().v4(),
+                        date: now,
+                        type: TransactionType.repayment,
+                        amount: Money(amount),
+                        loanId: summary.loan.id,
+                        note: 'Repayment — ${summary.loan.name}',
+                        createdAt: now,
+                        updatedAt: now,
+                      );
+                      await ref.read(addTransactionUseCaseProvider).execute(tx);
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: NeoButton(
-                  label: 'CANCEL',
-                  variant: NeoButtonVariant.ghost,
-                  fullWidth: true,
-                  onPressed: () => Navigator.of(ctx).pop(),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: NeoButton(
+                    label: 'CANCEL',
+                    variant: NeoButtonVariant.ghost,
+                    fullWidth: true,
+                    onPressed: () => Navigator.of(ctx).pop(),
+                  ),
                 ),
-              ),
-            ]),
+              ],
+            ),
           ],
         ),
       ),
