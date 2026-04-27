@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_system/design_system.dart';
 import 'package:application/application.dart';
+import 'package:intl/intl.dart';
 import 'widgets/metrics_panel.dart';
 import 'widgets/investable_bar.dart';
 import 'widgets/cash_chart.dart';
@@ -15,6 +16,7 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final model = ref.watch(modelProvider);
     final months = ref.watch(projectedMonthsProvider);
 
@@ -25,7 +27,6 @@ class DashboardScreen extends ConsumerWidget {
             child: _DashboardHeader(onConfig: () => _showConfig(context)),
           ),
 
-                    // Cards
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
             sliver: SliverList(
@@ -41,13 +42,13 @@ class DashboardScreen extends ConsumerWidget {
                 const SubscriptionsPanel(),
                 const SizedBox(height: AppSpacing.cardGap),
                 NeoExpandableCard(
-                  title: 'CASH TIMELINE',
+                  title: l10n.cashTimeline,
                   accentColor: SC.accentNeutral,
                   initiallyExpanded: false,
                   summary: Text(
                     months.isEmpty
-                        ? 'Add transactions to see projection'
-                        : '${months.length} months projected',
+                        ? l10n.addNoData
+                        : l10n.monthsProjected(months.length),
                     style: AppTextStyles.bodySmall,
                   ),
                   details: months.isEmpty
@@ -85,31 +86,11 @@ class _DashboardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final weekday = [
-      'SUN',
-      'MON',
-      'TUE',
-      'WED',
-      'THU',
-      'FRI',
-      'SAT',
-    ][now.weekday % 7];
-    final months = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MAY',
-      'JUN',
-      'JUL',
-      'AUG',
-      'SEP',
-      'OCT',
-      'NOV',
-      'DEC',
-    ];
-    final dateStr = '${now.day} ${months[now.month - 1]} ${now.year}, $weekday';
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context).toString();
+    final dateStr = DateFormat('d MMM yyyy, EEE', locale)
+        .format(DateTime.now())
+        .toUpperCase();
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -121,7 +102,6 @@ class _DashboardHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Logo mark
           Container(
             width: 36,
             height: 36,
@@ -142,13 +122,12 @@ class _DashboardHeader extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.sm),
 
-          // Title + date
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'SURVIVAL.EXE',
+                  l10n.hudTitle,
                   style: AppTextStyles.body.copyWith(
                     color: AppColors.neonGreen,
                     fontWeight: FontWeight.w700,
@@ -164,7 +143,6 @@ class _DashboardHeader extends StatelessWidget {
             ),
           ),
 
-          // Config button
           GestureDetector(
             onTap: onConfig,
             child: Container(
@@ -186,7 +164,7 @@ class _DashboardHeader extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
-                    'CONFIG',
+                    l10n.config,
                     style: AppTextStyles.caption.copyWith(
                       color: AppColors.textSecondary,
                     ),

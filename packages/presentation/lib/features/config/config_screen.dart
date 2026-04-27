@@ -19,7 +19,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
 
   static const _languages = [
     (label: 'ENGLISH', locale: Locale('en')),
-    (label: '繁中', locale: Locale('zh', 'TW')),
+    (label: '中文', locale: Locale('zh', 'TW')),
     (label: 'FRANÇAIS', locale: Locale('fr')),
     (label: '日本語', locale: Locale('ja')),
     (label: 'ESPAÑOL', locale: Locale('es')),
@@ -102,7 +102,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                         ),
                       ),
                       Text(
-                        'PREFERENCES & BUDGET',
+                        l10n.prefsBudget,
                         style: AppTextStyles.caption.copyWith(
                           color: AppColors.textSecondary,
                           letterSpacing: 1.5,
@@ -123,7 +123,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                         border: Border.all(color: AppColors.cardBorder),
                       ),
                       child: Text(
-                        'CLOSE',
+                        l10n.close,
                         style: AppTextStyles.caption.copyWith(
                           color: AppColors.textPrimary,
                           letterSpacing: 1.0,
@@ -144,21 +144,21 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                   children: [
                     // ── MONTHLY BUDGET ────────────────
                     NeoCard(
-                      title: 'MONTHLY BUDGET',
+                      title: l10n.monthlyBudget,
                       accentColor: AppColors.green,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (!_editingBudget) ...[
                             _budgetRow(
-                              'RENT / FIXED',
+                              l10n.rentFixed,
                               budget.rent > 0
                                   ? '$symbol ${nf.format(budget.rent)}'
                                   : '—',
                               AppColors.textPrimary,
                             ),
                             _budgetRow(
-                              'LIVING EXPENSES',
+                              l10n.livingExpenses,
                               budget.living > 0
                                   ? '$symbol ${nf.format(budget.living)}'
                                   : '—',
@@ -169,17 +169,17 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                               height: AppSpacing.lg,
                             ),
                             _budgetRow(
-                              'SUBTOTAL',
+                              l10n.subtotal,
                               '$symbol ${nf.format(budget.subtotal)}',
                               AppColors.green,
                             ),
                             _budgetRow(
-                              '+ SUBSCR/MO',
+                              '+ ${l10n.subscrPerMonth}',
                               '$symbol ${nf.format(subCost)}',
                               AppColors.purple,
                             ),
                             _budgetRow(
-                              '+ DEBT/MO',
+                              '+ ${l10n.loanPerMonth}',
                               '$symbol ${nf.format(debtCost)}',
                               AppColors.gold,
                             ),
@@ -188,7 +188,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                               height: AppSpacing.lg,
                             ),
                             _budgetRow(
-                              'TOTAL BUDGET/MO',
+                              l10n.totalBudgetPerMonth,
                               '$symbol ${nf.format(budget.subtotal + subCost + debtCost)}',
                               AppColors.red,
                             ),
@@ -199,7 +199,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                                 NeoButton(
                                   label: budget.isSet
                                       ? l10n.edit
-                                      : 'SET BUDGET',
+                                      : l10n.setBudget,
                                   variant: NeoButtonVariant.secondary,
                                   onPressed: () => _startEditing(budget),
                                 ),
@@ -207,21 +207,21 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                             ),
                           ] else ...[
                             NeoInput(
-                              label: 'RENT / FIXED COSTS',
+                              label: l10n.rentFixedCosts,
                               controller: _rentCtrl,
                               keyboardType: TextInputType.number,
                               hint: '45000',
                             ),
                             const SizedBox(height: AppSpacing.md),
                             NeoInput(
-                              label: 'LIVING EXPENSES',
+                              label: l10n.livingExpenses,
                               controller: _livingCtrl,
                               keyboardType: TextInputType.number,
                               hint: '35000',
                             ),
                             const SizedBox(height: AppSpacing.xs),
                             Text(
-                              'Subscriptions + debt added automatically',
+                              l10n.subscrDebtAuto,
                               style: AppTextStyles.caption,
                             ),
                             const SizedBox(height: AppSpacing.md),
@@ -351,7 +351,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
 
                     // ── DISPLAY ───────────────────────
                     NeoCard(
-                      title: 'DISPLAY',
+                      title: l10n.display,
                       accentColor: AppColors.turkishBlue,
                       child: Consumer(
                         builder: (context, ref, _) {
@@ -362,9 +362,9 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('GLASS EFFECT',
+                                  Text(l10n.glassEffect,
                                       style: AppTextStyles.body),
-                                  Text('GPU intensive — disable on older devices',
+                                  Text(l10n.glassEffectHint,
                                       style: AppTextStyles.caption),
                                 ],
                               ),

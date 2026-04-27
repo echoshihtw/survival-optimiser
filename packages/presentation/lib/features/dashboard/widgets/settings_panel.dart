@@ -8,7 +8,7 @@ class SettingsPanel extends ConsumerWidget {
 
   static const _languages = [
     (label: 'ENGLISH', locale: Locale('en')),
-    (label: '繁中', locale: Locale('zh', 'TW')),
+    (label: '中文', locale: Locale('zh', 'TW')),
     (label: 'FRANÇAIS', locale: Locale('fr')),
     (label: '日本語', locale: Locale('ja')),
     (label: 'ESPAÑOL', locale: Locale('es')),

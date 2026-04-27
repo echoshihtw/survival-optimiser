@@ -101,7 +101,7 @@ class TransactionRow extends ConsumerWidget {
                       ),
                       if (_isPlanned) ...[
                         const SizedBox(width: AppSpacing.xs),
-                        PixelBadge(label: 'PLANNED', color: AppColors.textDim),
+                        PixelBadge(label: l10n.planned, color: AppColors.textDim),
                       ],
                     ],
                   ),

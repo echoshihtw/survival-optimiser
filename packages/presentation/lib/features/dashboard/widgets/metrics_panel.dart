@@ -21,14 +21,13 @@ class MetricsPanel extends ConsumerWidget {
     final hasActual = model.burnRate > 0;
     final hasBudget = budget != null && budget.isSet;
 
-    // Summary — total outflow (the key supporting number)
     final summary = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('TOTAL / MO', style: AppTextStyles.label),
+            Text(l10n.totalPerMonth, style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xxs),
             Text(
               '-${fmt(model.totalMonthlyOutflow)}',
@@ -39,7 +38,7 @@ class MetricsPanel extends ConsumerWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text('CASH', style: AppTextStyles.label),
+            Text(l10n.cash, style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xxs),
             Text(
               fmt(model.currentCash),
@@ -50,7 +49,6 @@ class MetricsPanel extends ConsumerWidget {
       ],
     );
 
-    // Details
     final details = Column(
       children: [
         if (hasActual)
@@ -60,7 +58,7 @@ class MetricsPanel extends ConsumerWidget {
             AppColors.red,
           ),
         if (hasBudget && !hasActual)
-          _row('BUDGET/MO', '-${fmt(budget.subtotal)}', AppColors.gold),
+          _row(l10n.budgetPerMonth, '-${fmt(budget.subtotal)}', AppColors.gold),
         if (model.subscriptionMonthlyCost > 0)
           _row(
             l10n.subscrPerMonth,
@@ -86,7 +84,7 @@ class MetricsPanel extends ConsumerWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('TOTAL / MO', style: AppTextStyles.label),
+              Text(l10n.totalPerMonth, style: AppTextStyles.label),
               Text(
                 '-${fmt(model.totalMonthlyOutflow)}',
                 style: AppTextStyles.metricSmall.copyWith(
@@ -100,7 +98,7 @@ class MetricsPanel extends ConsumerWidget {
     );
 
     return NeoExpandableCard(
-      title: 'BREAKDOWN',
+      title: l10n.breakdown,
       accentColor: SC.accentLife,
       initiallyExpanded: false,
       summary: summary,

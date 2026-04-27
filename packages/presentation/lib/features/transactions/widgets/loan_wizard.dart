@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:design_system/design_system.dart';
+import 'package:intl/intl.dart';
 import 'dart:math';
 
 class LoanWizard extends StatefulWidget {
@@ -200,7 +201,7 @@ class _LoanWizardState extends State<LoanWizard>
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
-          SlideTransition(position: _slideAnim, child: _buildStep(l10n)),
+          SlideTransition(position: _slideAnim, child: _buildStep(context, l10n)),
           const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
@@ -243,29 +244,15 @@ class _LoanWizardState extends State<LoanWizard>
     );
   }
 
-  Widget _buildStep(AppLocalizations l10n) => switch (_step) {
-    0 => _step0(l10n),
+  Widget _buildStep(BuildContext context, AppLocalizations l10n) => switch (_step) {
+    0 => _step0(context, l10n),
     1 => _step1(l10n),
     _ => _step2(l10n),
   };
 
-  Widget _step0(AppLocalizations l10n) {
-    final months = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MAY',
-      'JUN',
-      'JUL',
-      'AUG',
-      'SEP',
-      'OCT',
-      'NOV',
-      'DEC',
-    ];
-    final dateStr =
-        '${_date.day.toString().padLeft(2, "0")} ${months[_date.month - 1]} ${_date.year}';
+  Widget _step0(BuildContext context, AppLocalizations l10n) {
+    final locale = Localizations.localeOf(context).toString();
+    final dateStr = DateFormat('dd MMM yyyy', locale).format(_date).toUpperCase();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -402,7 +389,7 @@ class _LoanWizardState extends State<LoanWizard>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(l10n.computedInstallment, style: AppTextStyles.label),
-                    Text("/ MONTH", style: AppTextStyles.caption),
+                    Text(l10n.perMonth, style: AppTextStyles.caption),
                   ],
                 ),
                 Text(

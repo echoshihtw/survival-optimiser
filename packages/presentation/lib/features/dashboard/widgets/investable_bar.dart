@@ -11,6 +11,7 @@ class InvestableBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
     final nf = NumberFormat('#,##0', 'en_US');
     final investable = model.investableCash;
@@ -28,7 +29,7 @@ class InvestableBar extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('INVESTABLE', style: AppTextStyles.label),
+              Text(l10n.investable, style: AppTextStyles.label),
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 '$symbol ${nf.format(investable)}',
@@ -43,7 +44,7 @@ class InvestableBar extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('SAFETY FUND', style: AppTextStyles.label),
+              Text(l10n.safetyFund, style: AppTextStyles.label),
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 '$symbol ${nf.format(safety)}',
@@ -93,14 +94,14 @@ class InvestableBar extends ConsumerWidget {
             const SizedBox(height: AppSpacing.xs),
             Row(
               children: [
-                _dot(AppColors.gold, 'SAFETY'),
+                _dot(AppColors.gold, l10n.safety),
                 const SizedBox(width: AppSpacing.md),
-                _dot(AppColors.blue, 'INVESTABLE'),
+                _dot(AppColors.blue, l10n.investable),
               ],
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'DEPLOYABLE CAPITAL — separate from survival buffer',
+              l10n.deployableCapital,
               style: AppTextStyles.caption,
             ),
           ],
@@ -109,7 +110,7 @@ class InvestableBar extends ConsumerWidget {
     );
 
     return NeoExpandableCard(
-      title: 'INVESTABLE',
+      title: l10n.investable,
       accentColor: SC.accentNeutral,
       initiallyExpanded: false,
       summary: summary,

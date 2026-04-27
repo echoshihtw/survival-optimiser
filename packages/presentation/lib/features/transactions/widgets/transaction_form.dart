@@ -102,7 +102,8 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final dateStr = DateFormat('dd MMM yyyy').format(_date).toUpperCase();
+    final locale = Localizations.localeOf(context).toString();
+    final dateStr = DateFormat('dd MMM yyyy', locale).format(_date).toUpperCase();
 
     return Container(
       decoration: const BoxDecoration(
@@ -122,7 +123,6 @@ class _TransactionFormState extends State<TransactionForm> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Handle bar
             Center(
               child: Container(
                 width: 36,
@@ -137,14 +137,13 @@ class _TransactionFormState extends State<TransactionForm> {
 
             Text(
               widget.existing == null
-                  ? l10n.newEntry.toUpperCase()
-                  : 'EDIT ENTRY',
+                  ? l10n.newLogEntry.toUpperCase()
+                  : l10n.modifyEntry.toUpperCase(),
               style: AppTextStyles.title,
             ),
             const SizedBox(height: AppSpacing.lg),
 
-            // Type selector
-            Text('TYPE', style: AppTextStyles.label),
+            Text(l10n.type, style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xs),
             Wrap(
               spacing: AppSpacing.xs,
@@ -182,17 +181,15 @@ class _TransactionFormState extends State<TransactionForm> {
             ),
             const SizedBox(height: AppSpacing.lg),
 
-            // Amount
             NeoInput(
-              label: 'AMOUNT',
+              label: l10n.amount,
               controller: _amountCtrl,
               keyboardType: TextInputType.number,
               hint: '50,000',
             ),
             const SizedBox(height: AppSpacing.md),
 
-            // Date
-            Text('DATE', style: AppTextStyles.label),
+            Text(l10n.date, style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xs),
             GestureDetector(
               onTap: _pickDate,
@@ -221,15 +218,13 @@ class _TransactionFormState extends State<TransactionForm> {
             ),
             const SizedBox(height: AppSpacing.md),
 
-            // Note
             NeoInput(
-              label: 'NOTE (OPTIONAL)',
+              label: l10n.noteOptional,
               controller: _noteCtrl,
               hint: 'groceries, rent...',
             ),
             const SizedBox(height: AppSpacing.lg),
 
-            // Actions
             Row(
               children: [
                 Expanded(

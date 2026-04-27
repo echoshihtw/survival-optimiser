@@ -38,18 +38,16 @@ class ScenariosScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
               const SizedBox(height: AppSpacing.sm),
               Text(l10n.scenarioSimulator, style: AppTextStyles.title),
               Text(
-                'WHAT-IF ANALYSIS',
+                l10n.whatIfAnalysis,
                 style: AppTextStyles.caption.copyWith(letterSpacing: 1.5),
               ),
               const SizedBox(height: AppSpacing.xl),
 
-              // Current baseline card
               NeoCard(
-                title: 'CURRENT',
+                title: l10n.current,
                 accentColor: AppColors.green,
                 child: Column(
                   children: [
@@ -57,14 +55,14 @@ class ScenariosScreen extends ConsumerWidget {
                       children: [
                         Expanded(
                           child: _tile(
-                            'RUNWAY',
+                            l10n.runway,
                             fmtRunway(realModel.runwayMonths),
                             runwayColor(realModel.survivalStatus),
                           ),
                         ),
                         Expanded(
                           child: _tile(
-                            'TOTAL/MO',
+                            l10n.totalPerMonth,
                             '-${fmt(realModel.totalMonthlyOutflow)}',
                             AppColors.textPrimary,
                           ),
@@ -76,14 +74,14 @@ class ScenariosScreen extends ConsumerWidget {
                       children: [
                         Expanded(
                           child: _tile(
-                            'CASH',
+                            l10n.cash,
                             fmt(realModel.currentCash),
                             AppColors.textPrimary,
                           ),
                         ),
                         Expanded(
                           child: _tile(
-                            'INVESTABLE',
+                            l10n.investable,
                             fmt(realModel.investableCash),
                             AppColors.textPrimary,
                           ),
@@ -95,26 +93,20 @@ class ScenariosScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.cardGap),
 
-              // Inputs
               NeoCard(
-                title: 'SIMULATE',
+                title: l10n.simulate,
                 accentColor: AppColors.purple,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Override burn rate or add income to see impact on runway',
-                      style: AppTextStyles.caption,
-                    ),
+                    Text(l10n.simHint, style: AppTextStyles.caption),
                     const SizedBox(height: AppSpacing.md),
                     _SimInput(
                       label: l10n.burnRateOverride,
                       hint: realModel.burnRate > 0
                           ? realModel.burnRate.toStringAsFixed(0)
                           : '50000',
-                      initialValue: scenario.burnRateOverride?.toStringAsFixed(
-                        0,
-                      ),
+                      initialValue: scenario.burnRateOverride?.toStringAsFixed(0),
                       onChanged: (v) => ref
                           .read(scenarioProvider.notifier)
                           .setBurnRateOverride(double.tryParse(v)),
@@ -123,9 +115,7 @@ class ScenariosScreen extends ConsumerWidget {
                     _SimInput(
                       label: l10n.simulatedIncome,
                       hint: '0',
-                      initialValue: scenario.simulatedIncome?.toStringAsFixed(
-                        0,
-                      ),
+                      initialValue: scenario.simulatedIncome?.toStringAsFixed(0),
                       onChanged: (v) => ref
                           .read(scenarioProvider.notifier)
                           .setSimulatedIncome(double.tryParse(v)),
@@ -143,10 +133,9 @@ class ScenariosScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.cardGap),
 
-              // Results
               if (scenario.isActive && simModel != null) ...[
                 NeoCard(
-                  title: 'SIMULATION',
+                  title: l10n.simulation,
                   accentColor: AppColors.blue,
                   child: Column(
                     children: [
@@ -154,14 +143,14 @@ class ScenariosScreen extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: _tile(
-                              'SIM RUNWAY',
+                              l10n.simRunway,
                               fmtRunway(simModel.runwayMonths),
                               runwayColor(simModel.survivalStatus),
                             ),
                           ),
                           Expanded(
                             child: _tile(
-                              'SIM INVESTABLE',
+                              l10n.simInvestable,
                               fmt(simModel.investableCash),
                               AppColors.blue,
                             ),
@@ -172,7 +161,6 @@ class ScenariosScreen extends ConsumerWidget {
                       const Divider(color: AppColors.cardBorder, height: 1),
                       const SizedBox(height: AppSpacing.md),
 
-                      // Delta highlight
                       Container(
                         padding: const EdgeInsets.all(AppSpacing.md),
                         decoration: BoxDecoration(
@@ -182,17 +170,14 @@ class ScenariosScreen extends ConsumerWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('RUNWAY DELTA', style: AppTextStyles.label),
+                            Text(l10n.deltaRunway, style: AppTextStyles.label),
                             Row(
                               children: [
                                 Icon(
-                                  simModel.runwayMonths >=
-                                          realModel.runwayMonths
+                                  simModel.runwayMonths >= realModel.runwayMonths
                                       ? Icons.trending_up_rounded
                                       : Icons.trending_down_rounded,
-                                  color:
-                                      simModel.runwayMonths >=
-                                          realModel.runwayMonths
+                                  color: simModel.runwayMonths >= realModel.runwayMonths
                                       ? AppColors.green
                                       : AppColors.red,
                                   size: 16,
@@ -201,9 +186,7 @@ class ScenariosScreen extends ConsumerWidget {
                                 Text(
                                   '${simModel.runwayMonths > realModel.runwayMonths ? "+" : ""}${simModel.runwayMonths - realModel.runwayMonths} MO',
                                   style: AppTextStyles.metric.copyWith(
-                                    color:
-                                        simModel.runwayMonths >=
-                                            realModel.runwayMonths
+                                    color: simModel.runwayMonths >= realModel.runwayMonths
                                         ? AppColors.green
                                         : AppColors.red,
                                   ),
@@ -237,7 +220,7 @@ class ScenariosScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
-                          'Enter values above to simulate',
+                          l10n.enterValuesToSim,
                           style: AppTextStyles.bodySmall,
                           textAlign: TextAlign.center,
                         ),

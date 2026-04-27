@@ -22,7 +22,6 @@ class TransactionsScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.lg,
@@ -37,20 +36,20 @@ class TransactionsScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(l10n.transactionLog, style: AppTextStyles.title),
-                      Text('HISTORY & ENTRIES', style: AppTextStyles.caption),
+                      Text(l10n.historyEntries, style: AppTextStyles.caption),
                     ],
                   ),
                   Row(
                     children: [
                       NeoButton(
-                        label: 'LOAN',
+                        label: l10n.typeLoan,
                         variant: NeoButtonVariant.secondary,
                         color: AppColors.gold,
                         onPressed: () => _showLoanWizard(context, ref),
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       NeoButton(
-                        label: '+ ADD',
+                        label: l10n.addEntry,
                         variant: NeoButtonVariant.primary,
                         onPressed: () => _showForm(context, ref, null),
                       ),
@@ -61,7 +60,6 @@ class TransactionsScreen extends ConsumerWidget {
             ),
             const Divider(color: AppColors.cardBorder, height: 1),
 
-            // List
             Expanded(
               child: asyncTxs.when(
                 loading: () => const Center(
@@ -238,7 +236,7 @@ class TransactionsScreen extends ConsumerWidget {
             if (tx.type == TransactionType.loan) ...[
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Will also remove from liabilities',
+                l10n.willRemoveLoan,
                 style: AppTextStyles.caption.copyWith(color: AppColors.gold),
               ),
             ],
@@ -247,7 +245,7 @@ class TransactionsScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('Cancel', style: AppTextStyles.body),
+            child: Text(l10n.cancel, style: AppTextStyles.body),
           ),
           TextButton(
             onPressed: () async {
@@ -258,7 +256,7 @@ class TransactionsScreen extends ConsumerWidget {
               }
             },
             child: Text(
-              'Delete',
+              l10n.delete,
               style: AppTextStyles.body.copyWith(color: AppColors.red),
             ),
           ),

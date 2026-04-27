@@ -28,13 +28,12 @@ class SubscriptionsPanel extends ConsumerWidget {
     final showCatLabel = hasPersonal && hasBusiness;
 
     final summary = active.isEmpty
-        ? Text('No active subscriptions',
-            style: AppTextStyles.bodySmall)
+        ? Text(l10n.noSubscriptions, style: AppTextStyles.bodySmall)
         : Row(children: [
             Expanded(child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('SUBSCR/MO', style: AppTextStyles.label),
+                Text(l10n.subscrPerMonth, style: AppTextStyles.label),
                 const SizedBox(height: AppSpacing.xxs),
                 Text('$symbol ${nf.format(monthly)}',
                     style: AppTextStyles.metric
@@ -44,7 +43,7 @@ class SubscriptionsPanel extends ConsumerWidget {
             Expanded(child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('SUBSCR/YR', style: AppTextStyles.label),
+                Text(l10n.subscrPerYear, style: AppTextStyles.label),
                 const SizedBox(height: AppSpacing.xxs),
                 Text('$symbol ${nf.format(yearly)}',
                     style: AppTextStyles.metric
@@ -56,7 +55,7 @@ class SubscriptionsPanel extends ConsumerWidget {
     final details = Column(
       children: [
         NeoButton(
-          label: '+ SUBSCRIPTION',
+          label: l10n.newSubscription,
           variant: NeoButtonVariant.ghost,
           fullWidth: true,
           onPressed: () => _showForm(context, ref, null),
@@ -134,8 +133,8 @@ class SubscriptionsPanel extends ConsumerWidget {
     );
   }
 
-  void _delete(BuildContext context, WidgetRef ref,
-      Subscription sub) {
+  void _delete(BuildContext context, WidgetRef ref, Subscription sub) {
+    final l10n = context.l10n;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -143,14 +142,14 @@ class SubscriptionsPanel extends ConsumerWidget {
         shape: RoundedRectangleBorder(
             borderRadius:
                 BorderRadius.circular(AppSpacing.cardRadius)),
-        title: Text('Remove?', style: AppTextStyles.title),
+        title: Text(l10n.removeConfirm, style: AppTextStyles.title),
         content: Text(sub.name,
             style: AppTextStyles.body
                 .copyWith(color: AppColors.purple)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('Cancel', style: AppTextStyles.body),
+            child: Text(l10n.cancel, style: AppTextStyles.body),
           ),
           TextButton(
             onPressed: () async {
@@ -159,7 +158,7 @@ class SubscriptionsPanel extends ConsumerWidget {
                   .read(deleteSubscriptionUseCaseProvider)
                   .execute(sub.id);
             },
-            child: Text('Remove',
+            child: Text(l10n.remove,
                 style: AppTextStyles.body
                     .copyWith(color: AppColors.hotPink)),
           ),
@@ -188,6 +187,7 @@ class _SubRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n      = context.l10n;
     final days      = sub.daysUntilNextBilling;
     final daysColor = days <= 7
         ? AppColors.hotPink
@@ -207,7 +207,6 @@ class _SubRow extends StatelessWidget {
           ),
         ),
         child: Row(children: [
-          // Purple dot — all subscriptions same color
           Container(
             width: 6, height: 6,
             decoration: BoxDecoration(
@@ -224,7 +223,6 @@ class _SubRow extends StatelessWidget {
                 Row(children: [
                   Text(sub.name.toUpperCase(),
                       style: AppTextStyles.body),
-                  // Category tag — only when both exist
                   if (showCategoryLabel) ...[
                     const SizedBox(width: AppSpacing.xs),
                     Container(
@@ -239,10 +237,9 @@ class _SubRow extends StatelessWidget {
                                 .withAlpha(60)),
                       ),
                       child: Text(
-                        sub.category ==
-                                SubscriptionCategory.personal
-                            ? 'PERSONAL'
-                            : 'BUSINESS',
+                        sub.category == SubscriptionCategory.personal
+                            ? l10n.personal
+                            : l10n.business,
                         style: AppTextStyles.caption.copyWith(
                             color: AppColors.purple,
                             fontSize: 9),
@@ -260,7 +257,6 @@ class _SubRow extends StatelessWidget {
               ],
             ),
           ),
-          // Days until billing
           Text(
             '$days d',
             style: AppTextStyles.caption

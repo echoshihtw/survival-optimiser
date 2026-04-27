@@ -77,9 +77,7 @@ class LoanCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             _row(
               l10n.remaining,
-              summary.isFullyPaid
-                  ? '✓ PAID'
-                  : nf.format(summary.remainingBalance),
+              summary.isFullyPaid ? l10n.paid : nf.format(summary.remainingBalance),
               color,
             ),
 

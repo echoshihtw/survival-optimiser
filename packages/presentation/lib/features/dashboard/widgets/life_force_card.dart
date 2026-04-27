@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_system/design_system.dart';
 import 'package:domain/domain.dart';
 import 'package:application/application.dart';
+import '../../share/share_screen.dart';
 import 'package:intl/intl.dart';
 
 class LifeForceCard extends ConsumerWidget {
@@ -15,6 +16,7 @@ class LifeForceCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
     final nf = NumberFormat('#,##0', 'en_US');
     final status = model.survivalStatus;
@@ -25,9 +27,9 @@ class LifeForceCard extends ConsumerWidget {
       SurvivalStatus.critical => AppColors.red,
     };
     final statusLabel = switch (status) {
-      SurvivalStatus.stable => 'STABLE',
-      SurvivalStatus.caution => 'CAUTION',
-      SurvivalStatus.critical => 'CRITICAL',
+      SurvivalStatus.stable => l10n.stable,
+      SurvivalStatus.caution => l10n.caution,
+      SurvivalStatus.critical => l10n.critical,
     };
 
     final charge = model.runwayMonths >= 9999
@@ -50,84 +52,111 @@ class LifeForceCard extends ConsumerWidget {
     String fmtDate(DateTime? d) =>
         d == null ? '—' : DateFormat('MMM yyyy').format(d).toUpperCase();
 
+    final shareButton = GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const ShareScreen()),
+      ),
+      child: Container(
+        width: 32,
+        height: 32,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.neonGreen.withAlpha(12),
+          borderRadius: BorderRadius.circular(50),
+          border: Border.all(color: AppColors.neonGreen.withAlpha(40)),
+        ),
+        child: Icon(Icons.ios_share_rounded,
+            color: AppColors.neonGreen, size: 15),
+      ),
+    );
+
     final glassEnabled = ref.watch(displayProvider).value ?? false;
     return LiquidGlassContainer(
       glassEnabled: glassEnabled,
       accentColor: color,
-      child: Column(
+      child: Stack(
         children: [
-          const SizedBox(height: AppSpacing.sm),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
+          Column(
             children: [
-              Text(
-                fmtRunway(model.runwayMonths),
-                style: AppTextStyles.heroLarge.copyWith(
-                  color: color,
-                  fontSize: 72,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                child: Text(
-                  ' ${fmtRunwayUnit(model.runwayMonths)}',
-                  style: AppTextStyles.metric.copyWith(
-                    color: color.withAlpha(180),
+              const SizedBox(height: AppSpacing.sm),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    fmtRunway(model.runwayMonths),
+                    style: AppTextStyles.heroLarge.copyWith(
+                      color: color,
+                      fontSize: 72,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Courier New',
+                    ),
                   ),
-                ),
+                  Text(
+                    ' ${fmtRunwayUnit(model.runwayMonths)}',
+                    style: AppTextStyles.metric.copyWith(
+                      color: color.withAlpha(180),
+                      fontFamily: 'Courier New',
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          Text(
-            'RUNWAY',
-            style: AppTextStyles.sectionTitle.copyWith(letterSpacing: 3),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          PixelBadge(label: statusLabel, color: color),
-          const SizedBox(height: AppSpacing.xl),
-          PixelBar(value: charge, color: color, segments: 24, height: 6),
-          const SizedBox(height: AppSpacing.xs),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('SURVIVAL CHARGE', style: AppTextStyles.caption),
               Text(
-                '$chargePercent%',
-                style: AppTextStyles.caption.copyWith(color: color),
+                l10n.runway,
+                style: AppTextStyles.sectionTitle.copyWith(letterSpacing: 3),
               ),
+              const SizedBox(height: AppSpacing.sm),
+              PixelBadge(label: statusLabel, color: color),
+              const SizedBox(height: AppSpacing.xl),
+              PixelBar(value: charge, color: color, segments: 24, height: 6),
+              const SizedBox(height: AppSpacing.xs),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(l10n.survivalCharge, style: AppTextStyles.caption),
+                  Text(
+                    '$chargePercent%',
+                    style: AppTextStyles.caption.copyWith(color: color),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Divider(color: Colors.white.withAlpha(15), height: 1),
+              const SizedBox(height: AppSpacing.md),
+              Row(
+                children: [
+                  Expanded(
+                    child: _stat(
+                      l10n.cash,
+                      '$symbol ${nf.format(model.currentCash)}',
+                      AppColors.green,
+                    ),
+                  ),
+                  Expanded(
+                    child: _stat(
+                      l10n.runOut,
+                      fmtDate(model.runOutDate),
+                      AppColors.textSecondary,
+                    ),
+                  ),
+                  Expanded(
+                    child: _stat(
+                      l10n.totalPerMonth,
+                      '-$symbol ${nf.format(model.totalMonthlyOutflow)}',
+                      AppColors.red,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.xs),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
-          Divider(color: Colors.white.withAlpha(15), height: 1),
-          const SizedBox(height: AppSpacing.md),
-          Row(
-            children: [
-              Expanded(
-                child: _stat(
-                  'CASH',
-                  '$symbol ${nf.format(model.currentCash)}',
-                  AppColors.green,
-                ),
-              ),
-              Expanded(
-                child: _stat(
-                  'RUN OUT',
-                  fmtDate(model.runOutDate),
-                  AppColors.textSecondary,
-                ),
-              ),
-              Expanded(
-                child: _stat(
-                  'TOTAL/MO',
-                  '-$symbol ${nf.format(model.totalMonthlyOutflow)}',
-                  AppColors.red,
-                ),
-              ),
-            ],
+          Positioned(
+            top: 0,
+            right: 0,
+            child: shareButton,
           ),
-          const SizedBox(height: AppSpacing.xs),
         ],
       ),
     );
@@ -186,7 +215,6 @@ class _LiquidGlassCardState extends State<_LiquidGlassCard>
       animation: _ctrl,
       builder: (_, child) => Stack(
         children: [
-          // Layer 1 — backdrop blur (refraction base)
           ClipRRect(
             borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
             child: BackdropFilter(
@@ -200,7 +228,6 @@ class _LiquidGlassCardState extends State<_LiquidGlassCard>
             ),
           ),
 
-          // Layer 2 — glass body with volume
           CustomPaint(
             painter: _GlassBodyPainter(
               t: _ctrl.value,
@@ -209,7 +236,6 @@ class _LiquidGlassCardState extends State<_LiquidGlassCard>
             ),
           ),
 
-          // Layer 3 — content
           ClipRRect(
             borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
             child: Container(
@@ -222,7 +248,6 @@ class _LiquidGlassCardState extends State<_LiquidGlassCard>
             ),
           ),
 
-          // Layer 4 — specular rim on top (painted last)
           CustomPaint(
             painter: _GlassRimPainter(
               t: _ctrl.value,
@@ -236,7 +261,6 @@ class _LiquidGlassCardState extends State<_LiquidGlassCard>
   }
 }
 
-// ── Glass body — fills the card with glass volume ─────────────
 class _GlassBodyPainter extends CustomPainter {
   final double t;
   final Color accentColor;
@@ -253,13 +277,11 @@ class _GlassBodyPainter extends CustomPainter {
     final rect = Offset.zero & size;
     final rrect = RRect.fromRectAndRadius(rect, Radius.circular(radius));
 
-    // Base glass fill — semi-transparent dark
     canvas.drawRRect(
       rrect,
       Paint()..color = const Color(0xFF111318).withAlpha(200),
     );
 
-    // Inner light scatter — top half brighter (light enters top)
     canvas.drawRRect(
       rrect,
       Paint()
@@ -275,7 +297,6 @@ class _GlassBodyPainter extends CustomPainter {
         ).createShader(rect),
     );
 
-    // Accent tint — very subtle color from status
     canvas.drawRRect(
       rrect,
       Paint()
@@ -286,7 +307,6 @@ class _GlassBodyPainter extends CustomPainter {
         ).createShader(rect),
     );
 
-    // Inner shadow — depth at bottom
     canvas.drawRRect(
       rrect,
       Paint()
@@ -298,7 +318,6 @@ class _GlassBodyPainter extends CustomPainter {
         ).createShader(rect),
     );
 
-    // Animated shimmer — slow moving light inside glass
     final shimmerX = 0.5 + cos(t * 2 * pi) * 0.3;
     final shimmerY = 0.3 + sin(t * pi) * 0.2;
     canvas.drawRRect(
@@ -321,7 +340,6 @@ class _GlassBodyPainter extends CustomPainter {
   bool shouldRepaint(_GlassBodyPainter old) => old.t != t;
 }
 
-// ── Glass rim — the edge specular ring ────────────────────────
 class _GlassRimPainter extends CustomPainter {
   final double t;
   final double radius;
@@ -333,7 +351,6 @@ class _GlassRimPainter extends CustomPainter {
     final rect = Offset.zero & size;
     final rrect = RRect.fromRectAndRadius(rect, Radius.circular(radius));
 
-    // Outer border — gradient sweep simulating glass thickness
     canvas.drawRRect(
       rrect,
       Paint()
@@ -341,22 +358,21 @@ class _GlassRimPainter extends CustomPainter {
         ..strokeWidth = 1.2
         ..shader = SweepGradient(
           center: Alignment.topLeft,
-          startAngle: -pi * 0.25, // 45° — light from upper left
+          startAngle: -pi * 0.25,
           endAngle: -pi * 0.25 + pi * 2,
           stops: const [0.0, 0.08, 0.25, 0.5, 0.75, 0.92, 1.0],
           colors: [
-            Colors.white.withAlpha(180), // top-left — peak specular
-            Colors.white.withAlpha(80), // upper edge bright
-            Colors.white.withAlpha(20), // top-right fade
-            Colors.white.withAlpha(8), // bottom-right dark
-            Colors.white.withAlpha(12), // bottom-left slight bounce
-            Colors.white.withAlpha(60), // left edge — secondary
-            Colors.white.withAlpha(180), // back to peak
+            Colors.white.withAlpha(180),
+            Colors.white.withAlpha(80),
+            Colors.white.withAlpha(20),
+            Colors.white.withAlpha(8),
+            Colors.white.withAlpha(12),
+            Colors.white.withAlpha(60),
+            Colors.white.withAlpha(180),
           ],
         ).createShader(rect),
     );
 
-    // Inner rim — 1px inset, softer
     final innerRRect = RRect.fromRectAndRadius(
       Rect.fromLTWH(1, 1, size.width - 2, size.height - 2),
       Radius.circular(radius - 1),
@@ -380,7 +396,6 @@ class _GlassRimPainter extends CustomPainter {
         ).createShader(Rect.fromLTWH(1, 1, size.width - 2, size.height - 2)),
     );
 
-    // Top edge highlight — thin bright line
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(radius * 0.3, 0, size.width - radius * 0.6, 1),

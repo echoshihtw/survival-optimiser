@@ -20,14 +20,14 @@ class LiabilitiesPanel extends ConsumerWidget {
     final active = summaries.where((s) => s.loan.isActive).toList();
 
     final summary = active.isEmpty
-        ? Text('No active loans', style: AppTextStyles.bodySmall)
+        ? Text(l10n.noActiveLoans, style: AppTextStyles.bodySmall)
         : Row(
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('DEBT/MO', style: AppTextStyles.label),
+                    Text(l10n.loanPerMonth, style: AppTextStyles.label),
                     const SizedBox(height: AppSpacing.xxs),
                     Text(
                       '$symbol ${nf.format(total)}',
@@ -42,10 +42,10 @@ class LiabilitiesPanel extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('LOANS', style: AppTextStyles.label),
+                    Text(l10n.loans, style: AppTextStyles.label),
                     const SizedBox(height: AppSpacing.xxs),
                     Text(
-                      '${active.length} ACTIVE',
+                      l10n.activeCount(active.length),
                       style: AppTextStyles.metric.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -83,6 +83,7 @@ class LiabilitiesPanel extends ConsumerWidget {
   }
 
   void _showRepay(BuildContext context, WidgetRef ref, LoanSummary summary) {
+    final l10n = context.l10n;
     final amountCtrl = TextEditingController(
       text: summary.loan.monthlyPayment.toStringAsFixed(0),
     );
@@ -108,7 +109,7 @@ class LiabilitiesPanel extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'REPAY LOAN',
+              l10n.repayLoan,
               style: AppTextStyles.title.copyWith(color: SC.numberPrimary),
             ),
             const SizedBox(height: AppSpacing.xs),
@@ -118,7 +119,7 @@ class LiabilitiesPanel extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             NeoInput(
-              label: 'REPAYMENT AMOUNT',
+              label: l10n.repaymentAmount,
               controller: amountCtrl,
               keyboardType: TextInputType.number,
               hint: summary.loan.monthlyPayment.toStringAsFixed(0),
@@ -128,7 +129,7 @@ class LiabilitiesPanel extends ConsumerWidget {
               children: [
                 Expanded(
                   child: NeoButton(
-                    label: 'CONFIRM',
+                    label: l10n.confirm,
                     variant: NeoButtonVariant.primary,
                     color: AppColors.gold,
                     fullWidth: true,
@@ -143,7 +144,7 @@ class LiabilitiesPanel extends ConsumerWidget {
                         type: TransactionType.repayment,
                         amount: Money(amount),
                         loanId: summary.loan.id,
-                        note: 'Repayment — ${summary.loan.name}',
+                        note: '${l10n.repay} — ${summary.loan.name}',
                         createdAt: now,
                         updatedAt: now,
                       );
@@ -154,7 +155,7 @@ class LiabilitiesPanel extends ConsumerWidget {
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: NeoButton(
-                    label: 'CANCEL',
+                    label: l10n.cancel,
                     variant: NeoButtonVariant.ghost,
                     fullWidth: true,
                     onPressed: () => Navigator.of(ctx).pop(),
