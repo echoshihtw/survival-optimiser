@@ -49,6 +49,13 @@ class SurvivalApp extends ConsumerWidget {
       localeResolutionCallback: (deviceLocale, supportedLocales) {
         if (locale != null) return locale;
         if (deviceLocale == null) return const Locale('en');
+        // Prefer exact match (language + country) first, then language-only.
+        for (final supported in supportedLocales) {
+          if (supported.languageCode == deviceLocale.languageCode &&
+              supported.countryCode == deviceLocale.countryCode) {
+            return supported;
+          }
+        }
         for (final supported in supportedLocales) {
           if (supported.languageCode == deviceLocale.languageCode) {
             return supported;
