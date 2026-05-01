@@ -1,0 +1,281 @@
+# AWARENESS — Development Contracts
+
+> These contracts define the rules, decisions, and constraints that govern development. Every contributor (human or AI) must read and follow these before making changes.
+
+---
+
+## 1. Product Contract
+
+### 1.1 Purpose
+Awareness is a **personal financial survival tool**, not a budgeting app, not a portfolio tracker. Every feature must answer: *does this help the user know how long they can survive?*
+
+### 1.2 The One Number
+Runway is the hero metric. It is always the largest, most prominent number on screen. Nothing competes with it.
+
+### 1.3 First Principles Rule
+Before adding a feature, ask:
+1. Does this serve the survival question?
+2. Can the user understand it without a tutorial?
+3. Does it add data or add noise?
+
+If the answer to (1) is no, don't build it. If (2) is no, redesign it. If (3) is noise, cut it.
+
+### 1.4 Simplicity Contract
+> "If it needs a manual, it's not intuitive enough."
+
+UX decisions must favor clarity over completeness. One rough number the user understands beats a precise number they have to think about.
+
+---
+
+## 2. Architecture Contracts
+
+### 2.1 Layer Boundaries
+```
+presentation → application → domain ← data
+```
+- `domain` has zero Flutter dependencies
+- `data` only knows about `domain` interfaces
+- `presentation` never imports `data` directly
+- `application` providers are the only bridge
+
+Violations will break compile-time enforcement.
+
+### 2.2 No Business Logic in Presentation
+All financial calculations live in `domain/lib/logic/`. Presentation only formats and displays. If you find yourself doing math in a widget, move it to the domain.
+
+### 2.3 Repository Pattern
+All data access goes through repository interfaces defined in `domain`. No direct database calls from application or presentation layers.
+
+### 2.4 Codegen
+Run `make gen` after any change to:
+- Drift table definitions
+- Riverpod providers with `@riverpod` annotation
+
+Never commit stale `.g.dart` files.
+
+---
+
+## 3. Domain Contracts
+
+### 3.1 Burn Rate Formula
+```dart
+effectiveBurn = max(actualSpending, budgetEstimate) + subscriptions + debt
+```
+- `actualSpending` = average `grossOutflow` from transaction history
+- `grossOutflow` excludes: income, loan inflows, investments
+- `budgetEstimate` = rent + living (user-defined floor)
+- Budget is a floor, never a ceiling — reality always wins when over
+
+### 3.2 Runway Calculation
+- No arbitrary cap — calculate mathematically beyond projection window
+- `runwayMonths = projectedMonths + (lastBalance / burnRate).floor()`
+- `runOutDate` = null only when burn rate is zero
+
+### 3.3 Investable Calculation
+```dart
+safetyMonths = clamp(runwayMonths / 2, 6, 18)  // adaptive buffer
+safetyCash   = effectiveBurn * safetyMonths
+surplus      = currentCash - safetyCash
+riskCapacity = clamp((runwayMonths - safetyMonths) / safetyMonths, 0, 1)
+investable   = max(0, surplus × riskCapacity × pressureFactor)
+```
+Two pockets: SAFETY FUND (locked) and INVESTABLE (deployable). Never mix them.
+
+### 3.4 Investment Transactions
+Investment transactions reduce cash balance but are excluded from burn rate calculation. They are not expenses.
+
+### 3.5 Subscription Normalization
+All billing cycles normalize to monthly equivalent:
+- Weekly: `amount × 52 / 12`
+- Monthly: `amount`
+- Quarterly: `amount / 3`
+- Yearly: `amount / 12`
+
+### 3.6 Loan Months Remaining
+Uses `originalTermMonths - elapsed` — not `remainingBalance / monthlyPayment`. This ensures interest-bearing loans show accurate remaining term.
+
+---
+
+## 4. UI/UX Contracts
+
+### 4.1 Color System
+**Never use raw `AppColors.*` in presentation layer. Always use `SC.*` (semantic colors).**
+
+| Semantic | Color | Used For |
+|---|---|---|
+| `SC.life` / Mint | `#8FDDAA` | Cash, runway, stable status, survival charge |
+| `SC.cost` / Pink | `#E8829E` | Total outflow, burn, critical status |
+| `SC.subscr` / Purple | `#BB6DFF` | Subscriptions ONLY |
+| `SC.chrome` / Gold | `#CB9A3E` | Debt, loan obligations |
+| Turkish Blue | `#5B9DC4` | UI structure, investable, neutral |
+| Smoke | `#CDD5E0` | All other numbers — neutral facts |
+
+**Rule:** Color = semantic meaning, not decoration. Color a number only when it represents a distinct mental category.
+
+### 4.2 Typography Hierarchy
+- **Numbers/values** → JetBrains Mono (gaming soul)
+- **Labels/titles** → Inter (clean, modern)
+- **Hero number** (runway) → 72px, bold
+- **Metric numbers** → 20px
+- **Labels** → 11px, ALL CAPS, 1.0 letter spacing
+
+### 4.3 Layout Rules
+- Runway is always the hero — largest, most prominent, center-top
+- Cards are expandable — key metrics always visible, details collapsed
+- Section accent bar color = section identity (thin left bar)
+- No more than 3 accent colors visible at once on screen
+
+### 4.4 Component Rules
+- Use `NeoButton` not `TerminalButton` for new UI
+- Use `NeoInput` not `TerminalInput` for new UI
+- Use `NeoCard` / `NeoExpandableCard` for all card containers
+- Use `SC.*` for all colors in presentation layer
+- Pill-shaped buttons (borderRadius: 50) for actions
+- Round-corner cards (borderRadius: 16) for containers
+
+### 4.5 Navigation
+Three tabs only:
+- **HUD** — main dashboard, survival overview
+- **LOG** — transaction history and entry
+- **SIM** — scenario simulator
+
+No new top-level tabs without strong justification.
+
+---
+
+## 5. Data Contracts
+
+### 5.1 Schema Versioning
+Current schema version: **4**
+
+| Version | Change |
+|---|---|
+| 1 | Initial: transactions table |
+| 2 | Added: loanId to transactions, loans table |
+| 3 | Added: subscriptions table |
+| 4 | Added: originalTermMonths to loans |
+
+Every schema change requires a migration in `MigrationStrategy`.
+
+### 5.2 Opening Balance
+Opening balance transactions are handled specially:
+- Excluded from monthly aggregation loop
+- Summed as starting cash before regular transactions
+- If only opening balance exists → return synthetic MonthlyState
+
+### 5.3 Transaction Types
+```dart
+enum TransactionType {
+  expense,        // reduces cash, counts in burn rate
+  income,         // increases cash
+  loan,           // increases cash (loan proceeds)
+  investment,     // reduces cash, EXCLUDED from burn rate
+  repayment,      // reduces cash, counts in burn rate
+  openingBalance, // sets starting cash
+}
+```
+
+---
+
+## 6. Localization Contracts
+
+### 6.1 Supported Languages
+EN, 繁中 (zh_TW), FR, JA, ES, IT
+
+### 6.2 ARB Files Location
+`packages/design_system/lib/l10n/`
+
+### 6.3 Adding New Strings
+1. Add to all 7 ARB files
+2. Run `make gen-l10n`
+3. Never hardcode user-facing strings in Dart files
+
+### 6.4 No `//` Prefixes in Strings
+ARB values must not contain `//` prefixes. They are for display only.
+
+---
+
+## 7. Testing Contracts
+
+### 7.1 Domain Tests Required
+All domain logic changes require corresponding tests in `packages/domain/test/`.
+
+### 7.2 Test Coverage Areas
+- `MonthlyAggregator` — always test edge cases (empty, opening only, mixed)
+- `SurvivalEngine` — always test status thresholds and runway math
+- `LoanEngine` — always test months remaining calculation
+- New domain logic → new test file
+
+### 7.3 Test Command
+```bash
+cd packages/domain && dart test
+```
+All 39+ tests must pass before any commit.
+
+---
+
+## 8. Git Contracts
+
+### 8.1 Commit Message Format
+```
+feat: description of new feature
+fix: description of bug fix
+refactor: code change without behavior change
+style: visual/UI changes
+test: adding or updating tests
+chore: build, deps, config changes
+```
+
+### 8.2 Branch Strategy
+- `main` — production ready
+- `develop` — integration branch
+- Feature branches → PR to `develop`
+- Releases → `develop` to `main` via PR
+
+### 8.3 Pre-commit Checklist
+```bash
+make precommit  # runs lint + tests
+```
+Never commit with failing tests or errors (warnings OK).
+
+---
+
+## 9. Future Development Guidelines
+
+### 9.1 Before Adding a Feature
+Answer these questions:
+1. Does it serve the survival question?
+2. Where does it live in Clean Architecture?
+3. Does it need a new domain entity or extend an existing one?
+4. What are the edge cases?
+5. What tests are needed?
+
+### 9.2 Planned Features (Prioritized)
+1. **Onboarding** — 3-screen intro + guided first action (opening balance)
+2. **Planned expenses** — future-dated transactions already work; just add PLANNED visual tag
+3. **Cloud sync** — Supabase backend, same Flutter codebase
+4. **Web support** — replace sqlite3 with drift web backend
+5. **Notifications** — subscription renewal alerts, runway warnings
+
+### 9.3 Never Build
+- Complex category budgeting (defeats simplicity)
+- Social/sharing features (personal survival data)
+- Investment portfolio tracking (out of scope)
+- Automatic bank sync (privacy, complexity)
+
+---
+
+## 10. Decision Log
+
+| Date | Decision | Reason |
+|---|---|---|
+| 2026-04 | No investment in burn rate | Investment ≠ expense, would inflate burn |
+| 2026-04 | Adaptive safety buffer (6-18mo) | Balance conservative vs aggressive |
+| 2026-04 | max(actual, budget) formula | Reality wins, budget is floor not ceiling |
+| 2026-04 | Mathematical runway (no 120mo cap) | Artificial caps mislead users |
+| 2026-04 | Two pockets (safety + investable) | Mental model clarity |
+| 2026-04 | JetBrains Mono for numbers | Gaming soul, readability |
+| 2026-04 | Color = semantic meaning only | Reduce visual noise |
+| 2026-04 | Runway as hero metric | App purpose = survival timer |
+| 2026-04 | No portfolio tracking | Out of scope, different mental model |
+| 2026-04 | Subscription normalized to monthly | Apples-to-apples comparison |
