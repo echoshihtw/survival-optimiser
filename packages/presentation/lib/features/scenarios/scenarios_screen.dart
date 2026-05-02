@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_system/design_system.dart';
 import 'package:application/application.dart';
+import '../paywall/paywall_screen.dart';
 import 'package:domain/domain.dart';
 import 'package:intl/intl.dart';
 
@@ -100,33 +101,36 @@ class ScenariosScreen extends ConsumerWidget {
                           ? realModel.burnRate.toStringAsFixed(0)
                           : '50000',
                       initialValue: scenario.burnRateOverride?.toStringAsFixed(0),
-                      onChanged: (v) => ref
-                          .read(scenarioProvider.notifier)
-                          .setBurnRateOverride(double.tryParse(v)),
+                      onChanged: (v) => ref.read(scenarioProvider.notifier).setBurnRateOverride(double.tryParse(v)),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     _SimInput(
                       label: l10n.simulatedIncome,
                       hint: '0',
                       initialValue: scenario.simulatedIncome?.toStringAsFixed(0),
-                      onChanged: (v) => ref
-                          .read(scenarioProvider.notifier)
-                          .setSimulatedIncome(double.tryParse(v)),
+                      onChanged: (v) => ref.read(scenarioProvider.notifier).setSimulatedIncome(double.tryParse(v)),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     NeoButton(
                       label: l10n.resetSim,
                       variant: NeoButtonVariant.ghost,
                       fullWidth: true,
-                      onPressed: () =>
-                          ref.read(scenarioProvider.notifier).reset(),
+                      onPressed: () {
+                        final isPro = ref.read(entitlementProvider).value?.isPro ?? false;
+                        final isActive = ref.read(scenarioProvider).isActive;
+                        if (!isPro && isActive) {
+                          showPaywall(context, trigger: 'simulation');
+                          return;
+                        }
+                        ref.read(scenarioProvider.notifier).reset();
+                      },
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: AppSpacing.cardGap),
 
-              if (scenario.isActive && simModel != null) ...[
+              if (scenario.isActive && simModel != null && realModel.currentCash > 0) ...[
                 NeoCard(
                   title: l10n.simulation,
                   accentColor: AppColors.blue,
@@ -185,7 +189,28 @@ class ScenariosScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-              ] else ...[
+              ] else if (realModel.currentCash == 0) ...[
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.xl),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+                  border: Border.all(color: AppColors.cardBorder),
+                ),
+                child: Column(children: [
+                  const Icon(Icons.account_balance_wallet_outlined,
+                      color: AppColors.textDim, size: 32),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text('Add your opening balance first',
+                      style: AppTextStyles.bodySmall,
+                      textAlign: TextAlign.center),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text('Go to LOG → + ADD → Opening Balance',
+                      style: AppTextStyles.caption,
+                      textAlign: TextAlign.center),
+                ]),
+              ),
+            ] else ...[
                 Container(
                   padding: const EdgeInsets.all(AppSpacing.xl),
                   decoration: BoxDecoration(

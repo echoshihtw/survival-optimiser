@@ -8,6 +8,7 @@ import 'package:domain/domain.dart';
 import 'widgets/transaction_row.dart';
 import 'widgets/transaction_form.dart';
 import 'widgets/loan_wizard.dart';
+import '../paywall/paywall_screen.dart';
 
 class TransactionsScreen extends ConsumerWidget {
   final bool openAddOnLoad;
@@ -126,6 +127,15 @@ class TransactionsScreen extends ConsumerWidget {
   }
 
   void _showLoanWizard(BuildContext context, WidgetRef ref) {
+    // Free users can only have 1 loan
+    final isPro = ref.read(entitlementProvider).value?.isPro ?? false;
+    if (!isPro) {
+      final loans = ref.read(loansProvider).value ?? [];
+      if (loans.isNotEmpty) {
+        showPaywall(context, trigger: 'loan_limit');
+        return;
+      }
+    }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
