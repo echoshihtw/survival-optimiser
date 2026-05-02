@@ -6,6 +6,7 @@ import 'package:application/application.dart';
 import 'package:domain/domain.dart';
 import 'package:intl/intl.dart';
 import 'subscription_form.dart';
+import '../paywall/pro_locked_card.dart';
 
 class SubscriptionsPanel extends ConsumerWidget {
   const SubscriptionsPanel({super.key});
@@ -13,6 +14,7 @@ class SubscriptionsPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n   = context.l10n;
+    final isPro  = ref.watch(entitlementProvider).value?.isPro ?? false;
     final subs   = ref.watch(subscriptionsProvider).value ?? [];
     final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
     final nf     = NumberFormat('#,##0', 'en_US');
@@ -73,6 +75,15 @@ class SubscriptionsPanel extends ConsumerWidget {
         ],
       ],
     );
+
+    // PRO gate — subscriptions is a pro feature
+    if (!isPro) {
+      return ProLockedCard(
+        title: l10n.subscriptions,
+        accentColor: AppColors.purple,
+        feature: 'subscriptions',
+      );
+    }
 
     return NeoExpandableCard(
       title: l10n.subscriptions,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_system/design_system.dart';
-import 'package:application/application.dart';
 
 class PaywallScreen extends ConsumerWidget {
   final String trigger;
@@ -9,8 +8,6 @@ class PaywallScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final entitlement = ref.watch(entitlementProvider).value;
-
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surface,
@@ -52,38 +49,7 @@ class PaywallScreen extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.md),
 
-          if (entitlement != null && !entitlement.isPro) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceHigh,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('FREE ENTRIES TODAY',
-                      style: AppTextStyles.label),
-                  Row(children: List.generate(
-                    entitlement.dailyTxLimit,
-                    (i) => Container(
-                      width: 10, height: 10,
-                      margin: const EdgeInsets.only(left: AppSpacing.xs),
-                      decoration: BoxDecoration(
-                        color: i < entitlement.dailyTxCount
-                            ? AppColors.hotPink
-                            : AppColors.neonGreen.withAlpha(40),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                  )),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-          ],
+
 
           ..._proFeatures.map((f) => Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -136,11 +102,11 @@ class PaywallScreen extends ConsumerWidget {
   };
 
   static const _proFeatures = [
-    'Unlimited daily entries',
-    'Unlimited loans',
     'Subscriptions tracker',
+    'Unlimited loans',
     'Unlimited scenario simulations',
     'Cash timeline chart',
+    'Priority support',
   ];
 }
 
