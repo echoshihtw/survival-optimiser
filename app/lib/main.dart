@@ -1,22 +1,42 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:presentation/router/app_router.dart';
 import 'package:application/application.dart';
 import 'package:data/data.dart';
+import 'firebase_options.dart';
+import 'firebase_analytics_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final db = AppDatabase();
-  final txRepo = DriftTransactionRepository(db);
+  // Screen security — prevent screenshots and app switcher preview
+  if (Platform.isAndroid) {
+    await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+  }
+
+  // Firebase init — non-blocking, app works without it
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase init failed: $e');
+  }
+
+  final db       = AppDatabase();
+  final txRepo   = DriftTransactionRepository(db);
   final loanRepo = DriftLoanRepository(db);
-  final subRepo = DriftSubscriptionRepository(db);
+  final subRepo  = DriftSubscriptionRepository(db);
 
   runApp(
     ProviderScope(
       overrides: [
+        analyticsProvider.overrideWithValue(FirebaseAnalyticsService()),
         transactionRepositoryProvider.overrideWithValue(txRepo),
         loanRepositoryProvider.overrideWithValue(loanRepo),
         subscriptionRepositoryProvider.overrideWithValue(subRepo),
@@ -32,9 +52,8 @@ class SurvivalApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider).value;
-
     return MaterialApp.router(
-      title: 'SURVIVAL OPTIMIZER',
+      title: 'AWARENESS',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
       routerConfig: appRouter,
@@ -49,13 +68,6 @@ class SurvivalApp extends ConsumerWidget {
       localeResolutionCallback: (deviceLocale, supportedLocales) {
         if (locale != null) return locale;
         if (deviceLocale == null) return const Locale('en');
-        // Prefer exact match (language + country) first, then language-only.
-        for (final supported in supportedLocales) {
-          if (supported.languageCode == deviceLocale.languageCode &&
-              supported.countryCode == deviceLocale.countryCode) {
-            return supported;
-          }
-        }
         for (final supported in supportedLocales) {
           if (supported.languageCode == deviceLocale.languageCode) {
             return supported;

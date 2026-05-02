@@ -19,7 +19,6 @@ class DashboardScreen extends ConsumerWidget {
     final l10n = context.l10n;
     final model = ref.watch(modelProvider);
     final months = ref.watch(projectedMonthsProvider);
-
     return GradientScaffold(
       body: CustomScrollView(
         slivers: [
@@ -35,8 +34,10 @@ class DashboardScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.cardGap),
                 MetricsPanel(model: model),
                 const SizedBox(height: AppSpacing.cardGap),
-                InvestableBar(model: model),
-                const SizedBox(height: AppSpacing.cardGap),
+                if (FeatureFlags.investments) ...[
+                  const InvestableBar(),
+                  const SizedBox(height: AppSpacing.cardGap),
+                ],
                 const LiabilitiesPanel(),
                 const SizedBox(height: AppSpacing.cardGap),
                 const SubscriptionsPanel(),
@@ -53,7 +54,7 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                   details: months.isEmpty
                       ? null
-                      : CashChart(months: months, safetyCash: model.safetyCash),
+                      : CashChart(months: months, safetyCash: model.effectiveBurnRate * 12),
                 ),
                 const SizedBox(height: AppSpacing.xxxl),
               ]),
@@ -88,9 +89,10 @@ class _DashboardHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
-    final dateStr = DateFormat('d MMM yyyy, EEE', locale)
-        .format(DateTime.now())
-        .toUpperCase();
+    final dateStr = DateFormat(
+      'd MMM yyyy, EEE',
+      locale,
+    ).format(DateTime.now()).toUpperCase();
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(

@@ -191,20 +191,6 @@ void main() {
       expect(m.survivalStatus, SurvivalStatus.critical);
     });
 
-    test('investableCash is zero below safety threshold', () {
-      final months = makeMonths(
-        startBalance: 100000,
-        netFlowPerMonth: -50000,
-        count: 2,
-      );
-      final m = computeModel(
-        months: months,
-        monthlyPayment: 0,
-        subscriptionMonthlyCost: 0,
-      );
-      expect(m.investableCash, 0);
-    });
-
     test('subscription cost reduces runway', () {
       final months = makeMonths(
         startBalance: 1000000,
@@ -222,32 +208,6 @@ void main() {
         subscriptionMonthlyCost: 0,
       );
       expect(withSub.runwayMonths, lessThan(noSub.runwayMonths));
-    });
-
-    test('filledHearts clamps between 0 and 12', () {
-      final months = makeMonths(
-        startBalance: 100000,
-        netFlowPerMonth: -50000,
-        count: 2,
-      );
-      final low = computeModel(
-        months: months,
-        monthlyPayment: 0,
-        subscriptionMonthlyCost: 0,
-      );
-      expect(low.filledHearts, 0);
-
-      final high = makeMonths(
-        startBalance: 10000000,
-        netFlowPerMonth: -50000,
-        count: 5,
-      );
-      final m = computeModel(
-        months: high,
-        monthlyPayment: 0,
-        subscriptionMonthlyCost: 0,
-      );
-      expect(m.filledHearts, inInclusiveRange(0, 12));
     });
   });
 }

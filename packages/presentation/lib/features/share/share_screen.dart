@@ -21,24 +21,27 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
   bool _sharing = false;
 
   Future<void> _shareImage(ModelState model) async {
+    final copy = context.l10n.runwayShare;
+    final identity = copy.identityLabel(model.badge);
     setState(() => _sharing = true);
     try {
-      final boundary = _repaintKey.currentContext!
-          .findRenderObject() as RenderRepaintBoundary;
+      final boundary =
+          _repaintKey.currentContext!.findRenderObject()
+              as RenderRepaintBoundary;
       final image = await boundary.toImage(pixelRatio: 3.0);
-      final byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       final bytes = byteData!.buffer.asUint8List();
-      final dir  = await getTemporaryDirectory();
+      final dir = await getTemporaryDirectory();
       final file = File(
-          '${dir.path}/awareness_${DateTime.now().millisecondsSinceEpoch}.png');
+        '${dir.path}/runway_${DateTime.now().millisecondsSinceEpoch}.png',
+      );
       await file.writeAsBytes(bytes);
-      await SharePlus.instance.share(ShareParams(
-        files: [XFile(file.path, mimeType: 'image/png')],
-        text: 'I have ${model.runwayDays} days of financial runway — '
-            '${model.badge.emoji} ${model.badge.title}. '
-            'How long can you survive? awareness.app',
-      ));
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path, mimeType: 'image/png')],
+          text: copy.shareImageText(model.runwayDays, identity),
+        ),
+      );
     } catch (e) {
       debugPrint('Share error: $e');
     } finally {
@@ -47,17 +50,23 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
   }
 
   Future<void> _shareText(ModelState model) async {
-    await SharePlus.instance.share(ShareParams(
-      text: 'I have ${model.runwayDays} days of financial runway — '
-          '${model.badge.emoji} ${model.badge.title}. '
-          'You outlast ${model.badge.percentile}% of people. '
-          'awareness.app',
-    ));
+    final copy = context.l10n.runwayShare;
+    final identity = copy.identityLabel(model.badge);
+    await SharePlus.instance.share(
+      ShareParams(
+        text: copy.shareTextMessage(
+          model.runwayDays,
+          identity,
+          model.badge.percentile,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final model = ref.watch(modelProvider);
+    final copy = context.l10n.runwayShare;
 
     return GradientScaffold(
       body: SafeArea(
@@ -65,33 +74,39 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg, AppSpacing.lg,
-                  AppSpacing.lg, AppSpacing.sm),
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.sm,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('SHARE', style: AppTextStyles.title),
+                  Text(copy.shareSafe, style: AppTextStyles.title),
                   GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: AppSpacing.xs + 2),
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.xs + 2,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.surfaceHigh,
                         borderRadius: BorderRadius.circular(50),
                         border: Border.all(color: AppColors.cardBorder),
                       ),
-                      child: Text('CLOSE',
-                          style: AppTextStyles.caption.copyWith(
-                              color: AppColors.textSecondary)),
+                      child: Text(
+                        context.l10n.close,
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            Text('This is what will be shared',
-                style: AppTextStyles.caption),
+            Text(copy.shareSafeHint, style: AppTextStyles.caption),
             const SizedBox(height: AppSpacing.lg),
 
             Expanded(
@@ -108,15 +123,14 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
               child: Column(
                 children: [
                   NeoButton(
-                    label: _sharing ? 'PREPARING...' : 'SHARE IMAGE',
+                    label: _sharing ? copy.preparing : copy.shareImage,
                     variant: NeoButtonVariant.primary,
                     fullWidth: true,
-                    onPressed:
-                        _sharing ? null : () => _shareImage(model),
+                    onPressed: _sharing ? null : () => _shareImage(model),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   NeoButton(
-                    label: 'SHARE AS TEXT',
+                    label: copy.shareAsText,
                     variant: NeoButtonVariant.ghost,
                     fullWidth: true,
                     onPressed: () => _shareText(model),
@@ -137,29 +151,24 @@ class _ShareCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final copy = context.l10n.runwayShare;
     final badge = model.badge;
+    final badgeTitle = copy.badgeTitle(badge);
+    final emotionalLine = copy.emotionalLine(model.runwayDays);
     final color = switch (model.survivalStatus) {
-      SurvivalStatus.stable   => AppColors.neonGreen,
-      SurvivalStatus.caution  => AppColors.gold,
+      SurvivalStatus.stable => AppColors.neonGreen,
+      SurvivalStatus.caution => AppColors.gold,
       SurvivalStatus.critical => AppColors.hotPink,
     };
 
-    final numLabel = model.runwayDays >= 9999
-        ? '∞'
-        : model.runwayMonths >= 24
-            ? (model.runwayMonths / 12).toStringAsFixed(1)
-            : '${model.runwayDays}';
-
-    final unitLabel = model.runwayDays >= 9999
-        ? ''
-        : model.runwayMonths >= 24
-            ? 'YEARS LEFT'
-            : 'DAYS LEFT';
+    final numLabel = model.runwayDays >= 9999 ? '∞' : '${model.runwayDays}';
+    final unitLabel = model.runwayDays >= 9999 ? '' : copy.daysUpper;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: Container(
-        width: 300, height: 375,
+        width: 320,
+        height: 560,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -170,142 +179,419 @@ class _ShareCard extends StatelessWidget {
             ],
           ),
         ),
-        child: Stack(children: [
-          // Radial glow top
-          Positioned(
-            top: -60, left: -60, right: -60,
-            child: Container(
-              height: 300,
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  colors: [color.withAlpha(30), Colors.transparent],
-                  radius: 0.65,
+        child: Stack(
+          children: [
+            // Radial glow top
+            Positioned(
+              top: -60,
+              left: -60,
+              right: -60,
+              child: Container(
+                height: 300,
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    colors: [color.withAlpha(30), Colors.transparent],
+                    radius: 0.65,
+                  ),
                 ),
               ),
             ),
-          ),
 
-          Padding(
-            padding: const EdgeInsets.fromLTRB(28, 24, 28, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Logo
-                Row(children: [
-                  Container(
-                    width: 22, height: 22,
-                    decoration: BoxDecoration(
-                      color: AppColors.neonGreen.withAlpha(15),
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(
-                          color: AppColors.neonGreen.withAlpha(50)),
-                    ),
-                    child: Center(child: Text('◈',
+            Padding(
+              padding: const EdgeInsets.fromLTRB(28, 28, 28, 28),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          color: AppColors.neonGreen.withAlpha(15),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: AppColors.neonGreen.withAlpha(50),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '◈',
+                            style: TextStyle(
+                              color: AppColors.neonGreen,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        copy.runwayBrand,
                         style: TextStyle(
-                            color: AppColors.neonGreen,
-                            fontSize: 10))),
-                  ),
-                  const SizedBox(width: 6),
-                  Text('AWARENESS',
-                      style: TextStyle(
-                          fontSize: 10, letterSpacing: 2,
+                          fontSize: 10,
+                          letterSpacing: 2,
                           color: AppColors.neonGreen,
-                          fontWeight: FontWeight.w500)),
-                ]),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
 
-                const Spacer(),
+                  const Spacer(),
 
-                // Hero number
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(numLabel,
-                    style: const TextStyle(
-                      fontSize: 88,
+                  Text(
+                    copy.ifIncomeStoppedToday,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Color(0xFFCDD5E0),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+
+                  // Hero number
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      numLabel,
+                      style: TextStyle(
+                        fontSize: 108,
+                        fontWeight: FontWeight.w700,
+                        height: 0.9,
+                        letterSpacing: -1,
+                        fontFamily: 'Courier New',
+                        color: color,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    unitLabel,
+                    style: TextStyle(
+                      fontSize: 22,
+                      letterSpacing: 3,
+                      color: color.withAlpha(150),
                       fontWeight: FontWeight.w700,
-                      height: 0.9,
-                      letterSpacing: -1,
                       fontFamily: 'Courier New',
                     ),
-                  ).copyWith(color: color),
-                ),
-                const SizedBox(height: 6),
-                Text(unitLabel,
-                    style: TextStyle(
-                        fontSize: 11, letterSpacing: 3,
-                        color: color.withAlpha(150),
-                        fontWeight: FontWeight.w500)),
+                  ),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 28),
 
-                Container(height: 1,
-                    color: Colors.white.withAlpha(15)),
-
-                const SizedBox(height: 20),
-
-                // Badge
-                Row(children: [
-                  Text(badge.emoji,
-                      style: const TextStyle(fontSize: 24)),
-                  const SizedBox(width: 10),
-                  Expanded(child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
-                      Text(badge.title,
-                          style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFFCDD5E0))),
-                      Text(badge.description,
-                          style: const TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF6B7F96))),
+                      Text(badge.emoji, style: const TextStyle(fontSize: 28)),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              badgeTitle,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFFCDD5E0),
+                              ),
+                            ),
+                            Text(
+                              emotionalLine,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF6B7F96),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
-                  )),
-                ]),
+                  ),
 
-                const SizedBox(height: 14),
+                  const SizedBox(height: 16),
 
-                // Social proof + URL
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: color.withAlpha(15),
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: color.withAlpha(50)),
-                      ),
-                      child: Text(
-                        'Top ${100 - badge.percentile}% of people',
-                        style: TextStyle(
-                            fontSize: 10,
-                            color: color,
-                            fontWeight: FontWeight.w600),
-                      ),
+                  Text(
+                    copy.youOutlastPeople(badge.percentile),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: color,
+                      fontWeight: FontWeight.w700,
                     ),
-                    const Text('awareness.app',
+                  ),
+
+                  const Spacer(),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        copy.canYouBeatThis,
                         style: TextStyle(
-                            fontSize: 10,
-                            color: Color(0xFF2A3D5A),
-                            letterSpacing: 0.5)),
-                  ],
-                ),
-              ],
+                          fontSize: 10,
+                          color: Color(0xFF6B7F96),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      Text(
+                        copy.runwayBrand,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Color(0xFF2A3D5A),
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
   }
 }
 
-extension on Text {
-  Text copyWith({Color? color}) {
-    return Text(data ?? '',
-        style: style?.copyWith(color: color) ??
-            TextStyle(color: color));
+extension _RunwayShareCopyAccess on AppLocalizations {
+  _RunwayShareCopy get runwayShare => _RunwayShareCopy(localeName);
+}
+
+class _RunwayShareCopy {
+  final String localeName;
+
+  const _RunwayShareCopy(this.localeName);
+
+  String get _lang => localeName.split('_').first;
+
+  bool get _isTraditionalChinese =>
+      localeName == 'zh_TW' || localeName.toLowerCase().contains('hant');
+
+  String get runwayBrand => 'RUNWAY';
+
+  String get ifIncomeStoppedToday => switch (_lang) {
+    'es' => 'Si tu ingreso se detuviera hoy',
+    'fr' => "Si vos revenus s'arrêtaient aujourd'hui",
+    'it' => 'Se il tuo reddito si fermasse oggi',
+    'ja' => '今日、収入が止まったら',
+    'zh' => '如果你的收入今天停止',
+    _ => 'If your income stopped today',
+  };
+
+  String get daysUpper => switch (_lang) {
+    'es' => 'DÍAS',
+    'fr' => 'JOURS',
+    'it' => 'GIORNI',
+    'ja' => '日',
+    'zh' => '天',
+    _ => 'DAYS',
+  };
+
+  String get shareSafe => switch (_lang) {
+    'es' => 'COMPARTIR SEGURO',
+    'fr' => 'PARTAGE SÛR',
+    'it' => 'CONDIVISIONE SICURA',
+    'ja' => '安全に共有',
+    'zh' => '安全分享',
+    _ => 'SHARE SAFE',
+  };
+
+  String get shareSafeHint => switch (_lang) {
+    'es' => 'Sin ahorros. Sin gastos. Solo tu autonomía.',
+    'fr' => "Pas d'épargne. Pas de dépenses. Juste votre runway.",
+    'it' => 'Niente risparmi. Niente spese. Solo il tuo runway.',
+    'ja' => '貯金額も支出も出しません。ランウェイだけ。',
+    'zh' =>
+      _isTraditionalChinese
+          ? '不顯示存款。不顯示支出。只顯示你的生存跑道。'
+          : '不显示存款。不显示支出。只显示你的生存跑道。',
+    _ => 'No savings. No expenses. Just your runway.',
+  };
+
+  String get preparing => switch (_lang) {
+    'es' => 'PREPARANDO...',
+    'fr' => 'PRÉPARATION...',
+    'it' => 'PREPARAZIONE...',
+    'ja' => '準備中...',
+    'zh' => _isTraditionalChinese ? '準備中...' : '准备中...',
+    _ => 'PREPARING...',
+  };
+
+  String get shareImage => switch (_lang) {
+    'es' => 'COMPARTIR IMAGEN',
+    'fr' => "PARTAGER L'IMAGE",
+    'it' => 'CONDIVIDI IMMAGINE',
+    'ja' => '画像を共有',
+    'zh' => '分享图片',
+    _ => 'SHARE IMAGE',
+  };
+
+  String get shareAsText => switch (_lang) {
+    'es' => 'COMPARTIR TEXTO',
+    'fr' => 'PARTAGER EN TEXTE',
+    'it' => 'CONDIVIDI TESTO',
+    'ja' => 'テキストで共有',
+    'zh' => _isTraditionalChinese ? '以文字分享' : '以文字分享',
+    _ => 'SHARE AS TEXT',
+  };
+
+  String get canYouBeatThis => switch (_lang) {
+    'es' => '¿Puedes superar esto?',
+    'fr' => 'Pouvez-vous faire mieux ?',
+    'it' => 'Riesci a batterlo?',
+    'ja' => 'これを超えられますか？',
+    'zh' => _isTraditionalChinese ? '你能超過嗎？' : '你能超过吗？',
+    _ => 'Can you beat this?',
+  };
+
+  String youOutlastPeople(int percentile) => switch (_lang) {
+    'es' => 'Sobrevives más que el $percentile% de las personas',
+    'fr' => 'Vous tenez plus longtemps que $percentile% des gens',
+    'it' => 'Resisti più del $percentile% delle persone',
+    'ja' => 'あなたは$percentile%の人より長く持ちます',
+    'zh' =>
+      _isTraditionalChinese
+          ? '你比 $percentile% 的人撐得更久'
+          : '你比 $percentile% 的人撑得更久',
+    _ => 'You outlast $percentile% of people',
+  };
+
+  String shareImageText(int days, String identity) => switch (_lang) {
+    'es' =>
+      'Si mi ingreso se detuviera hoy, sobrevivo $days días. $identity. ¿Puedes superar esto? RUNWAY',
+    'fr' =>
+      "Si mes revenus s'arrêtaient aujourd'hui, je tiens $days jours. $identity. Pouvez-vous faire mieux ? RUNWAY",
+    'it' =>
+      'Se il mio reddito si fermasse oggi, resisto $days giorni. $identity. Riesci a batterlo? RUNWAY',
+    'ja' => '今日収入が止まったら、私は$days日生きられます。$identity。これを超えられますか？ RUNWAY',
+    'zh' =>
+      _isTraditionalChinese
+          ? '如果我的收入今天停止，我能撐 $days 天。$identity。你能超過嗎？RUNWAY'
+          : '如果我的收入今天停止，我能撑 $days 天。$identity。你能超过吗？RUNWAY',
+    _ =>
+      'If my income stopped today, I survive $days days. $identity. Can you beat this? RUNWAY',
+  };
+
+  String shareTextMessage(int days, String identity, int percentile) =>
+      '${shareImageText(days, identity)} ${youOutlastPeople(percentile)}.';
+
+  String get emotionExposed => switch (_lang) {
+    'es' => 'Estás expuesto',
+    'fr' => 'Vous êtes exposé',
+    'it' => 'Sei esposto',
+    'ja' => 'かなり危険です',
+    'zh' => _isTraditionalChinese ? '你暴露在風險中' : '你暴露在风险中',
+    _ => "You're exposed",
+  };
+
+  String get emotionCloser => switch (_lang) {
+    'es' => 'Estás más cerca de lo que parece',
+    'fr' => "C'est plus proche qu'il n'y paraît",
+    'it' => 'È più vicino di quanto sembri',
+    'ja' => '思ったより近いです',
+    'zh' => '比你感觉的更近',
+    _ => "You're closer than it feels",
+  };
+
+  String get emotionBreathingRoom => switch (_lang) {
+    'es' => 'Tienes algo de margen',
+    'fr' => "Vous avez un peu d'air",
+    'it' => "Hai un po' di respiro",
+    'ja' => '少し余裕があります',
+    'zh' => _isTraditionalChinese ? '你還有一點喘息空間' : '你还有一点喘息空间',
+    _ => 'You have some breathing room',
+  };
+
+  String get emotionSaferMost => switch (_lang) {
+    'es' => 'Estás más seguro que la mayoría',
+    'fr' => 'Vous êtes plus en sécurité que la plupart',
+    'it' => 'Sei più al sicuro della maggior parte',
+    'ja' => '多くの人より安全です',
+    'zh' => _isTraditionalChinese ? '你比大多數人更安全' : '你比大多数人更安全',
+    _ => "You're safer than most",
+  };
+
+  String get emotionAheadMost => switch (_lang) {
+    'es' => 'Vas por delante de la mayoría',
+    'fr' => 'Vous êtes devant la plupart des gens',
+    'it' => 'Sei avanti rispetto alla maggior parte',
+    'ja' => '多くの人より先にいます',
+    'zh' => _isTraditionalChinese ? '你領先大多數人' : '你领先大多数人',
+    _ => "You're ahead of most people",
+  };
+
+  String get badgeSurvivalMode => switch (_lang) {
+    'es' => 'Modo supervivencia',
+    'fr' => 'Mode survie',
+    'it' => 'Modalità sopravvivenza',
+    'ja' => 'サバイバルモード',
+    'zh' => '生存模式',
+    _ => 'Survival Mode',
+  };
+
+  String get badgeFinancialRookie => switch (_lang) {
+    'es' => 'Novato financiero',
+    'fr' => 'Débutant financier',
+    'it' => 'Principiante finanziario',
+    'ja' => '金融ルーキー',
+    'zh' => _isTraditionalChinese ? '財務新手' : '财务新手',
+    _ => 'Financial Rookie',
+  };
+
+  String get badgeGettingBy => switch (_lang) {
+    'es' => 'Saliendo adelante',
+    'fr' => 'Vous tenez le coup',
+    'it' => 'Te la cavi',
+    'ja' => 'なんとか持ちこたえ中',
+    'zh' => _isTraditionalChinese ? '勉強撐住' : '勉强撑住',
+    _ => 'Getting By',
+  };
+
+  String get badgeFinanciallyStable => switch (_lang) {
+    'es' => 'Financieramente estable',
+    'fr' => 'Financièrement stable',
+    'it' => 'Finanziariamente stabile',
+    'ja' => '経済的に安定',
+    'zh' => _isTraditionalChinese ? '財務穩定' : '财务稳定',
+    _ => 'Financially Stable',
+  };
+
+  String get badgeFinancialFortress => switch (_lang) {
+    'es' => 'Fortaleza financiera',
+    'fr' => 'Forteresse financière',
+    'it' => 'Fortezza finanziaria',
+    'ja' => '金融要塞',
+    'zh' => _isTraditionalChinese ? '財務堡壘' : '财务堡垒',
+    _ => 'Financial Fortress',
+  };
+
+  String get badgeEscapeVelocity => switch (_lang) {
+    'es' => 'Velocidad de escape',
+    'fr' => "Vitesse d'évasion",
+    'it' => 'Velocità di fuga',
+    'ja' => '脱出速度',
+    'zh' => '逃逸速度',
+    _ => 'Escape Velocity',
+  };
+
+  String identityLabel(IdentityBadge badge) =>
+      '${badgeTitle(badge)} ${badge.emoji}';
+
+  String emotionalLine(int days) {
+    if (days < 30) return emotionExposed;
+    if (days < 90) return emotionCloser;
+    if (days < 180) return emotionBreathingRoom;
+    if (days < 365) return emotionSaferMost;
+    return emotionAheadMost;
+  }
+
+  String badgeTitle(IdentityBadge badge) {
+    return switch (badge) {
+      IdentityBadge.survivalMode => badgeSurvivalMode,
+      IdentityBadge.financialRookie => badgeFinancialRookie,
+      IdentityBadge.gettingBy => badgeGettingBy,
+      IdentityBadge.financiallyStable => badgeFinanciallyStable,
+      IdentityBadge.financialFortress => badgeFinancialFortress,
+      IdentityBadge.escapeVelocity => badgeEscapeVelocity,
+    };
   }
 }

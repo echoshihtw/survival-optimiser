@@ -79,13 +79,6 @@ class ScenariosScreen extends ConsumerWidget {
                             AppColors.textPrimary,
                           ),
                         ),
-                        Expanded(
-                          child: _tile(
-                            l10n.investable,
-                            fmt(realModel.investableCash),
-                            AppColors.textPrimary,
-                          ),
-                        ),
                       ],
                     ),
                   ],
@@ -146,13 +139,6 @@ class ScenariosScreen extends ConsumerWidget {
                               l10n.simRunway,
                               fmtRunway(simModel.runwayMonths),
                               runwayColor(simModel.survivalStatus),
-                            ),
-                          ),
-                          Expanded(
-                            child: _tile(
-                              l10n.simInvestable,
-                              fmt(simModel.investableCash),
-                              AppColors.blue,
                             ),
                           ),
                         ],

@@ -355,4 +355,238 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get subscrPerMonth => 'サブスク/月';
+
+  @override
+  String get loans => 'ローン';
+
+  @override
+  String activeCount(int count) {
+    return '$count 件有効';
+  }
+
+  @override
+  String get repayLoan => 'ローン返済';
+
+  @override
+  String get repaymentAmount => '返済金額';
+
+  @override
+  String get cancel => 'キャンセル';
+
+  @override
+  String get paid => '✓ 完済';
+
+  @override
+  String get subscrPerYear => 'サブスク/年';
+
+  @override
+  String get removeConfirm => '削除？';
+
+  @override
+  String get remove => '削除';
+
+  @override
+  String monthsProjected(int count) {
+    return '$countヶ月予測';
+  }
+
+  @override
+  String get budgetPerMonth => '予算/月';
+
+  @override
+  String get breakdown => '明細';
+
+  @override
+  String get safetyFund => '安全資金';
+
+  @override
+  String get safety => '安全';
+
+  @override
+  String get deployableCapital => '運用可能資金 — 生存バッファとは別';
+
+  @override
+  String get survivalCharge => 'サバイバルチャージ';
+
+  @override
+  String get historyEntries => '履歴 & 入力';
+
+  @override
+  String get addEntry => '+ 追加';
+
+  @override
+  String get willRemoveLoan => '負債からも削除されます';
+
+  @override
+  String get delete => '削除';
+
+  @override
+  String get planned => '予定';
+
+  @override
+  String get whatIfAnalysis => '仮定分析';
+
+  @override
+  String get current => '現在';
+
+  @override
+  String get simulate => 'シミュレート';
+
+  @override
+  String get simHint => '支出や収入を変更してランウェイへの影響を確認';
+
+  @override
+  String get simulation => 'シミュレーション';
+
+  @override
+  String get enterValuesToSim => '上の値を入力してシミュレート';
+
+  @override
+  String get perMonth => '/ 月';
+
+  @override
+  String get prefsBudget => '設定 & 予算';
+
+  @override
+  String get close => '閉じる';
+
+  @override
+  String get monthlyBudget => '月間予算';
+
+  @override
+  String get rentFixed => '家賃 / 固定費';
+
+  @override
+  String get livingExpenses => '生活費';
+
+  @override
+  String get subtotal => '小計';
+
+  @override
+  String get totalBudgetPerMonth => '予算合計/月';
+
+  @override
+  String get setBudget => '予算設定';
+
+  @override
+  String get rentFixedCosts => '家賃 / 固定費用';
+
+  @override
+  String get subscrDebtAuto => 'サブスク + 負債は自動加算';
+
+  @override
+  String get display => '表示';
+
+  @override
+  String get glassEffect => 'グラスエフェクト';
+
+  @override
+  String get glassEffectHint => 'GPU負荷大 — 旧デバイスは無効化推奨';
+
+  @override
+  String get runwayBrand => 'RUNWAY';
+
+  @override
+  String get bootRunwayCheck => '> RUNWAYチェック...';
+
+  @override
+  String get bootIncomeStopped => '> 今日、収入が止まったら...';
+
+  @override
+  String get bootCountingCashDays => '> 現金で生きられる日数を計算中...';
+
+  @override
+  String get bootRemovingComfortFilter => '> 安心フィルターを解除中...';
+
+  @override
+  String get bootRealityCheckReady => '> 現実チェック準備完了。';
+
+  @override
+  String get ifIncomeStoppedToday => '今日、収入が止まったら';
+
+  @override
+  String get daysUpper => '日';
+
+  @override
+  String get yourRunway => 'あなたのランウェイ';
+
+  @override
+  String get emotionExposed => 'かなり危険です';
+
+  @override
+  String get emotionCloser => '思ったより近いです';
+
+  @override
+  String get emotionBreathingRoom => '少し余裕があります';
+
+  @override
+  String get emotionSaferMost => '多くの人より安全です';
+
+  @override
+  String get emotionAheadMost => '多くの人より先にいます';
+
+  @override
+  String youOutlastPeople(int percentile) {
+    return 'あなたは$percentile%の人より長く持ちます';
+  }
+
+  @override
+  String get loseIncome => '収入ゼロ';
+
+  @override
+  String get higherExpenses => '支出増加';
+
+  @override
+  String get incomeSetToZero => '収入を0に設定';
+
+  @override
+  String deltaDays(int days) {
+    return '$days日';
+  }
+
+  @override
+  String get shareSafe => '安全に共有';
+
+  @override
+  String get shareSafeHint => '貯金額も支出も出しません。ランウェイだけ。';
+
+  @override
+  String get preparing => '準備中...';
+
+  @override
+  String get shareImage => '画像を共有';
+
+  @override
+  String get shareAsText => 'テキストで共有';
+
+  @override
+  String get canYouBeatThis => 'これを超えられますか？';
+
+  @override
+  String shareImageText(int days, String identity) {
+    return '今日収入が止まったら、私は$days日生きられます。$identity。これを超えられますか？ RUNWAY';
+  }
+
+  @override
+  String shareTextMessage(int days, String identity, int percentile) {
+    return '今日収入が止まったら、私は$days日生きられます。$identity。あなたは$percentile%の人より長く持ちます。これを超えられますか？ RUNWAY';
+  }
+
+  @override
+  String get badgeSurvivalMode => 'サバイバルモード';
+
+  @override
+  String get badgeFinancialRookie => '金融ルーキー';
+
+  @override
+  String get badgeGettingBy => 'なんとか持ちこたえ中';
+
+  @override
+  String get badgeFinanciallyStable => '経済的に安定';
+
+  @override
+  String get badgeFinancialFortress => '金融要塞';
+
+  @override
+  String get badgeEscapeVelocity => '脱出速度';
 }

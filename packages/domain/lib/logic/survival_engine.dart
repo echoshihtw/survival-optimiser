@@ -1,9 +1,8 @@
-import 'dart:math';
 import '../entities/monthly_state.dart';
 import '../entities/model_state.dart';
+import '../entities/identity_badge.dart';
 import '../value_objects/survival_month.dart';
 
-const _safetyMonths = 12;
 const _maxProjection = 120;
 
 ModelState computeModel({
@@ -50,15 +49,13 @@ ModelState computeModel({
     }
   }
 
-  final safetyCash = burnForModel * _safetyMonths;
-  final surplus = currentCash - safetyCash;
-  final riskCapacity = ((runwayMonths - 12) / 12).clamp(0.0, 1.0);
   final pressureRatio = txBurnRate > 0
       ? (monthlyPayment + subscriptionMonthlyCost) / txBurnRate
       : 0.0;
-  final pressureFactor = max(0.2, 1 - pressureRatio);
-  final investableCash = max(0.0, surplus * riskCapacity * pressureFactor);
 
+  final runwayDays = burnForModel > 0
+      ? (currentCash / burnForModel * 30).floor()
+      : 99999;
   return ModelState(
     currentCash: currentCash,
     burnRate: txBurnRate,
@@ -66,13 +63,10 @@ ModelState computeModel({
     monthlyPayment: monthlyPayment,
     subscriptionMonthlyCost: subscriptionMonthlyCost,
     runwayMonths: runwayMonths,
+    runwayDays: runwayDays,
+    badge: IdentityBadgeX.fromDays(runwayDays),
     runOutDate: runOutDate,
     pressureRatio: pressureRatio,
-    safetyCash: safetyCash,
-    surplus: surplus,
-    riskCapacity: riskCapacity,
-    pressureFactor: pressureFactor,
-    investableCash: investableCash,
   );
 }
 

@@ -802,6 +802,450 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SUBSCR/MO'**
   String get subscrPerMonth;
+
+  /// No description provided for @loans.
+  ///
+  /// In en, this message translates to:
+  /// **'LOANS'**
+  String get loans;
+
+  /// No description provided for @activeCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} ACTIVE'**
+  String activeCount(int count);
+
+  /// No description provided for @repayLoan.
+  ///
+  /// In en, this message translates to:
+  /// **'REPAY LOAN'**
+  String get repayLoan;
+
+  /// No description provided for @repaymentAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'REPAYMENT AMOUNT'**
+  String get repaymentAmount;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCEL'**
+  String get cancel;
+
+  /// No description provided for @paid.
+  ///
+  /// In en, this message translates to:
+  /// **'✓ PAID'**
+  String get paid;
+
+  /// No description provided for @subscrPerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'SUBSCR/YR'**
+  String get subscrPerYear;
+
+  /// No description provided for @removeConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'REMOVE?'**
+  String get removeConfirm;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'REMOVE'**
+  String get remove;
+
+  /// No description provided for @monthsProjected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} MONTHS PROJECTED'**
+  String monthsProjected(int count);
+
+  /// No description provided for @budgetPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'BUDGET/MO'**
+  String get budgetPerMonth;
+
+  /// No description provided for @breakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'BREAKDOWN'**
+  String get breakdown;
+
+  /// No description provided for @safetyFund.
+  ///
+  /// In en, this message translates to:
+  /// **'SAFETY FUND'**
+  String get safetyFund;
+
+  /// No description provided for @safety.
+  ///
+  /// In en, this message translates to:
+  /// **'SAFETY'**
+  String get safety;
+
+  /// No description provided for @deployableCapital.
+  ///
+  /// In en, this message translates to:
+  /// **'DEPLOYABLE CAPITAL — SEPARATE FROM SURVIVAL BUFFER'**
+  String get deployableCapital;
+
+  /// No description provided for @survivalCharge.
+  ///
+  /// In en, this message translates to:
+  /// **'SURVIVAL CHARGE'**
+  String get survivalCharge;
+
+  /// No description provided for @historyEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'HISTORY & ENTRIES'**
+  String get historyEntries;
+
+  /// No description provided for @addEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'+ ADD'**
+  String get addEntry;
+
+  /// No description provided for @willRemoveLoan.
+  ///
+  /// In en, this message translates to:
+  /// **'WILL ALSO REMOVE FROM LIABILITIES'**
+  String get willRemoveLoan;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'DELETE'**
+  String get delete;
+
+  /// No description provided for @planned.
+  ///
+  /// In en, this message translates to:
+  /// **'PLANNED'**
+  String get planned;
+
+  /// No description provided for @whatIfAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'WHAT-IF ANALYSIS'**
+  String get whatIfAnalysis;
+
+  /// No description provided for @current.
+  ///
+  /// In en, this message translates to:
+  /// **'CURRENT'**
+  String get current;
+
+  /// No description provided for @simulate.
+  ///
+  /// In en, this message translates to:
+  /// **'SIMULATE'**
+  String get simulate;
+
+  /// No description provided for @simHint.
+  ///
+  /// In en, this message translates to:
+  /// **'OVERRIDE BURN RATE OR ADD INCOME TO SEE IMPACT ON RUNWAY'**
+  String get simHint;
+
+  /// No description provided for @simulation.
+  ///
+  /// In en, this message translates to:
+  /// **'SIMULATION'**
+  String get simulation;
+
+  /// No description provided for @enterValuesToSim.
+  ///
+  /// In en, this message translates to:
+  /// **'ENTER VALUES ABOVE TO SIMULATE'**
+  String get enterValuesToSim;
+
+  /// No description provided for @perMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'/ MONTH'**
+  String get perMonth;
+
+  /// No description provided for @prefsBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'PREFERENCES & BUDGET'**
+  String get prefsBudget;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'CLOSE'**
+  String get close;
+
+  /// No description provided for @monthlyBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'MONTHLY BUDGET'**
+  String get monthlyBudget;
+
+  /// No description provided for @rentFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'RENT / FIXED'**
+  String get rentFixed;
+
+  /// No description provided for @livingExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVING EXPENSES'**
+  String get livingExpenses;
+
+  /// No description provided for @subtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'SUBTOTAL'**
+  String get subtotal;
+
+  /// No description provided for @totalBudgetPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'TOTAL BUDGET/MO'**
+  String get totalBudgetPerMonth;
+
+  /// No description provided for @setBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'SET BUDGET'**
+  String get setBudget;
+
+  /// No description provided for @rentFixedCosts.
+  ///
+  /// In en, this message translates to:
+  /// **'RENT / FIXED COSTS'**
+  String get rentFixedCosts;
+
+  /// No description provided for @subscrDebtAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'SUBSCRIPTIONS + DEBT ADDED AUTOMATICALLY'**
+  String get subscrDebtAuto;
+
+  /// No description provided for @display.
+  ///
+  /// In en, this message translates to:
+  /// **'DISPLAY'**
+  String get display;
+
+  /// No description provided for @glassEffect.
+  ///
+  /// In en, this message translates to:
+  /// **'GLASS EFFECT'**
+  String get glassEffect;
+
+  /// No description provided for @glassEffectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'GPU INTENSIVE — DISABLE ON OLDER DEVICES'**
+  String get glassEffectHint;
+
+  /// No description provided for @runwayBrand.
+  ///
+  /// In en, this message translates to:
+  /// **'RUNWAY'**
+  String get runwayBrand;
+
+  /// No description provided for @bootRunwayCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'> RUNWAY CHECK...'**
+  String get bootRunwayCheck;
+
+  /// No description provided for @bootIncomeStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'> IF YOUR INCOME STOPPED TODAY...'**
+  String get bootIncomeStopped;
+
+  /// No description provided for @bootCountingCashDays.
+  ///
+  /// In en, this message translates to:
+  /// **'> COUNTING CASH DAYS...'**
+  String get bootCountingCashDays;
+
+  /// No description provided for @bootRemovingComfortFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'> REMOVING THE COMFORT FILTER...'**
+  String get bootRemovingComfortFilter;
+
+  /// No description provided for @bootRealityCheckReady.
+  ///
+  /// In en, this message translates to:
+  /// **'> REALITY CHECK READY.'**
+  String get bootRealityCheckReady;
+
+  /// No description provided for @ifIncomeStoppedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'If your income stopped today'**
+  String get ifIncomeStoppedToday;
+
+  /// No description provided for @daysUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'DAYS'**
+  String get daysUpper;
+
+  /// No description provided for @yourRunway.
+  ///
+  /// In en, this message translates to:
+  /// **'Your runway'**
+  String get yourRunway;
+
+  /// No description provided for @emotionExposed.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re exposed'**
+  String get emotionExposed;
+
+  /// No description provided for @emotionCloser.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re closer than it feels'**
+  String get emotionCloser;
+
+  /// No description provided for @emotionBreathingRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'You have some breathing room'**
+  String get emotionBreathingRoom;
+
+  /// No description provided for @emotionSaferMost.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re safer than most'**
+  String get emotionSaferMost;
+
+  /// No description provided for @emotionAheadMost.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re ahead of most people'**
+  String get emotionAheadMost;
+
+  /// No description provided for @youOutlastPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'You outlast {percentile}% of people'**
+  String youOutlastPeople(int percentile);
+
+  /// No description provided for @loseIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Lose income'**
+  String get loseIncome;
+
+  /// No description provided for @higherExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher expenses'**
+  String get higherExpenses;
+
+  /// No description provided for @incomeSetToZero.
+  ///
+  /// In en, this message translates to:
+  /// **'Income set to 0'**
+  String get incomeSetToZero;
+
+  /// No description provided for @deltaDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String deltaDays(int days);
+
+  /// No description provided for @shareSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'SHARE SAFE'**
+  String get shareSafe;
+
+  /// No description provided for @shareSafeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No savings. No expenses. Just your runway.'**
+  String get shareSafeHint;
+
+  /// No description provided for @preparing.
+  ///
+  /// In en, this message translates to:
+  /// **'PREPARING...'**
+  String get preparing;
+
+  /// No description provided for @shareImage.
+  ///
+  /// In en, this message translates to:
+  /// **'SHARE IMAGE'**
+  String get shareImage;
+
+  /// No description provided for @shareAsText.
+  ///
+  /// In en, this message translates to:
+  /// **'SHARE AS TEXT'**
+  String get shareAsText;
+
+  /// No description provided for @canYouBeatThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Can you beat this?'**
+  String get canYouBeatThis;
+
+  /// No description provided for @shareImageText.
+  ///
+  /// In en, this message translates to:
+  /// **'If my income stopped today, I survive {days} days. {identity}. Can you beat this? RUNWAY'**
+  String shareImageText(int days, String identity);
+
+  /// No description provided for @shareTextMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'If my income stopped today, I survive {days} days. {identity}. You outlast {percentile}% of people. Can you beat this? RUNWAY'**
+  String shareTextMessage(int days, String identity, int percentile);
+
+  /// No description provided for @badgeSurvivalMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Survival Mode'**
+  String get badgeSurvivalMode;
+
+  /// No description provided for @badgeFinancialRookie.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Rookie'**
+  String get badgeFinancialRookie;
+
+  /// No description provided for @badgeGettingBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting By'**
+  String get badgeGettingBy;
+
+  /// No description provided for @badgeFinanciallyStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Financially Stable'**
+  String get badgeFinanciallyStable;
+
+  /// No description provided for @badgeFinancialFortress.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Fortress'**
+  String get badgeFinancialFortress;
+
+  /// No description provided for @badgeEscapeVelocity.
+  ///
+  /// In en, this message translates to:
+  /// **'Escape Velocity'**
+  String get badgeEscapeVelocity;
 }
 
 class _AppLocalizationsDelegate

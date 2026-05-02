@@ -53,9 +53,9 @@ class LifeForceCard extends ConsumerWidget {
         d == null ? '—' : DateFormat('MMM yyyy').format(d).toUpperCase();
 
     final shareButton = GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const ShareScreen()),
-      ),
+      onTap: () => Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const ShareScreen())),
       child: Container(
         width: 32,
         height: 32,
@@ -65,8 +65,11 @@ class LifeForceCard extends ConsumerWidget {
           borderRadius: BorderRadius.circular(50),
           border: Border.all(color: AppColors.neonGreen.withAlpha(40)),
         ),
-        child: Icon(Icons.ios_share_rounded,
-            color: AppColors.neonGreen, size: 15),
+        child: Icon(
+          Icons.ios_share_rounded,
+          color: AppColors.neonGreen,
+          size: 15,
+        ),
       ),
     );
 
@@ -152,11 +155,7 @@ class LifeForceCard extends ConsumerWidget {
               const SizedBox(height: AppSpacing.xs),
             ],
           ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: shareButton,
-          ),
+          Positioned(top: 0, right: 0, child: shareButton),
         ],
       ),
     );

@@ -10,22 +10,26 @@ class BootScreen extends StatefulWidget {
 }
 
 class _BootScreenState extends State<BootScreen> with TickerProviderStateMixin {
-  final List<String> _lines = [
-    '> INITIALIZING SURVIVAL.EXE...',
-    '> LOADING ASSET DATABASE...',
-    '> CALIBRATING BURN RATE...',
-    '> COMPUTING SURVIVAL MODEL...',
-    '> SYSTEM ONLINE.',
-    '',
-    'SURVIVAL OPTIMIZER v1.0',
-  ];
-
+  late List<String> _lines;
   final List<String> _visible = [];
   bool _showPrompt = false;
+  bool _started = false;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_started) return;
+    final l10n = context.l10n;
+    _lines = [
+      l10n.bootRunwayCheck,
+      l10n.bootIncomeStopped,
+      l10n.bootCountingCashDays,
+      l10n.bootRemovingComfortFilter,
+      l10n.bootRealityCheckReady,
+      '',
+      l10n.runwayBrand,
+    ];
+    _started = true;
     _runBootSequence();
   }
 
@@ -60,7 +64,7 @@ class _BootScreenState extends State<BootScreen> with TickerProviderStateMixin {
                     padding: const EdgeInsets.only(bottom: AppSpacing.xs),
                     child: Text(
                       line,
-                      style: line.startsWith('SURVIVAL')
+                      style: line == context.l10n.runwayBrand
                           ? AppTextStyles.metric
                           : AppTextStyles.value,
                     ),

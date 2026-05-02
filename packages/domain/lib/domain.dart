@@ -26,3 +26,4 @@ export 'logic/loan_engine.dart';
 export 'logic/subscription_engine.dart';
 
 export 'failures/domain_failure.dart';
+export 'entities/identity_badge.dart';

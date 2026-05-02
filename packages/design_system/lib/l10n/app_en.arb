@@ -115,5 +115,113 @@
   "monthly": "MONTHLY",
   "quarterly": "QUARTERLY",
   "yearly": "YEARLY",
-  "subscrPerMonth": "SUBSCR/MO"
+  "subscrPerMonth": "SUBSCR/MO",
+  "loans": "LOANS",
+  "activeCount": "{count} ACTIVE",
+  "@activeCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "repayLoan": "REPAY LOAN",
+  "repaymentAmount": "REPAYMENT AMOUNT",
+  "cancel": "CANCEL",
+  "paid": "✓ PAID",
+  "subscrPerYear": "SUBSCR/YR",
+  "removeConfirm": "REMOVE?",
+  "remove": "REMOVE",
+  "monthsProjected": "{count} MONTHS PROJECTED",
+  "@monthsProjected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "budgetPerMonth": "BUDGET/MO",
+  "breakdown": "BREAKDOWN",
+  "safetyFund": "SAFETY FUND",
+  "safety": "SAFETY",
+  "deployableCapital": "DEPLOYABLE CAPITAL — SEPARATE FROM SURVIVAL BUFFER",
+  "survivalCharge": "SURVIVAL CHARGE",
+  "historyEntries": "HISTORY & ENTRIES",
+  "addEntry": "+ ADD",
+  "willRemoveLoan": "WILL ALSO REMOVE FROM LIABILITIES",
+  "delete": "DELETE",
+  "planned": "PLANNED",
+  "whatIfAnalysis": "WHAT-IF ANALYSIS",
+  "current": "CURRENT",
+  "simulate": "SIMULATE",
+  "simHint": "OVERRIDE BURN RATE OR ADD INCOME TO SEE IMPACT ON RUNWAY",
+  "simulation": "SIMULATION",
+  "enterValuesToSim": "ENTER VALUES ABOVE TO SIMULATE",
+  "perMonth": "/ MONTH",
+  "prefsBudget": "PREFERENCES & BUDGET",
+  "close": "CLOSE",
+  "monthlyBudget": "MONTHLY BUDGET",
+  "rentFixed": "RENT / FIXED",
+  "livingExpenses": "LIVING EXPENSES",
+  "subtotal": "SUBTOTAL",
+  "totalBudgetPerMonth": "TOTAL BUDGET/MO",
+  "setBudget": "SET BUDGET",
+  "rentFixedCosts": "RENT / FIXED COSTS",
+  "subscrDebtAuto": "SUBSCRIPTIONS + DEBT ADDED AUTOMATICALLY",
+  "display": "DISPLAY",
+  "glassEffect": "GLASS EFFECT",
+  "glassEffectHint": "GPU INTENSIVE — DISABLE ON OLDER DEVICES",
+
+  "runwayBrand": "RUNWAY",
+  "bootRunwayCheck": "> RUNWAY CHECK...",
+  "bootIncomeStopped": "> IF YOUR INCOME STOPPED TODAY...",
+  "bootCountingCashDays": "> COUNTING CASH DAYS...",
+  "bootRemovingComfortFilter": "> REMOVING THE COMFORT FILTER...",
+  "bootRealityCheckReady": "> REALITY CHECK READY.",
+  "ifIncomeStoppedToday": "If your income stopped today",
+  "daysUpper": "DAYS",
+  "yourRunway": "Your runway",
+  "emotionExposed": "You're exposed",
+  "emotionCloser": "You're closer than it feels",
+  "emotionBreathingRoom": "You have some breathing room",
+  "emotionSaferMost": "You're safer than most",
+  "emotionAheadMost": "You're ahead of most people",
+  "youOutlastPeople": "You outlast {percentile}% of people",
+  "@youOutlastPeople": {
+    "placeholders": {
+      "percentile": {"type": "int"}
+    }
+  },
+  "loseIncome": "Lose income",
+  "higherExpenses": "Higher expenses",
+  "incomeSetToZero": "Income set to 0",
+  "deltaDays": "{days} days",
+  "@deltaDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "shareSafe": "SHARE SAFE",
+  "shareSafeHint": "No savings. No expenses. Just your runway.",
+  "preparing": "PREPARING...",
+  "shareImage": "SHARE IMAGE",
+  "shareAsText": "SHARE AS TEXT",
+  "canYouBeatThis": "Can you beat this?",
+  "shareImageText": "If my income stopped today, I survive {days} days. {identity}. Can you beat this? RUNWAY",
+  "@shareImageText": {
+    "placeholders": {
+      "days": {"type": "int"},
+      "identity": {"type": "String"}
+    }
+  },
+  "shareTextMessage": "If my income stopped today, I survive {days} days. {identity}. You outlast {percentile}% of people. Can you beat this? RUNWAY",
+  "@shareTextMessage": {
+    "placeholders": {
+      "days": {"type": "int"},
+      "identity": {"type": "String"},
+      "percentile": {"type": "int"}
+    }
+  },
+  "badgeSurvivalMode": "Survival Mode",
+  "badgeFinancialRookie": "Financial Rookie",
+  "badgeGettingBy": "Getting By",
+  "badgeFinanciallyStable": "Financially Stable",
+  "badgeFinancialFortress": "Financial Fortress",
+  "badgeEscapeVelocity": "Escape Velocity"
 }

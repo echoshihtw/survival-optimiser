@@ -356,4 +356,240 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscrPerMonth => 'SUBSCR/MO';
+
+  @override
+  String get loans => 'LOANS';
+
+  @override
+  String activeCount(int count) {
+    return '$count ACTIVE';
+  }
+
+  @override
+  String get repayLoan => 'REPAY LOAN';
+
+  @override
+  String get repaymentAmount => 'REPAYMENT AMOUNT';
+
+  @override
+  String get cancel => 'CANCEL';
+
+  @override
+  String get paid => '✓ PAID';
+
+  @override
+  String get subscrPerYear => 'SUBSCR/YR';
+
+  @override
+  String get removeConfirm => 'REMOVE?';
+
+  @override
+  String get remove => 'REMOVE';
+
+  @override
+  String monthsProjected(int count) {
+    return '$count MONTHS PROJECTED';
+  }
+
+  @override
+  String get budgetPerMonth => 'BUDGET/MO';
+
+  @override
+  String get breakdown => 'BREAKDOWN';
+
+  @override
+  String get safetyFund => 'SAFETY FUND';
+
+  @override
+  String get safety => 'SAFETY';
+
+  @override
+  String get deployableCapital =>
+      'DEPLOYABLE CAPITAL — SEPARATE FROM SURVIVAL BUFFER';
+
+  @override
+  String get survivalCharge => 'SURVIVAL CHARGE';
+
+  @override
+  String get historyEntries => 'HISTORY & ENTRIES';
+
+  @override
+  String get addEntry => '+ ADD';
+
+  @override
+  String get willRemoveLoan => 'WILL ALSO REMOVE FROM LIABILITIES';
+
+  @override
+  String get delete => 'DELETE';
+
+  @override
+  String get planned => 'PLANNED';
+
+  @override
+  String get whatIfAnalysis => 'WHAT-IF ANALYSIS';
+
+  @override
+  String get current => 'CURRENT';
+
+  @override
+  String get simulate => 'SIMULATE';
+
+  @override
+  String get simHint =>
+      'OVERRIDE BURN RATE OR ADD INCOME TO SEE IMPACT ON RUNWAY';
+
+  @override
+  String get simulation => 'SIMULATION';
+
+  @override
+  String get enterValuesToSim => 'ENTER VALUES ABOVE TO SIMULATE';
+
+  @override
+  String get perMonth => '/ MONTH';
+
+  @override
+  String get prefsBudget => 'PREFERENCES & BUDGET';
+
+  @override
+  String get close => 'CLOSE';
+
+  @override
+  String get monthlyBudget => 'MONTHLY BUDGET';
+
+  @override
+  String get rentFixed => 'RENT / FIXED';
+
+  @override
+  String get livingExpenses => 'LIVING EXPENSES';
+
+  @override
+  String get subtotal => 'SUBTOTAL';
+
+  @override
+  String get totalBudgetPerMonth => 'TOTAL BUDGET/MO';
+
+  @override
+  String get setBudget => 'SET BUDGET';
+
+  @override
+  String get rentFixedCosts => 'RENT / FIXED COSTS';
+
+  @override
+  String get subscrDebtAuto => 'SUBSCRIPTIONS + DEBT ADDED AUTOMATICALLY';
+
+  @override
+  String get display => 'DISPLAY';
+
+  @override
+  String get glassEffect => 'GLASS EFFECT';
+
+  @override
+  String get glassEffectHint => 'GPU INTENSIVE — DISABLE ON OLDER DEVICES';
+
+  @override
+  String get runwayBrand => 'RUNWAY';
+
+  @override
+  String get bootRunwayCheck => '> RUNWAY CHECK...';
+
+  @override
+  String get bootIncomeStopped => '> IF YOUR INCOME STOPPED TODAY...';
+
+  @override
+  String get bootCountingCashDays => '> COUNTING CASH DAYS...';
+
+  @override
+  String get bootRemovingComfortFilter => '> REMOVING THE COMFORT FILTER...';
+
+  @override
+  String get bootRealityCheckReady => '> REALITY CHECK READY.';
+
+  @override
+  String get ifIncomeStoppedToday => 'If your income stopped today';
+
+  @override
+  String get daysUpper => 'DAYS';
+
+  @override
+  String get yourRunway => 'Your runway';
+
+  @override
+  String get emotionExposed => 'You\'re exposed';
+
+  @override
+  String get emotionCloser => 'You\'re closer than it feels';
+
+  @override
+  String get emotionBreathingRoom => 'You have some breathing room';
+
+  @override
+  String get emotionSaferMost => 'You\'re safer than most';
+
+  @override
+  String get emotionAheadMost => 'You\'re ahead of most people';
+
+  @override
+  String youOutlastPeople(int percentile) {
+    return 'You outlast $percentile% of people';
+  }
+
+  @override
+  String get loseIncome => 'Lose income';
+
+  @override
+  String get higherExpenses => 'Higher expenses';
+
+  @override
+  String get incomeSetToZero => 'Income set to 0';
+
+  @override
+  String deltaDays(int days) {
+    return '$days days';
+  }
+
+  @override
+  String get shareSafe => 'SHARE SAFE';
+
+  @override
+  String get shareSafeHint => 'No savings. No expenses. Just your runway.';
+
+  @override
+  String get preparing => 'PREPARING...';
+
+  @override
+  String get shareImage => 'SHARE IMAGE';
+
+  @override
+  String get shareAsText => 'SHARE AS TEXT';
+
+  @override
+  String get canYouBeatThis => 'Can you beat this?';
+
+  @override
+  String shareImageText(int days, String identity) {
+    return 'If my income stopped today, I survive $days days. $identity. Can you beat this? RUNWAY';
+  }
+
+  @override
+  String shareTextMessage(int days, String identity, int percentile) {
+    return 'If my income stopped today, I survive $days days. $identity. You outlast $percentile% of people. Can you beat this? RUNWAY';
+  }
+
+  @override
+  String get badgeSurvivalMode => 'Survival Mode';
+
+  @override
+  String get badgeFinancialRookie => 'Financial Rookie';
+
+  @override
+  String get badgeGettingBy => 'Getting By';
+
+  @override
+  String get badgeFinanciallyStable => 'Financially Stable';
+
+  @override
+  String get badgeFinancialFortress => 'Financial Fortress';
+
+  @override
+  String get badgeEscapeVelocity => 'Escape Velocity';
 }

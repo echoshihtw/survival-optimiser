@@ -6,132 +6,92 @@ import 'package:application/application.dart';
 import 'package:intl/intl.dart';
 
 class InvestableBar extends ConsumerWidget {
-  final ModelState model;
-  const InvestableBar({super.key, required this.model});
+  const InvestableBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
-    final nf = NumberFormat('#,##0', 'en_US');
-    final investable = model.investableCash;
-    final safety = model.safetyCash;
-    final total = model.currentCash;
+    final symbol  = ref.watch(currencyProvider).value?.symbol ?? '¥';
+    final nf      = NumberFormat('#,##0', 'en_US');
+    final txns    = ref.watch(transactionsProvider).value ?? [];
 
-    final safetyRatio = total > 0 ? (safety / total).clamp(0.0, 1.0) : 0.0;
-    final investableRatio = total > 0
-        ? (investable / total).clamp(0.0, 1.0)
-        : 0.0;
+    // Sum all investment transactions
+    final totalInvested = txns
+        .where((t) => t.type == TransactionType.investment)
+        .fold(0.0, (sum, t) => sum + t.amount.value);
 
-    final summary = Row(
+    final count = txns
+        .where((t) => t.type == TransactionType.investment)
+        .length;
+
+    final summary = Row(children: [
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('TOTAL INVESTED', style: AppTextStyles.label),
+            const SizedBox(height: AppSpacing.xxs),
+            Text(
+              '$symbol ${nf.format(totalInvested)}',
+              style: AppTextStyles.metric
+                  .copyWith(color: AppColors.turkishBlue),
+            ),
+          ],
+        ),
+      ),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('ENTRIES', style: AppTextStyles.label),
+            const SizedBox(height: AppSpacing.xxs),
+            Text(
+              '$count',
+              style: AppTextStyles.metric
+                  .copyWith(color: AppColors.textSecondary),
+            ),
+          ],
+        ),
+      ),
+    ]);
+
+    final details = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.investable, style: AppTextStyles.label),
-              const SizedBox(height: AppSpacing.xxs),
-              Text(
-                '$symbol ${nf.format(investable)}',
-                style: AppTextStyles.metric.copyWith(
-                  color: AppColors.turkishBlue,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.safetyFund, style: AppTextStyles.label),
-              const SizedBox(height: AppSpacing.xxs),
-              Text(
-                '$symbol ${nf.format(safety)}',
-                style: AppTextStyles.metric.copyWith(
-                  color: SC.metricSafety,
-                ),
-              ),
-            ],
-          ),
-        ),
+        if (count == 0)
+          Text('No investments logged yet',
+              style: AppTextStyles.bodySmall)
+        else
+          ...txns
+              .where((t) => t.type == TransactionType.investment)
+              .map((t) => Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.xs),
+                    child: Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          t.note ?? 'Investment',
+                          style: AppTextStyles.body,
+                        ),
+                        Text(
+                          '$symbol ${nf.format(t.amount.value)}',
+                          style: AppTextStyles.metricSmall
+                              .copyWith(
+                                  color: AppColors.turkishBlue),
+                        ),
+                      ],
+                    ),
+                  )),
       ],
     );
 
-    final details = LayoutBuilder(
-      builder: (_, c) {
-        final w = c.maxWidth;
-        final safetyW = w * safetyRatio;
-        final investableW = w * investableRatio;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: Stack(
-                children: [
-                  Container(height: 6, width: w, color: AppColors.surfaceHigh),
-                  Container(
-                    height: 6,
-                    width: safetyW,
-                    decoration: const BoxDecoration(
-                      gradient: AppColors.gradientGold,
-                    ),
-                  ),
-                  Positioned(
-                    left: safetyW,
-                    child: Container(
-                      height: 6,
-                      width: investableW,
-                      decoration: const BoxDecoration(
-                        gradient: AppColors.gradientBlue,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Row(
-              children: [
-                _dot(AppColors.gold, l10n.safety),
-                const SizedBox(width: AppSpacing.md),
-                _dot(AppColors.blue, l10n.investable),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              l10n.deployableCapital,
-              style: AppTextStyles.caption,
-            ),
-          ],
-        );
-      },
-    );
-
     return NeoExpandableCard(
-      title: l10n.investable,
+      title: 'INVESTMENTS',
       accentColor: SC.accentNeutral,
       initiallyExpanded: false,
       summary: summary,
       details: details,
-    );
-  }
-
-  Widget _dot(Color color, String label) {
-    return Row(
-      children: [
-        Container(
-          width: 6,
-          height: 6,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(3),
-          ),
-        ),
-        const SizedBox(width: AppSpacing.xxs + 2),
-        Text(label, style: AppTextStyles.caption),
-      ],
     );
   }
 }

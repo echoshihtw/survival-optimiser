@@ -11,32 +11,21 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(path: '/boot', builder: (_, __) => const BootScreen()),
     StatefulShellRoute.indexedStack(
-      builder: (context, state, shell) => _ScaffoldWithNav(shell: shell),
+      builder: (context, state, shell) =>
+          _ScaffoldWithNav(shell: shell),
       branches: [
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/dashboard',
-              builder: (_, __) => const DashboardScreen(),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/transactions',
-              builder: (_, __) => const TransactionsScreen(),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/scenarios',
-              builder: (_, __) => const ScenariosScreen(),
-            ),
-          ],
-        ),
+        StatefulShellBranch(routes: [
+          GoRoute(path: '/dashboard',
+              builder: (_, __) => const DashboardScreen()),
+        ]),
+        StatefulShellBranch(routes: [
+          GoRoute(path: '/transactions',
+              builder: (_, __) => const TransactionsScreen()),
+        ]),
+        StatefulShellBranch(routes: [
+          GoRoute(path: '/scenarios',
+              builder: (_, __) => const ScenariosScreen()),
+        ]),
       ],
     ),
   ],
@@ -68,9 +57,9 @@ class _NavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final items = [
-      (label: l10n.navHud, icon: Icons.space_dashboard_rounded),
-      (label: l10n.navLog, icon: Icons.receipt_long_rounded),
-      (label: l10n.navSim, icon: Icons.science_rounded),
+      (label: l10n.navHud,  icon: Icons.space_dashboard_rounded),
+      (label: l10n.navLog,  icon: Icons.receipt_long_rounded),
+      (label: l10n.navSim,  icon: Icons.science_rounded),
     ];
 
     return Container(
@@ -84,12 +73,10 @@ class _NavBar extends StatelessWidget {
         top: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.sm,
-          ),
+              horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
           child: Row(
             children: List.generate(items.length, (i) {
-              final item = items[i];
+              final item   = items[i];
               final active = i == currentIndex;
               return Expanded(
                 child: GestureDetector(
@@ -99,8 +86,7 @@ class _NavBar extends StatelessWidget {
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeOut,
                     padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.xs + 2,
-                    ),
+                        vertical: AppSpacing.xs + 2),
                     decoration: BoxDecoration(
                       color: active
                           ? AppColors.neonGreen.withAlpha(15)
@@ -110,26 +96,22 @@ class _NavBar extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          item.icon,
-                          color: active
-                              ? AppColors.neonGreen
-                              : AppColors.textSecondary,
-                          size: 20,
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          item.label.toUpperCase(),
-                          style: AppTextStyles.caption.copyWith(
+                        Icon(item.icon,
                             color: active
                                 ? AppColors.neonGreen
                                 : AppColors.textSecondary,
-                            letterSpacing: 1.0,
-                            fontWeight: active
-                                ? FontWeight.w600
-                                : FontWeight.w400,
-                          ),
-                        ),
+                            size: 20),
+                        const SizedBox(height: 3),
+                        Text(item.label.toUpperCase(),
+                            style: AppTextStyles.caption.copyWith(
+                              color: active
+                                  ? AppColors.neonGreen
+                                  : AppColors.textSecondary,
+                              letterSpacing: 1.0,
+                              fontWeight: active
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                            )),
                       ],
                     ),
                   ),
