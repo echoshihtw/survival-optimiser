@@ -8,9 +8,16 @@ import 'package:domain/domain.dart';
 import 'widgets/transaction_row.dart';
 import 'widgets/transaction_form.dart';
 import 'widgets/loan_wizard.dart';
+import '../paywall/paywall_screen.dart';
 
 class TransactionsScreen extends ConsumerWidget {
-  const TransactionsScreen({super.key});
+  final bool openAddOnLoad;
+  final String? firstTransactionType;
+  const TransactionsScreen({
+    super.key,
+    this.openAddOnLoad = false,
+    this.firstTransactionType,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -169,6 +176,13 @@ class TransactionsScreen extends ConsumerWidget {
   }
 
   void _showForm(BuildContext context, WidgetRef ref, Transaction? existing) {
+    if (existing == null) {
+      final e = ref.read(entitlementProvider).value;
+      if (e != null && e.hasHitDailyLimit) {
+        showPaywall(context, trigger: 'daily_limit');
+        return;
+      }
+    }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -193,6 +207,8 @@ class TransactionsScreen extends ConsumerWidget {
               updatedAt: now,
             );
             await ref.read(addTransactionUseCaseProvider).execute(tx);
+            // Record for daily limit tracking
+            await ref.read(entitlementProvider.notifier).recordTransaction();
           } else {
             final tx = existing.copyWith(
               date: date,

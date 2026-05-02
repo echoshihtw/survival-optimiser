@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import 'package:design_system/design_system.dart';
+import '../onboarding/onboarding_screen.dart';
 
 class BootScreen extends StatefulWidget {
   const BootScreen({super.key});
@@ -44,7 +46,16 @@ class _BootScreenState extends State<BootScreen> with TickerProviderStateMixin {
     setState(() => _showPrompt = true);
     await Future.delayed(const Duration(milliseconds: 1200));
     if (!mounted) return;
-    context.go('/dashboard');
+    final prefs = await SharedPreferences.getInstance();
+    final onboardingDone = prefs.getBool('onboarding_done') ?? false;
+    if (!mounted) return;
+    if (onboardingDone) {
+      context.go('/dashboard');
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+      );
+    }
   }
 
   @override

@@ -25,3 +25,4 @@ export 'providers/budget_provider.dart';
 export 'providers/display_provider.dart';
 export 'feature_flags.dart';
 export 'analytics_service.dart';
+export 'providers/entitlement_provider.dart';

@@ -71,30 +71,16 @@ Future<String> _getOrCreateKey() async {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-
-    final dir = await getApplicationDocumentsDirectory();
+    final dir  = await getApplicationDocumentsDirectory();
     final file = File(p.join(dir.path, 'survival.db'));
-    // Exclude DB from iCloud/iTunes backup — sensitive financial data
-    if (Platform.isIOS || Platform.isMacOS) {
-      await file.setLastModified(DateTime.now()); // ensure file exists
-      try {
-        // This prevents the DB from being included in iCloud/iTunes backups
-        await Process.run('mdutil', ['-E', file.path]);
-      } catch (_) {}
-    }
-
-    // Get encryption key from secure storage
     // ignore: unused_local_variable
-    final dbKey = await _getOrCreateKey();
-
+    final dbKey    = await _getOrCreateKey();
+    final pragmaKey = "PRAGMA key = '$dbKey';";
     return NativeDatabase.createInBackground(
       file,
       setup: (db) {
-        // Set encryption key — this is what SQLCipher uses
-        db.execute("PRAGMA key = '\$dbKey';");
-        // Use WAL mode for better performance
+        db.execute(pragmaKey);
         db.execute('PRAGMA journal_mode=WAL;');
-        // Verify encryption is working
         db.execute('SELECT count(*) FROM sqlite_master;');
       },
     );
