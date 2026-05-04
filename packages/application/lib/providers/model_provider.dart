@@ -91,19 +91,15 @@ final scenarioModelProvider = Provider<ModelState?>((ref) {
       final realMonths = aggregateMonths(transactions);
       final currentCash = realMonths.isEmpty ? 0.0 : realMonths.last.balance;
       final realBurnRate = _computeBurnRate(realMonths) ?? 0.0;
-      final effectiveBurn = scenario.burnRateOverride ?? realBurnRate;
-      final effectiveIncome = scenario.simulatedIncome ?? 0.0;
-      final netMonthlyFlow = effectiveIncome - effectiveBurn;
+      final variableBurn = scenario.burnRateOverride ?? realBurnRate;
+      final totalBurn = variableBurn + monthlyPayment + subscriptionCost;
+      final simulatedIncome = scenario.simulatedIncome ?? 0.0;
+      final netBurn = totalBurn - simulatedIncome;
 
-      final projected = _projectFromCash(
+      return _computeScenarioModel(
         startingCash: currentCash,
-        netMonthlyFlow: netMonthlyFlow,
-        fromDate: DateTime.now(),
-        maxMonths: 120,
-      );
-
-      return computeModel(
-        months: projected,
+        variableBurnRate: variableBurn,
+        effectiveBurnRate: netBurn > 0 ? netBurn : 0.0,
         monthlyPayment: monthlyPayment,
         subscriptionMonthlyCost: subscriptionCost,
       );
@@ -120,21 +116,35 @@ double? _computeBurnRate(List<MonthlyState> months) {
   return outflows.reduce((a, b) => a + b) / outflows.length;
 }
 
-List<MonthlyState> _projectFromCash({
+ModelState _computeScenarioModel({
   required double startingCash,
-  required double netMonthlyFlow,
-  required DateTime fromDate,
-  required int maxMonths,
+  required double variableBurnRate,
+  required double effectiveBurnRate,
+  required double monthlyPayment,
+  required double subscriptionMonthlyCost,
 }) {
-  final result = <MonthlyState>[];
-  double balance = startingCash;
-  for (int i = 0; i < maxMonths; i++) {
-    final month = SurvivalMonth(DateTime(fromDate.year, fromDate.month + i));
-    balance += netMonthlyFlow;
-    result.add(
-      MonthlyState(month: month, netFlow: netMonthlyFlow, balance: balance),
-    );
-    if (balance <= 0) break;
-  }
-  return result;
+  final runwayDays = effectiveBurnRate > 0
+      ? (startingCash / effectiveBurnRate * 30).floor()
+      : 99999;
+  final runwayMonths = effectiveBurnRate > 0
+      ? (startingCash / effectiveBurnRate).floor()
+      : 9999;
+  final now = DateTime.now();
+
+  return ModelState(
+    currentCash: startingCash,
+    burnRate: variableBurnRate,
+    effectiveBurnRate: effectiveBurnRate,
+    monthlyPayment: monthlyPayment,
+    subscriptionMonthlyCost: subscriptionMonthlyCost,
+    runwayMonths: runwayMonths,
+    runwayDays: runwayDays,
+    runOutDate: effectiveBurnRate > 0
+        ? DateTime(now.year, now.month + runwayMonths, 1)
+        : null,
+    pressureRatio: variableBurnRate > 0
+        ? (monthlyPayment + subscriptionMonthlyCost) / variableBurnRate
+        : 0.0,
+    badge: IdentityBadgeX.fromDays(runwayDays),
+  );
 }

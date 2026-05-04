@@ -100,29 +100,64 @@ class ScenariosScreen extends ConsumerWidget {
                       hint: realModel.burnRate > 0
                           ? realModel.burnRate.toStringAsFixed(0)
                           : '50000',
-                      initialValue: scenario.burnRateOverride?.toStringAsFixed(0),
+                      initialValue: scenario.burnRateOverride?.toStringAsFixed(
+                        0,
+                      ),
+                      resetVersion: scenario.resetVersion,
+                      focusOnReset: true,
                       onChanged: (v) {
-                        final isPro = ref.read(entitlementProvider).value?.isPro ?? false;
-                        if (!isPro && scenario.isActive) {
-                          showPaywall(context, trigger: 'simulation');
-                          return;
-                        }
-                        ref.read(scenarioProvider.notifier).setBurnRateOverride(double.tryParse(v));
+                        final value = double.tryParse(v);
+                        ref
+                            .read(scenarioProvider.notifier)
+                            .setBurnRateOverride(value);
                       },
                     ),
                     const SizedBox(height: AppSpacing.md),
                     _SimInput(
                       label: l10n.simulatedIncome,
                       hint: '0',
-                      initialValue: scenario.simulatedIncome?.toStringAsFixed(0),
+                      initialValue: scenario.simulatedIncome?.toStringAsFixed(
+                        0,
+                      ),
+                      resetVersion: scenario.resetVersion,
+                      focusOnReset: false,
                       onChanged: (v) {
-                        final isPro = ref.read(entitlementProvider).value?.isPro ?? false;
-                        if (!isPro && scenario.isActive) {
-                          showPaywall(context, trigger: 'simulation');
-                          return;
-                        }
-                        ref.read(scenarioProvider.notifier).setSimulatedIncome(double.tryParse(v));
+                        final value = double.tryParse(v);
+                        ref
+                            .read(scenarioProvider.notifier)
+                            .setSimulatedIncome(value);
                       },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _simulationResult(
+                      l10n: l10n,
+                      scenario: scenario,
+                      realModel: realModel,
+                      simModel: simModel,
+                      fmtRunway: fmtRunway,
+                      runwayColor: runwayColor,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    NeoButton(
+                      label: 'RUN SIMULATION',
+                      variant: NeoButtonVariant.primary,
+                      fullWidth: true,
+                      onPressed:
+                          realModel.currentCash == 0 ||
+                              scenario.simulatedIncome == null ||
+                              scenario.isCalculating ||
+                              scenario.isActive
+                          ? null
+                          : () {
+                              final isPro =
+                                  ref.read(entitlementProvider).value?.isPro ??
+                                  false;
+                              if (!isPro && scenario.hasRunSimulation) {
+                                showPaywall(context, trigger: 'simulation');
+                                return;
+                              }
+                              ref.read(scenarioProvider.notifier).activate();
+                            },
                     ),
                     const SizedBox(height: AppSpacing.md),
                     NeoButton(
@@ -130,130 +165,12 @@ class ScenariosScreen extends ConsumerWidget {
                       variant: NeoButtonVariant.ghost,
                       fullWidth: true,
                       onPressed: () {
-                        final isPro = ref.read(entitlementProvider).value?.isPro ?? false;
-                        final isActive = ref.read(scenarioProvider).isActive;
-                        if (!isPro && isActive) {
-                          showPaywall(context, trigger: 'simulation');
-                          return;
-                        }
                         ref.read(scenarioProvider.notifier).reset();
                       },
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.cardGap),
-
-              if (scenario.isActive && simModel != null && realModel.currentCash > 0) ...[
-                NeoCard(
-                  title: l10n.simulation,
-                  accentColor: AppColors.blue,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _tile(
-                              l10n.simRunway,
-                              fmtRunway(simModel.runwayMonths),
-                              runwayColor(simModel.survivalStatus),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      const Divider(color: AppColors.cardBorder, height: 1),
-                      const SizedBox(height: AppSpacing.md),
-
-                      Container(
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceHigh,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(l10n.deltaRunway, style: AppTextStyles.label),
-                            Row(
-                              children: [
-                                Icon(
-                                  simModel.runwayMonths >= realModel.runwayMonths
-                                      ? Icons.trending_up_rounded
-                                      : Icons.trending_down_rounded,
-                                  color: simModel.runwayMonths >= realModel.runwayMonths
-                                      ? AppColors.green
-                                      : AppColors.red,
-                                  size: 16,
-                                ),
-                                const SizedBox(width: AppSpacing.xs),
-                                Text(
-                                  '${simModel.runwayMonths > realModel.runwayMonths ? "+" : ""}${simModel.runwayMonths - realModel.runwayMonths} MO',
-                                  style: AppTextStyles.metric.copyWith(
-                                    color: simModel.runwayMonths >= realModel.runwayMonths
-                                        ? AppColors.green
-                                        : AppColors.red,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ] else if (realModel.currentCash == 0) ...[
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.xl),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-                  border: Border.all(color: AppColors.cardBorder),
-                ),
-                child: Column(children: [
-                  const Icon(Icons.account_balance_wallet_outlined,
-                      color: AppColors.textDim, size: 32),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text('Add your opening balance first',
-                      style: AppTextStyles.bodySmall,
-                      textAlign: TextAlign.center),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text('Go to LOG → + ADD → Opening Balance',
-                      style: AppTextStyles.caption,
-                      textAlign: TextAlign.center),
-                ]),
-              ),
-            ] else ...[
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.xl),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-                    border: Border.all(
-                      color: AppColors.cardBorder,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                  child: Center(
-                    child: Column(
-                      children: [
-                        const Icon(
-                          Icons.science_outlined,
-                          color: AppColors.textDim,
-                          size: 32,
-                        ),
-                        const SizedBox(height: AppSpacing.sm),
-                        Text(
-                          l10n.enterValuesToSim,
-                          style: AppTextStyles.bodySmall,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
               const SizedBox(height: AppSpacing.xxxl),
             ],
           ),
@@ -277,18 +194,139 @@ class ScenariosScreen extends ConsumerWidget {
       ],
     );
   }
+
+  Widget _simulationResult({
+    required AppLocalizations l10n,
+    required ScenarioState scenario,
+    required ModelState realModel,
+    required ModelState? simModel,
+    required String Function(int) fmtRunway,
+    required Color Function(SurvivalStatus) runwayColor,
+  }) {
+    if (realModel.currentCash == 0) {
+      return _simulationPanel(
+        icon: Icons.account_balance_wallet_outlined,
+        child: Column(
+          children: [
+            Text(
+              'Add your opening balance first',
+              style: AppTextStyles.bodySmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              'Go to LOG → + ADD → Opening Balance',
+              style: AppTextStyles.caption,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (scenario.isCalculating || (scenario.isActive && simModel == null)) {
+      return _simulationPanel(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.purple,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(l10n.simulation, style: AppTextStyles.bodySmall),
+          ],
+        ),
+      );
+    }
+
+    if (scenario.isActive && simModel != null) {
+      final isImproved = simModel.runwayMonths >= realModel.runwayMonths;
+      final delta = simModel.runwayMonths - realModel.runwayMonths;
+
+      return _simulationPanel(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: _tile(
+                    l10n.simRunway,
+                    fmtRunway(simModel.runwayMonths),
+                    runwayColor(simModel.survivalStatus),
+                  ),
+                ),
+                Icon(
+                  isImproved
+                      ? Icons.trending_up_rounded
+                      : Icons.trending_down_rounded,
+                  color: isImproved ? AppColors.green : AppColors.red,
+                  size: 18,
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                Text(
+                  '${delta > 0 ? "+" : ""}$delta MO',
+                  style: AppTextStyles.metricSmall.copyWith(
+                    color: isImproved ? AppColors.green : AppColors.red,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    return _simulationPanel(
+      icon: Icons.science_outlined,
+      child: Text(
+        l10n.enterValuesToSim,
+        style: AppTextStyles.bodySmall,
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _simulationPanel({IconData? icon, required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceHigh,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.cardBorder),
+      ),
+      child: Column(
+        children: [
+          if (icon != null) ...[
+            Icon(icon, color: AppColors.textDim, size: 24),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+          child,
+        ],
+      ),
+    );
+  }
 }
 
 class _SimInput extends StatefulWidget {
   final String label;
   final String hint;
   final String? initialValue;
+  final int resetVersion;
+  final bool focusOnReset;
   final ValueChanged<String> onChanged;
 
   const _SimInput({
     required this.label,
     required this.hint,
     this.initialValue,
+    required this.resetVersion,
+    required this.focusOnReset,
     required this.onChanged,
   });
 
@@ -298,17 +336,38 @@ class _SimInput extends StatefulWidget {
 
 class _SimInputState extends State<_SimInput> {
   late TextEditingController _ctrl;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _ctrl = TextEditingController(text: widget.initialValue ?? '');
+    _focusNode = FocusNode();
   }
 
   @override
   void dispose() {
+    _focusNode.dispose();
     _ctrl.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant _SimInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.resetVersion != oldWidget.resetVersion) {
+      _ctrl.clear();
+      if (widget.focusOnReset) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _focusNode.requestFocus();
+        });
+      }
+      return;
+    }
+    final value = widget.initialValue ?? '';
+    if (value != _ctrl.text) {
+      _ctrl.text = value;
+    }
   }
 
   @override
@@ -316,6 +375,7 @@ class _SimInputState extends State<_SimInput> {
     return NeoInput(
       label: widget.label,
       controller: _ctrl,
+      focusNode: _focusNode,
       inputType: NeoInputType.numeric,
       hint: widget.hint,
       onChanged: widget.onChanged,

@@ -9,13 +9,11 @@ import '../../config/config_screen.dart';
 
 const _kDismissedKey = 'getting_started_dismissed';
 
-
 class GettingStartedCard extends ConsumerStatefulWidget {
   const GettingStartedCard({super.key});
 
   @override
-  ConsumerState<GettingStartedCard> createState() =>
-      _GettingStartedCardState();
+  ConsumerState<GettingStartedCard> createState() => _GettingStartedCardState();
 }
 
 class _GettingStartedCardState extends ConsumerState<GettingStartedCard> {
@@ -37,16 +35,16 @@ class _GettingStartedCardState extends ConsumerState<GettingStartedCard> {
   Widget build(BuildContext context) {
     if (_dismissed) return const SizedBox.shrink();
 
-    final txns     = ref.watch(transactionsProvider).value ?? [];
-    final budget   = ref.watch(budgetProvider).value ?? const Budget();
+    final txns = ref.watch(transactionsProvider).value ?? [];
+    final budget = ref.watch(budgetProvider).value ?? const Budget();
     final scenario = ref.watch(scenarioProvider);
 
     final hasBalance = txns.any(
-        (t) => t.type == TransactionType.openingBalance);
-    final hasBudget  = budget.isSet;
-    final hasExpense = txns.any(
-        (t) => t.type == TransactionType.expense);
-    final hasSim     = scenario.isActive;
+      (t) => t.type == TransactionType.openingBalance,
+    );
+    final hasBudget = budget.isSet;
+    final hasExpense = txns.any((t) => t.type == TransactionType.expense);
+    final hasSim = scenario.hasRunSimulation;
 
     final steps = [
       _Step(
@@ -67,13 +65,13 @@ class _GettingStartedCardState extends ConsumerState<GettingStartedCard> {
           useSafeArea: true,
           backgroundColor: Colors.transparent,
           builder: (ctx) => Padding(
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(ctx).padding.top + 8),
+            padding: EdgeInsets.only(top: MediaQuery.of(ctx).padding.top + 8),
             child: Container(
               decoration: const BoxDecoration(
                 color: AppColors.background,
                 borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(AppSpacing.cardRadius)),
+                  top: Radius.circular(AppSpacing.cardRadius),
+                ),
               ),
               child: const ConfigScreen(),
             ),
@@ -111,18 +109,22 @@ class _GettingStartedCardState extends ConsumerState<GettingStartedCard> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(
-                AppSpacing.cardPadding, AppSpacing.cardPadding,
-                AppSpacing.cardPadding, AppSpacing.sm),
+              AppSpacing.cardPadding,
+              AppSpacing.cardPadding,
+              AppSpacing.cardPadding,
+              AppSpacing.sm,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('GETTING STARTED',
-                        style: AppTextStyles.sectionTitle),
-                    Text('$completedCount of ${steps.length} complete',
-                        style: AppTextStyles.caption),
+                    Text('GETTING STARTED', style: AppTextStyles.sectionTitle),
+                    Text(
+                      '$completedCount of ${steps.length} complete',
+                      style: AppTextStyles.caption,
+                    ),
                   ],
                 ),
                 GestureDetector(
@@ -131,8 +133,11 @@ class _GettingStartedCardState extends ConsumerState<GettingStartedCard> {
                     final prefs = await SharedPreferences.getInstance();
                     await prefs.setBool(_kDismissedKey, true);
                   },
-                  child: const Icon(Icons.close_rounded,
-                      color: AppColors.textDim, size: 18),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    color: AppColors.textDim,
+                    size: 18,
+                  ),
                 ),
               ],
             ),
@@ -140,14 +145,14 @@ class _GettingStartedCardState extends ConsumerState<GettingStartedCard> {
 
           Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.cardPadding),
+              horizontal: AppSpacing.cardPadding,
+            ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(2),
               child: LinearProgressIndicator(
                 value: completedCount / steps.length,
                 backgroundColor: AppColors.cardBorder,
-                valueColor: const AlwaysStoppedAnimation(
-                    AppColors.neonGreen),
+                valueColor: const AlwaysStoppedAnimation(AppColors.neonGreen),
                 minHeight: 3,
               ),
             ),
@@ -160,25 +165,34 @@ class _GettingStartedCardState extends ConsumerState<GettingStartedCard> {
           // Tips
           Container(
             margin: const EdgeInsets.fromLTRB(
-                AppSpacing.cardPadding, 0,
-                AppSpacing.cardPadding, AppSpacing.sm),
+              AppSpacing.cardPadding,
+              0,
+              AppSpacing.cardPadding,
+              AppSpacing.sm,
+            ),
             padding: const EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.surfaceHigh,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Row(children: [
-              const Icon(Icons.lightbulb_outline_rounded,
-                  color: AppColors.gold, size: 14),
-              const SizedBox(width: AppSpacing.xs),
-              Expanded(
-                child: Text(
-                  'Tap to edit · Long press or swipe left to delete',
-                  style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.lightbulb_outline_rounded,
+                  color: AppColors.gold,
+                  size: 14,
                 ),
-              ),
-            ]),
+                const SizedBox(width: AppSpacing.xs),
+                Expanded(
+                  child: Text(
+                    'Tap to edit · Long press or swipe left to delete',
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -214,75 +228,89 @@ class _StepRow extends StatelessWidget {
       onTap: step.done ? null : step.onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.cardPadding,
-            vertical: AppSpacing.sm),
+          horizontal: AppSpacing.cardPadding,
+          vertical: AppSpacing.sm,
+        ),
         decoration: const BoxDecoration(
           border: Border(
             bottom: BorderSide(color: AppColors.cardBorder, width: 0.5),
           ),
         ),
-        child: Row(children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            width: 32, height: 32,
-            decoration: BoxDecoration(
-              color: step.done
-                  ? AppColors.neonGreen.withAlpha(20)
-                  : AppColors.surfaceHigh,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
+        child: Row(
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: step.done
+                    ? AppColors.neonGreen.withAlpha(20)
+                    : AppColors.surfaceHigh,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: step.done ? AppColors.neonGreen : AppColors.cardBorder,
+                ),
+              ),
+              child: Icon(
+                step.done ? Icons.check_rounded : step.icon,
                 color: step.done
                     ? AppColors.neonGreen
-                    : AppColors.cardBorder,
+                    : AppColors.textSecondary,
+                size: 16,
               ),
             ),
-            child: Icon(
-              step.done ? Icons.check_rounded : step.icon,
-              color: step.done
-                  ? AppColors.neonGreen
-                  : AppColors.textSecondary,
-              size: 16,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(children: [
-                  Text(step.label,
-                      style: AppTextStyles.body.copyWith(
-                        color: step.done
-                            ? AppColors.textSecondary
-                            : AppColors.textPrimary,
-                        decoration: step.done
-                            ? TextDecoration.lineThrough
-                            : null,
-                      )),
-                  if (step.isOptional) ...[
-                    const SizedBox(width: AppSpacing.xs),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 1),
-                      decoration: BoxDecoration(
-                        color: AppColors.turkishBlue.withAlpha(20),
-                        borderRadius: BorderRadius.circular(3),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        step.label,
+                        style: AppTextStyles.body.copyWith(
+                          color: step.done
+                              ? AppColors.textSecondary
+                              : AppColors.textPrimary,
+                          decoration: step.done
+                              ? TextDecoration.lineThrough
+                              : null,
+                        ),
                       ),
-                      child: Text('BONUS',
-                          style: AppTextStyles.caption.copyWith(
+                      if (step.isOptional) ...[
+                        const SizedBox(width: AppSpacing.xs),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 5,
+                            vertical: 1,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.turkishBlue.withAlpha(20),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          child: Text(
+                            'BONUS',
+                            style: AppTextStyles.caption.copyWith(
                               color: AppColors.turkishBlue,
-                              fontSize: 9)),
-                    ),
-                  ],
-                ]),
-                Text(step.hint, style: AppTextStyles.caption),
-              ],
+                              fontSize: 9,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  Text(step.hint, style: AppTextStyles.caption),
+                ],
+              ),
             ),
-          ),
-          if (!step.done)
-            const Icon(Icons.chevron_right_rounded,
-                color: AppColors.textDim, size: 18),
-        ]),
+            if (!step.done)
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.textDim,
+                size: 18,
+              ),
+          ],
+        ),
       ),
     );
   }
