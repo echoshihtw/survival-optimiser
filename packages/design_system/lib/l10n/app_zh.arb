@@ -23,7 +23,7 @@
   "loanAffectsInfo": "> 月還款影響壓力比例和可投資金額",
   "transactionLog": "交易記錄",
   "newEntry": "+ 新增",
-  "noEntries": "> 尚無記錄\n> 點擊 [+ 新增] 開始",
+  "noEntries": "No entries yet\nTap + ADD to log your first entry",
   "newLogEntry": "> 新增記錄",
   "modifyEntry": "> 修改記錄",
   "type": "類型",
@@ -157,7 +157,6 @@
   "display": "顯示",
   "glassEffect": "玻璃效果",
   "glassEffectHint": "GPU 密集 — 舊裝置建議關閉",
-
   "runwayBrand": "RUNWAY",
   "bootRunwayCheck": "> RUNWAY 检查...",
   "bootIncomeStopped": "> 如果你的收入今天停止...",

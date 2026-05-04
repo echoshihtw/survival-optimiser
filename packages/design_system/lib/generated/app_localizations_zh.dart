@@ -78,7 +78,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get newEntry => '+ 新增';
 
   @override
-  String get noEntries => '> 尚無記錄\n> 點擊 [+ 新增] 開始';
+  String get noEntries => 'No entries yet\nTap + ADD to log your first entry';
 
   @override
   String get newLogEntry => '> 新增記錄';
@@ -665,7 +665,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get newEntry => '+ 新增';
 
   @override
-  String get noEntries => '> 尚無記錄\n> 點擊 [+ 新增] 開始';
+  String get noEntries => 'No entries yet\nTap + ADD to log your first entry';
 
   @override
   String get newLogEntry => '> 新增記錄';

@@ -178,6 +178,7 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
             NeoInput(
               label: l10n.subscriptionName,
               controller: _nameCtrl,
+              inputType: NeoInputType.name,
               hint: 'Netflix',
               onChanged: (_) {},
             ),
@@ -187,7 +188,7 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
             NeoInput(
               label: l10n.subscriptionAmount,
               controller: _amountCtrl,
-              keyboardType: TextInputType.number,
+              inputType: NeoInputType.numeric,
               hint: '1990',
               onChanged: (_) {},
             ),

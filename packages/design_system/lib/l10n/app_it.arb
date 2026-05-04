@@ -23,7 +23,7 @@
   "loanAffectsInfo": "> PRESTITO/MESE INFLUISCE SUL RATIO DI PRESSIONE E INVESTIBILE",
   "transactionLog": "REGISTRO TRANSAZIONI",
   "newEntry": "+ NUOVO",
-  "noEntries": "> NESSUNA VOCE\n> TOCCA [+ NUOVO] PER INIZIARE",
+  "noEntries": "No entries yet\nTap + ADD to log your first entry",
   "newLogEntry": "> NUOVA VOCE",
   "modifyEntry": "> MODIFICA VOCE",
   "type": "TIPO",
@@ -157,7 +157,6 @@
   "display": "SCHERMO",
   "glassEffect": "EFFETTO VETRO",
   "glassEffectHint": "INTENSIVO GPU — DISATTIVARE SU DISPOSITIVI PIÙ VECCHI",
-
   "runwayBrand": "RUNWAY",
   "bootRunwayCheck": "> CONTROLLO RUNWAY...",
   "bootIncomeStopped": "> SE IL TUO REDDITO SI FERMASSE OGGI...",

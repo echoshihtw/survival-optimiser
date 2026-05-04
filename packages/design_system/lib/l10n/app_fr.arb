@@ -23,7 +23,7 @@
   "loanAffectsInfo": "> LE PRÊT/MO AFFECTE LE RATIO DE PRESSION ET L'INVESTISSABLE",
   "transactionLog": "JOURNAL DES TRANSACTIONS",
   "newEntry": "+ NOUVEAU",
-  "noEntries": "> AUCUNE ENTRÉE TROUVÉE\n> APPUYER SUR [+ NOUVEAU] POUR COMMENCER",
+  "noEntries": "No entries yet\nTap + ADD to log your first entry",
   "newLogEntry": "> NOUVELLE ENTRÉE",
   "modifyEntry": "> MODIFIER L'ENTRÉE",
   "type": "TYPE",
@@ -157,7 +157,6 @@
   "display": "AFFICHAGE",
   "glassEffect": "EFFET VERRE",
   "glassEffectHint": "INTENSIF GPU — DÉSACTIVER SUR ANCIENS APPAREILS",
-
   "runwayBrand": "RUNWAY",
   "bootRunwayCheck": "> VÉRIFICATION DU RUNWAY...",
   "bootIncomeStopped": "> SI VOS REVENUS S'ARRÊTAIENT AUJOURD'HUI...",

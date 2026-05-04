@@ -6,6 +6,11 @@ import '../features/dashboard/dashboard_screen.dart';
 import '../features/transactions/transactions_screen.dart';
 import '../features/scenarios/scenarios_screen.dart';
 
+// Global keys for coach mark tour
+final hudNavKey = GlobalKey();
+final logNavKey = GlobalKey();
+final simNavKey = GlobalKey();
+
 final appRouter = GoRouter(
   initialLocation: '/boot',
   routes: [
@@ -80,6 +85,7 @@ class _NavBar extends StatelessWidget {
               final active = i == currentIndex;
               return Expanded(
                 child: GestureDetector(
+                  key: i == 0 ? hudNavKey : i == 1 ? logNavKey : simNavKey,
                   onTap: () => onTap(i),
                   behavior: HitTestBehavior.opaque,
                   child: AnimatedContainer(

@@ -23,7 +23,7 @@
   "loanAffectsInfo": "> LOAN/MO AFFECTS PRESSURE RATIO AND INVESTABLE CASH",
   "transactionLog": "TRANSACTION LOG",
   "newEntry": "+ NEW",
-  "noEntries": "> NO ENTRIES FOUND\n> TAP [+ NEW] TO BEGIN",
+  "noEntries": "No entries yet\nTap + ADD to log your first entry",
   "newLogEntry": "> NEW LOG ENTRY",
   "modifyEntry": "> MODIFY ENTRY",
   "type": "TYPE",
@@ -120,7 +120,9 @@
   "activeCount": "{count} ACTIVE",
   "@activeCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "repayLoan": "REPAY LOAN",
@@ -133,7 +135,9 @@
   "monthsProjected": "{count} MONTHS PROJECTED",
   "@monthsProjected": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "budgetPerMonth": "BUDGET/MO",
@@ -167,7 +171,6 @@
   "display": "DISPLAY",
   "glassEffect": "GLASS EFFECT",
   "glassEffectHint": "GPU INTENSIVE — DISABLE ON OLDER DEVICES",
-
   "runwayBrand": "RUNWAY",
   "bootRunwayCheck": "> RUNWAY CHECK...",
   "bootIncomeStopped": "> IF YOUR INCOME STOPPED TODAY...",
@@ -185,7 +188,9 @@
   "youOutlastPeople": "You outlast {percentile}% of people",
   "@youOutlastPeople": {
     "placeholders": {
-      "percentile": {"type": "int"}
+      "percentile": {
+        "type": "int"
+      }
     }
   },
   "loseIncome": "Lose income",
@@ -194,7 +199,9 @@
   "deltaDays": "{days} days",
   "@deltaDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "shareSafe": "SHARE SAFE",
@@ -206,16 +213,26 @@
   "shareImageText": "If my income stopped today, I survive {days} days. {identity}. Can you beat this? RUNWAY",
   "@shareImageText": {
     "placeholders": {
-      "days": {"type": "int"},
-      "identity": {"type": "String"}
+      "days": {
+        "type": "int"
+      },
+      "identity": {
+        "type": "String"
+      }
     }
   },
   "shareTextMessage": "If my income stopped today, I survive {days} days. {identity}. You outlast {percentile}% of people. Can you beat this? RUNWAY",
   "@shareTextMessage": {
     "placeholders": {
-      "days": {"type": "int"},
-      "identity": {"type": "String"},
-      "percentile": {"type": "int"}
+      "days": {
+        "type": "int"
+      },
+      "identity": {
+        "type": "String"
+      },
+      "percentile": {
+        "type": "int"
+      }
     }
   },
   "badgeSurvivalMode": "Survival Mode",

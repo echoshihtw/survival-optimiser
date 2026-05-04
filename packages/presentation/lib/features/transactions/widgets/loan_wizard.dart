@@ -300,6 +300,7 @@ class _LoanWizardState extends State<LoanWizard>
         NeoInput(
           label: l10n.nameLender,
           controller: _nameCtrl,
+          inputType: NeoInputType.name,
           hint: _source == "BANK" ? "Fubon" : "John",
           onChanged: (_) => setState(() {}),
         ),
@@ -307,7 +308,7 @@ class _LoanWizardState extends State<LoanWizard>
         NeoInput(
           label: l10n.loanAmount,
           controller: _amountCtrl,
-          keyboardType: TextInputType.number,
+          inputType: NeoInputType.numeric,
           hint: "1880000",
           onChanged: (_) {
             setState(() {});
@@ -358,7 +359,7 @@ class _LoanWizardState extends State<LoanWizard>
         NeoInput(
           label: l10n.annualRate,
           controller: _rateCtrl,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputType: NeoInputType.decimal,
           hint: "3.3",
           onChanged: (_) => _compute(),
         ),
@@ -366,7 +367,7 @@ class _LoanWizardState extends State<LoanWizard>
         NeoInput(
           label: l10n.repaymentMonths,
           controller: _monthsCtrl,
-          keyboardType: TextInputType.number,
+          inputType: NeoInputType.numeric,
           hint: "84",
           onChanged: (_) {
             setState(() {});
@@ -471,7 +472,7 @@ class _LoanWizardState extends State<LoanWizard>
         NeoInput(
           label: l10n.monthlyInstallment,
           controller: _paymentCtrl,
-          keyboardType: TextInputType.number,
+          inputType: NeoInputType.numeric,
           hint: _computedPayment?.toStringAsFixed(0) ?? "0",
           onChanged: (_) => setState(() {}),
         ),

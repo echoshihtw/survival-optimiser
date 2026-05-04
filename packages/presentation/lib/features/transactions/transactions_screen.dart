@@ -86,21 +86,39 @@ class TransactionsScreen extends ConsumerWidget {
                 data: (txs) {
                   if (txs.isEmpty) {
                     return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.receipt_long_outlined,
-                            color: AppColors.textDim,
-                            size: 40,
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          Text(
-                            l10n.noEntries,
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.bodySmall,
-                          ),
-                        ],
+                      child: GestureDetector(
+                        onTap: () => _showFormWithType(
+                            context, ref, TransactionType.openingBalance),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.receipt_long_outlined,
+                              color: AppColors.textDim,
+                              size: 40,
+                            ),
+                            const SizedBox(height: AppSpacing.sm),
+                            Text(
+                              l10n.noEntries,
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.bodySmall,
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.lg,
+                                  vertical: AppSpacing.sm),
+                              decoration: BoxDecoration(
+                                color: AppColors.neonGreen,
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Text('+ ADD OPENING BALANCE',
+                                  style: AppTextStyles.caption.copyWith(
+                                      color: AppColors.background,
+                                      fontWeight: FontWeight.w700)),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   }
@@ -111,10 +129,28 @@ class TransactionsScreen extends ConsumerWidget {
                       vertical: AppSpacing.sm,
                     ),
                     itemCount: sorted.length,
-                    itemBuilder: (_, i) => TransactionRow(
-                      transaction: sorted[i],
-                      onEdit: () => _showForm(context, ref, sorted[i]),
-                      onDelete: () => _confirmDelete(context, ref, sorted[i]),
+                    itemBuilder: (_, i) => Dismissible(
+                      key: Key(sorted[i].id),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: AppSpacing.lg),
+                        decoration: BoxDecoration(
+                          color: AppColors.hotPink.withAlpha(30),
+                          borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+                        ),
+                        child: const Icon(Icons.delete_rounded,
+                            color: AppColors.hotPink, size: 22),
+                      ),
+                      confirmDismiss: (_) async {
+                        _confirmDelete(context, ref, sorted[i]);
+                        return false; // let _confirmDelete handle deletion
+                      },
+                      child: TransactionRow(
+                        transaction: sorted[i],
+                        onEdit: () => _showForm(context, ref, sorted[i]),
+                        onDelete: () => _confirmDelete(context, ref, sorted[i]),
+                      ),
                     ),
                   );
                 },
@@ -175,6 +211,36 @@ class TransactionsScreen extends ConsumerWidget {
             amount: Money(loanAmount),
             note: note,
             loanId: loanId,
+            createdAt: now,
+            updatedAt: now,
+          );
+          await ref.read(addTransactionUseCaseProvider).execute(tx);
+        },
+      ),
+    );
+  }
+
+  void _showFormWithType(BuildContext context, WidgetRef ref,
+      TransactionType preselectedType) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppSpacing.cardRadius)),
+      ),
+      builder: (_) => TransactionForm(
+        existing: null,
+        preselectedType: preselectedType,
+        onSubmit: (type, amount, date, note) async {
+          final now = DateTime.now();
+          final tx = Transaction(
+            id: const Uuid().v4(),
+            date: date,
+            type: type,
+            amount: Money(amount),
+            note: note,
             createdAt: now,
             updatedAt: now,
           );

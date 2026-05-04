@@ -79,8 +79,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get newEntry => '+ NOUVEAU';
 
   @override
-  String get noEntries =>
-      '> AUCUNE ENTRÉE TROUVÉE\n> APPUYER SUR [+ NOUVEAU] POUR COMMENCER';
+  String get noEntries => 'No entries yet\nTap + ADD to log your first entry';
 
   @override
   String get newLogEntry => '> NOUVELLE ENTRÉE';

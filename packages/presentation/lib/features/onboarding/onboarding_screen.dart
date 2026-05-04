@@ -64,7 +64,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
   Future<void> _finish() async {
     await markOnboardingDone();
     if (!mounted) return;
-    // Use go_router to navigate to dashboard with nav bar intact
+    // Go to HUD — Getting Started card guides them from there
     context.go('/dashboard');
   }
 

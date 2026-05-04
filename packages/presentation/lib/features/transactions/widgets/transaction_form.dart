@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 class TransactionForm extends StatefulWidget {
   final Transaction? existing;
+  final TransactionType? preselectedType;
   final void Function(
     TransactionType type,
     double amount,
@@ -13,7 +14,7 @@ class TransactionForm extends StatefulWidget {
   )
   onSubmit;
 
-  const TransactionForm({super.key, this.existing, required this.onSubmit});
+  const TransactionForm({super.key, this.existing, this.preselectedType, required this.onSubmit});
 
   @override
   State<TransactionForm> createState() => _TransactionFormState();
@@ -37,7 +38,7 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   void initState() {
     super.initState();
-    _type = widget.existing?.type ?? TransactionType.expense;
+    _type = widget.existing?.type ?? widget.preselectedType ?? TransactionType.expense;
     _date = widget.existing?.date ?? DateTime.now();
     _amountCtrl.text = widget.existing?.amount.value.toStringAsFixed(0) ?? '';
     _noteCtrl.text = widget.existing?.note ?? '';

@@ -78,7 +78,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get newEntry => '+ 新規';
 
   @override
-  String get noEntries => '> エントリーなし\n> [+ 新規] をタップして開始';
+  String get noEntries => 'No entries yet\nTap + ADD to log your first entry';
 
   @override
   String get newLogEntry => '> 新規エントリー';

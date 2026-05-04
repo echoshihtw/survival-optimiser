@@ -23,7 +23,7 @@
   "loanAffectsInfo": "> 月間返済はプレッシャー比率と投資可能額に影響します",
   "transactionLog": "取引ログ",
   "newEntry": "+ 新規",
-  "noEntries": "> エントリーなし\n> [+ 新規] をタップして開始",
+  "noEntries": "No entries yet\nTap + ADD to log your first entry",
   "newLogEntry": "> 新規エントリー",
   "modifyEntry": "> エントリー修正",
   "type": "タイプ",
@@ -157,7 +157,6 @@
   "display": "表示",
   "glassEffect": "グラスエフェクト",
   "glassEffectHint": "GPU負荷大 — 旧デバイスは無効化推奨",
-
   "runwayBrand": "RUNWAY",
   "bootRunwayCheck": "> RUNWAYチェック...",
   "bootIncomeStopped": "> 今日、収入が止まったら...",

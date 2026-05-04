@@ -5,9 +5,8 @@ import 'package:domain/domain.dart';
 
 class CashChart extends StatelessWidget {
   final List<MonthlyState> months;
-  final double safetyCash;
 
-  const CashChart({super.key, required this.months, required this.safetyCash});
+  const CashChart({super.key, required this.months});
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +72,7 @@ class CashChart extends StatelessWidget {
             // Safety threshold line
             LineChartBarData(
               spots: [
-                FlSpot(0, safetyCash),
-                FlSpot(months.length - 1.0, safetyCash),
+
               ],
               isCurved: false,
               color: AppColors.gold,

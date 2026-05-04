@@ -101,14 +101,28 @@ class ScenariosScreen extends ConsumerWidget {
                           ? realModel.burnRate.toStringAsFixed(0)
                           : '50000',
                       initialValue: scenario.burnRateOverride?.toStringAsFixed(0),
-                      onChanged: (v) => ref.read(scenarioProvider.notifier).setBurnRateOverride(double.tryParse(v)),
+                      onChanged: (v) {
+                        final isPro = ref.read(entitlementProvider).value?.isPro ?? false;
+                        if (!isPro && scenario.isActive) {
+                          showPaywall(context, trigger: 'simulation');
+                          return;
+                        }
+                        ref.read(scenarioProvider.notifier).setBurnRateOverride(double.tryParse(v));
+                      },
                     ),
                     const SizedBox(height: AppSpacing.md),
                     _SimInput(
                       label: l10n.simulatedIncome,
                       hint: '0',
                       initialValue: scenario.simulatedIncome?.toStringAsFixed(0),
-                      onChanged: (v) => ref.read(scenarioProvider.notifier).setSimulatedIncome(double.tryParse(v)),
+                      onChanged: (v) {
+                        final isPro = ref.read(entitlementProvider).value?.isPro ?? false;
+                        if (!isPro && scenario.isActive) {
+                          showPaywall(context, trigger: 'simulation');
+                          return;
+                        }
+                        ref.read(scenarioProvider.notifier).setSimulatedIncome(double.tryParse(v));
+                      },
                     ),
                     const SizedBox(height: AppSpacing.md),
                     NeoButton(
@@ -302,7 +316,7 @@ class _SimInputState extends State<_SimInput> {
     return NeoInput(
       label: widget.label,
       controller: _ctrl,
-      keyboardType: TextInputType.number,
+      inputType: NeoInputType.numeric,
       hint: widget.hint,
       onChanged: widget.onChanged,
     );
