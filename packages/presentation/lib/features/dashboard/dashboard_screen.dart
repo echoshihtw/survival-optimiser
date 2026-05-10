@@ -124,30 +124,7 @@ class _DashboardHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: AppColors.neonGreen.withAlpha(15),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: AppColors.neonGreen.withAlpha(60),
-                width: 1,
-              ),
-            ),
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(3),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    'assets/brand/runway-icon-1024.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          const _RunwayBadge(),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
@@ -200,6 +177,106 @@ class _DashboardHeader extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _RunwayBadge extends StatefulWidget {
+  const _RunwayBadge();
+
+  @override
+  State<_RunwayBadge> createState() => _RunwayBadgeState();
+}
+
+class _RunwayBadgeState extends State<_RunwayBadge>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _lift;
+  late final Animation<double> _turn;
+  late final Animation<double> _glow;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2200),
+    )..repeat(reverse: true);
+    _lift = Tween<double>(
+      begin: 0,
+      end: -2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _turn = Tween<double>(begin: -0.025, end: 0.025).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
+    );
+    _glow = Tween<double>(
+      begin: 0.12,
+      end: 0.38,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final disableAnimations = MediaQuery.disableAnimationsOf(context);
+    final child = _BadgeFrame(glow: disableAnimations ? 0.18 : null);
+
+    if (disableAnimations) return child;
+
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        return Transform.translate(
+          offset: Offset(0, _lift.value),
+          child: Transform.rotate(
+            angle: _turn.value,
+            child: _BadgeFrame(glow: _glow.value),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _BadgeFrame extends StatelessWidget {
+  final double? glow;
+  const _BadgeFrame({this.glow});
+
+  @override
+  Widget build(BuildContext context) {
+    final glowAlpha = ((glow ?? 0.18) * 255).round();
+    return Container(
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        color: AppColors.neonGreen.withAlpha(15),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.neonGreen.withAlpha(80), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.neonGreen.withAlpha(glowAlpha),
+            blurRadius: 14,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(3),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              'assets/brand/runway-icon-1024.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
       ),
     );
   }

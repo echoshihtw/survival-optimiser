@@ -180,13 +180,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get loading => '載入中...';
 
   @override
-  String get navHud => '儀表';
+  String get navHud => 'HUD';
 
   @override
-  String get navLog => '記錄';
+  String get navLog => 'LOG';
 
   @override
-  String get navSim => '模擬';
+  String get navSim => 'SIM';
 
   @override
   String get typeExpense => '支出';
@@ -767,13 +767,13 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get loading => '載入中...';
 
   @override
-  String get navHud => '儀表';
+  String get navHud => 'HUD';
 
   @override
-  String get navLog => '記錄';
+  String get navLog => 'LOG';
 
   @override
-  String get navSim => '模擬';
+  String get navSim => 'SIM';
 
   @override
   String get typeExpense => '支出';

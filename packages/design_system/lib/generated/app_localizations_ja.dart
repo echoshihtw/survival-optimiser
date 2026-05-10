@@ -183,10 +183,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get navHud => 'HUD';
 
   @override
-  String get navLog => 'ログ';
+  String get navLog => 'LOG';
 
   @override
-  String get navSim => 'シム';
+  String get navSim => 'SIM';
 
   @override
   String get typeExpense => '支出';

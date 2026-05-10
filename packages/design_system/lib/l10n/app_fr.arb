@@ -58,7 +58,7 @@
   "addNoData": "> AJOUTER DES TRANSACTIONS POUR VOIR LA CHRONOLOGIE",
   "loading": "CHARGEMENT...",
   "navHud": "HUD",
-  "navLog": "JOURNAL",
+  "navLog": "LOG",
   "navSim": "SIM",
   "typeExpense": "DÉPENSE",
   "typeIncome": "REVENU",
