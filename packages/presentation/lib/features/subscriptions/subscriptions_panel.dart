@@ -1,89 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uuid/uuid.dart';
 import 'package:design_system/design_system.dart';
 import 'package:application/application.dart';
 import 'package:domain/domain.dart';
 import 'package:intl/intl.dart';
-import 'subscription_form.dart';
-import '../paywall/pro_locked_card.dart';
 
 class SubscriptionsPanel extends ConsumerWidget {
   const SubscriptionsPanel({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n   = context.l10n;
-    final isPro  = ref.watch(entitlementProvider).value?.isPro ?? false;
-    final subs   = ref.watch(subscriptionsProvider).value ?? [];
+    final l10n = context.l10n;
+    final subs = ref.watch(subscriptionsProvider).value ?? [];
     final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
-    final nf     = NumberFormat('#,##0', 'en_US');
+    final nf = NumberFormat('#,##0', 'en_US');
     final active = subs.where((s) => s.isActive).toList();
+    final sorted = sortedByNextBilling(active);
     final monthly = totalSubscriptionMonthlyCost(active);
-    final yearly  = totalSubscriptionYearlyCost(active);
+    final yearly = totalSubscriptionYearlyCost(active);
+    final next = sorted.isEmpty ? null : sorted.first;
 
     // Show category tags only when both personal AND business exist
-    final hasPersonal  = active.any(
-        (s) => s.category == SubscriptionCategory.personal);
-    final hasBusiness  = active.any(
-        (s) => s.category == SubscriptionCategory.business);
+    final hasPersonal = active.any(
+      (s) => s.category == SubscriptionCategory.personal,
+    );
+    final hasBusiness = active.any(
+      (s) => s.category == SubscriptionCategory.business,
+    );
     final showCatLabel = hasPersonal && hasBusiness;
 
     final summary = active.isEmpty
-        ? Text(l10n.noSubscriptions, style: AppTextStyles.bodySmall)
-        : Row(children: [
-            Expanded(child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l10n.subscrPerMonth, style: AppTextStyles.label),
-                const SizedBox(height: AppSpacing.xxs),
-                Text('$symbol ${nf.format(monthly)}',
-                    style: AppTextStyles.metric
-                        .copyWith(color: AppColors.purple)),
-              ],
-            )),
-            Expanded(child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l10n.subscrPerYear, style: AppTextStyles.label),
-                const SizedBox(height: AppSpacing.xxs),
-                Text('$symbol ${nf.format(yearly)}',
-                    style: AppTextStyles.metric
-                        .copyWith(color: AppColors.textSecondary)),
-              ],
-            )),
-          ]);
+        ? _EmptySummary(l10n: l10n)
+        : Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _MetricCell(
+                      label: l10n.subscrPerMonth,
+                      value: '$symbol ${nf.format(monthly)}',
+                      color: AppColors.purple,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: _MetricCell(
+                      label: l10n.subscrPerYear,
+                      value: '$symbol ${nf.format(yearly)}',
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Row(
+                children: [
+                  Expanded(child: _NextBillingStrip(sub: next!)),
+                  const SizedBox(width: AppSpacing.sm),
+                  _CountBadge(count: active.length),
+                ],
+              ),
+            ],
+          );
 
-    final details = Column(
-      children: [
-        NeoButton(
-          label: l10n.newSubscription,
-          variant: NeoButtonVariant.ghost,
-          fullWidth: true,
-          onPressed: () => _showForm(context, ref, null),
-        ),
-        if (active.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.sm),
-          ...sortedByNextBilling(active).map((s) => _SubRow(
-            sub: s,
-            symbol: symbol,
-            nf: nf,
-            showCategoryLabel: showCatLabel,
-            onTap: () => _showForm(context, ref, s),
-            onDelete: () => _delete(context, ref, s),
-          )),
-        ],
-      ],
-    );
-
-    // PRO gate — subscriptions is a pro feature
-    if (!isPro) {
-      return ProLockedCard(
-        title: l10n.subscriptions,
-        accentColor: AppColors.purple,
-        feature: 'subscriptions',
-      );
-    }
+    final details = active.isEmpty
+        ? null
+        : Column(
+            children: [
+              for (var i = 0; i < sorted.length; i++)
+                _SubRow(
+                  sub: sorted[i],
+                  symbol: symbol,
+                  nf: nf,
+                  showCategoryLabel: showCatLabel,
+                  showDivider: i < sorted.length - 1,
+                ),
+            ],
+          );
 
     return NeoExpandableCard(
       title: l10n.subscriptions,
@@ -91,89 +84,139 @@ class SubscriptionsPanel extends ConsumerWidget {
       initiallyExpanded: false,
       summary: summary,
       details: details,
+      trailing: active.isEmpty
+          ? null
+          : Text(
+              '${active.length}',
+              style: AppTextStyles.caption.copyWith(color: AppColors.purple),
+            ),
     );
   }
+}
 
-  void _showForm(BuildContext context, WidgetRef ref,
-      Subscription? existing) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppSpacing.cardRadius)),
-      ),
-      builder: (_) => SubscriptionForm(
-        existing: existing,
-        onSubmit: (name, category, amount, cycle,
-            startDate, note) async {
-          final now  = DateTime.now();
-          final next = computeNextBillingDate(startDate, cycle);
-          if (existing == null) {
-            await ref
-                .read(addSubscriptionUseCaseProvider)
-                .execute(Subscription(
-                  id: const Uuid().v4(),
-                  name: name,
-                  category: category,
-                  amount: amount,
-                  cycle: cycle,
-                  startDate: startDate,
-                  nextBillingDate: next,
-                  note: note,
-                  createdAt: now,
-                  updatedAt: now,
-                ));
-          } else {
-            await ref
-                .read(editSubscriptionUseCaseProvider)
-                .execute(existing.copyWith(
-                  name: name,
-                  category: category,
-                  amount: amount,
-                  cycle: cycle,
-                  startDate: startDate,
-                  nextBillingDate: next,
-                  note: note,
-                  updatedAt: now,
-                ));
-          }
-        },
-      ),
-    );
-  }
+class _EmptySummary extends StatelessWidget {
+  final AppLocalizations l10n;
 
-  void _delete(BuildContext context, WidgetRef ref, Subscription sub) {
-    final l10n = context.l10n;
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(AppSpacing.cardRadius)),
-        title: Text(l10n.removeConfirm, style: AppTextStyles.title),
-        content: Text(sub.name,
-            style: AppTextStyles.body
-                .copyWith(color: AppColors.purple)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel, style: AppTextStyles.body),
+  const _EmptySummary({required this.l10n});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: AppColors.purple.withAlpha(16),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppColors.purple.withAlpha(45)),
           ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(ctx).pop();
-              await ref
-                  .read(deleteSubscriptionUseCaseProvider)
-                  .execute(sub.id);
-            },
-            child: Text(l10n.remove,
-                style: AppTextStyles.body
-                    .copyWith(color: AppColors.hotPink)),
+          child: const Icon(
+            Icons.subscriptions_rounded,
+            color: AppColors.purple,
+            size: 18,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Text(l10n.noSubscriptions, style: AppTextStyles.bodySmall),
+        ),
+      ],
+    );
+  }
+}
+
+class _MetricCell extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _MetricCell({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: AppTextStyles.label),
+        const SizedBox(height: AppSpacing.xxs),
+        Text(
+          value,
+          style: AppTextStyles.metric.copyWith(color: color),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+  }
+}
+
+class _NextBillingStrip extends StatelessWidget {
+  final Subscription sub;
+
+  const _NextBillingStrip({required this.sub});
+
+  @override
+  Widget build(BuildContext context) {
+    final days = sub.daysUntilNextBilling;
+    final color = days <= 7
+        ? AppColors.hotPink
+        : days <= 14
+        ? AppColors.gold
+        : AppColors.purple;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs + 2,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceHigh,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withAlpha(70)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.event_rounded, color: color, size: 14),
+          const SizedBox(width: AppSpacing.xs),
+          Expanded(
+            child: Text(
+              '${sub.name.toUpperCase()} · ${days}D',
+              style: AppTextStyles.caption.copyWith(color: color),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _CountBadge extends StatelessWidget {
+  final int count;
+
+  const _CountBadge({required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs + 2,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.purple.withAlpha(16),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.purple.withAlpha(55)),
+      ),
+      child: Text(
+        '$count ACTIVE',
+        style: AppTextStyles.caption.copyWith(color: AppColors.purple),
       ),
     );
   }
@@ -184,80 +227,87 @@ class _SubRow extends StatelessWidget {
   final String symbol;
   final NumberFormat nf;
   final bool showCategoryLabel;
-  final VoidCallback onTap;
-  final VoidCallback onDelete;
+  final bool showDivider;
 
   const _SubRow({
     required this.sub,
     required this.symbol,
     required this.nf,
-    required this.onTap,
-    required this.onDelete,
     this.showCategoryLabel = false,
+    required this.showDivider,
   });
 
   @override
   Widget build(BuildContext context) {
-    final l10n      = context.l10n;
-    final days      = sub.daysUntilNextBilling;
+    final l10n = context.l10n;
+    final days = sub.daysUntilNextBilling;
     final daysColor = days <= 7
         ? AppColors.hotPink
         : days <= 14
-            ? AppColors.gold
-            : AppColors.textDim;
+        ? AppColors.gold
+        : AppColors.textDim;
 
-    return GestureDetector(
-      onTap: onTap,
-      onLongPress: onDelete,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.sm),
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: AppColors.cardBorder),
-          ),
-        ),
-        child: Row(children: [
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      decoration: BoxDecoration(
+        border: showDivider
+            ? const Border(bottom: BorderSide(color: AppColors.cardBorder))
+            : null,
+      ),
+      child: Row(
+        children: [
           Container(
-            width: 6, height: 6,
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
-              color: AppColors.purple,
-              borderRadius: BorderRadius.circular(3),
+              color: daysColor.withAlpha(16),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: daysColor.withAlpha(55)),
             ),
-            margin: const EdgeInsets.only(
-                right: AppSpacing.sm, top: 2),
+            margin: const EdgeInsets.only(right: AppSpacing.sm),
+            child: Icon(Icons.autorenew_rounded, color: daysColor, size: 15),
           ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  Text(sub.name.toUpperCase(),
-                      style: AppTextStyles.body),
-                  if (showCategoryLabel) ...[
-                    const SizedBox(width: AppSpacing.xs),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xs,
-                          vertical: 1),
-                      decoration: BoxDecoration(
-                        color: AppColors.purple.withAlpha(20),
-                        borderRadius: BorderRadius.circular(3),
-                        border: Border.all(
-                            color: AppColors.purple
-                                .withAlpha(60)),
-                      ),
+                Row(
+                  children: [
+                    Flexible(
                       child: Text(
-                        sub.category == SubscriptionCategory.personal
-                            ? l10n.personal
-                            : l10n.business,
-                        style: AppTextStyles.caption.copyWith(
-                            color: AppColors.purple,
-                            fontSize: 9),
+                        sub.name.toUpperCase(),
+                        style: AppTextStyles.body,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                    if (showCategoryLabel) ...[
+                      const SizedBox(width: AppSpacing.xs),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xs,
+                          vertical: 1,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.purple.withAlpha(20),
+                          borderRadius: BorderRadius.circular(3),
+                          border: Border.all(
+                            color: AppColors.purple.withAlpha(60),
+                          ),
+                        ),
+                        child: Text(
+                          sub.category == SubscriptionCategory.personal
+                              ? l10n.personal
+                              : l10n.business,
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.purple,
+                            fontSize: 9,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
-                ]),
+                ),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
                   '${sub.cycle.label} · '
@@ -269,11 +319,10 @@ class _SubRow extends StatelessWidget {
             ),
           ),
           Text(
-            '$days d',
-            style: AppTextStyles.caption
-                .copyWith(color: daysColor),
+            '${days}D',
+            style: AppTextStyles.metricSmall.copyWith(color: daysColor),
           ),
-        ]),
+        ],
       ),
     );
   }

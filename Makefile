@@ -51,6 +51,10 @@ doctor: ## Run Flutter doctor
 run: ## Run app on connected device/simulator
 	cd $(APP_DIR) && $(FVM) run
 
+.PHONY: run-pro
+run-pro: ## Run app with local Pro entitlement enabled
+	cd $(APP_DIR) && $(FVM) run --dart-define=DEV_PRO_ENTITLEMENT=true
+
 .PHONY: run-fresh
 run-fresh: db-reset ## Uninstall app (clear DB) then run
 	cd $(APP_DIR) && $(FVM) run

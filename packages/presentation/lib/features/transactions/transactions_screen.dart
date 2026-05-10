@@ -8,6 +8,7 @@ import 'package:domain/domain.dart';
 import 'widgets/transaction_row.dart';
 import 'widgets/transaction_form.dart';
 import 'widgets/loan_wizard.dart';
+import '../subscriptions/subscription_form.dart';
 import '../paywall/paywall_screen.dart';
 
 class TransactionsScreen extends ConsumerWidget {
@@ -46,21 +47,10 @@ class TransactionsScreen extends ConsumerWidget {
                       Text(l10n.historyEntries, style: AppTextStyles.caption),
                     ],
                   ),
-                  Row(
-                    children: [
-                      NeoButton(
-                        label: l10n.typeLoan,
-                        variant: NeoButtonVariant.secondary,
-                        color: AppColors.gold,
-                        onPressed: () => _showLoanWizard(context, ref),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      NeoButton(
-                        label: l10n.addEntry,
-                        variant: NeoButtonVariant.primary,
-                        onPressed: () => _showForm(context, ref, null),
-                      ),
-                    ],
+                  NeoButton(
+                    label: l10n.addEntry,
+                    variant: NeoButtonVariant.primary,
+                    onPressed: () => _showAddMenu(context, ref),
                   ),
                 ],
               ),
@@ -88,7 +78,10 @@ class TransactionsScreen extends ConsumerWidget {
                     return Center(
                       child: GestureDetector(
                         onTap: () => _showFormWithType(
-                            context, ref, TransactionType.openingBalance),
+                          context,
+                          ref,
+                          TransactionType.openingBalance,
+                        ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -106,16 +99,20 @@ class TransactionsScreen extends ConsumerWidget {
                             const SizedBox(height: AppSpacing.md),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.lg,
-                                  vertical: AppSpacing.sm),
+                                horizontal: AppSpacing.lg,
+                                vertical: AppSpacing.sm,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.neonGreen,
                                 borderRadius: BorderRadius.circular(50),
                               ),
-                              child: Text('+ ADD OPENING BALANCE',
-                                  style: AppTextStyles.caption.copyWith(
-                                      color: AppColors.background,
-                                      fontWeight: FontWeight.w700)),
+                              child: Text(
+                                '+ ADD OPENING BALANCE',
+                                style: AppTextStyles.caption.copyWith(
+                                  color: AppColors.background,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -137,10 +134,15 @@ class TransactionsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.only(right: AppSpacing.lg),
                         decoration: BoxDecoration(
                           color: AppColors.hotPink.withAlpha(30),
-                          borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.cardRadius,
+                          ),
                         ),
-                        child: const Icon(Icons.delete_rounded,
-                            color: AppColors.hotPink, size: 22),
+                        child: const Icon(
+                          Icons.delete_rounded,
+                          color: AppColors.hotPink,
+                          size: 22,
+                        ),
                       ),
                       confirmDismiss: (_) async {
                         _confirmDelete(context, ref, sorted[i]);
@@ -162,11 +164,84 @@ class TransactionsScreen extends ConsumerWidget {
     );
   }
 
-  void _showLoanWizard(BuildContext context, WidgetRef ref) {
+  void _showAddMenu(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+
+    void openAfterClose(VoidCallback open) {
+      Navigator.of(context).pop();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) open();
+      });
+    }
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppSpacing.cardRadius),
+        ),
+      ),
+      builder: (_) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBorder,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text('ADD TO LOG', style: AppTextStyles.title),
+              const SizedBox(height: AppSpacing.md),
+              NeoButton(
+                label: 'ENTRY',
+                variant: NeoButtonVariant.primary,
+                fullWidth: true,
+                onPressed: () =>
+                    openAfterClose(() => _showForm(context, ref, null)),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              NeoButton(
+                label: l10n.typeLoan,
+                variant: NeoButtonVariant.secondary,
+                color: AppColors.gold,
+                fullWidth: true,
+                onPressed: () =>
+                    openAfterClose(() => _showLoanWizard(context, ref)),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              NeoButton(
+                label: l10n.subscriptions,
+                variant: NeoButtonVariant.secondary,
+                color: AppColors.purple,
+                fullWidth: true,
+                onPressed: () =>
+                    openAfterClose(() => _showSubscriptionForm(context, ref)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showLoanWizard(BuildContext context, WidgetRef ref) async {
     // Free users can only have 1 loan
-    final isPro = ref.read(entitlementProvider).value?.isPro ?? false;
+    final isPro =
+        FeatureFlags.devProEntitlement ||
+        (ref.read(entitlementProvider).value?.isPro ?? false);
     if (!isPro) {
-      final loans = ref.read(loansProvider).value ?? [];
+      final loans = await ref.read(loansProvider.future);
+      if (!context.mounted) return;
       if (loans.isNotEmpty) {
         showPaywall(context, trigger: 'loan_limit');
         return;
@@ -220,15 +295,62 @@ class TransactionsScreen extends ConsumerWidget {
     );
   }
 
-  void _showFormWithType(BuildContext context, WidgetRef ref,
-      TransactionType preselectedType) {
+  void _showSubscriptionForm(BuildContext context, WidgetRef ref) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppSpacing.cardRadius)),
+          top: Radius.circular(AppSpacing.cardRadius),
+        ),
+      ),
+      builder: (_) => SubscriptionForm(
+        onSubmit: (name, category, amount, cycle, startDate, note) async {
+          final isPro =
+              FeatureFlags.devProEntitlement ||
+              (ref.read(entitlementProvider).value?.isPro ?? false);
+          if (!isPro) {
+            showPaywall(context, trigger: 'subscriptions');
+            return false;
+          }
+
+          final now = DateTime.now();
+          await ref
+              .read(addSubscriptionUseCaseProvider)
+              .execute(
+                Subscription(
+                  id: const Uuid().v4(),
+                  name: name,
+                  category: category,
+                  amount: amount,
+                  cycle: cycle,
+                  startDate: startDate,
+                  nextBillingDate: computeNextBillingDate(startDate, cycle),
+                  note: note,
+                  createdAt: now,
+                  updatedAt: now,
+                ),
+              );
+          return true;
+        },
+      ),
+    );
+  }
+
+  void _showFormWithType(
+    BuildContext context,
+    WidgetRef ref,
+    TransactionType preselectedType,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppSpacing.cardRadius),
+        ),
       ),
       builder: (_) => TransactionForm(
         existing: null,

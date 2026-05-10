@@ -150,8 +150,9 @@ class ScenariosScreen extends ConsumerWidget {
                           ? null
                           : () {
                               final isPro =
-                                  ref.read(entitlementProvider).value?.isPro ??
-                                  false;
+                                  FeatureFlags.devProEntitlement ||
+                                  (ref.read(entitlementProvider).value?.isPro ??
+                                      false);
                               if (!isPro && scenario.hasRunSimulation) {
                                 showPaywall(context, trigger: 'simulation');
                                 return;

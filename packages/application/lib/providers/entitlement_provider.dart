@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../feature_flags.dart';
 
 const _kIsPro = 'is_pro';
 
@@ -8,7 +9,7 @@ class EntitlementNotifier extends AsyncNotifier<EntitlementState> {
   Future<EntitlementState> build() async {
     final prefs = await SharedPreferences.getInstance();
     final isPro = prefs.getBool(_kIsPro) ?? false;
-    return EntitlementState(isPro: isPro);
+    return EntitlementState(isPro: _effectiveIsPro(isPro));
   }
 
   Future<void> unlockPro() async {
@@ -20,7 +21,11 @@ class EntitlementNotifier extends AsyncNotifier<EntitlementState> {
   Future<void> revokePro() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kIsPro, false);
-    state = AsyncData(EntitlementState(isPro: false));
+    state = AsyncData(EntitlementState(isPro: _effectiveIsPro(false)));
+  }
+
+  bool _effectiveIsPro(bool storedIsPro) {
+    return storedIsPro || FeatureFlags.devProEntitlement;
   }
 }
 
@@ -29,20 +34,21 @@ class EntitlementState {
   const EntitlementState({required this.isPro});
 
   // Feature gates — what's free vs pro
-  bool get canUseSubscriptions  => isPro;
-  bool get canAddMultipleLoans  => isPro;
-  bool get canUseTimeline       => isPro;
-  bool get canUseUnlimitedSims  => isPro;
+  bool get canUseSubscriptions => isPro;
+  bool get canAddMultipleLoans => isPro;
+  bool get canUseTimeline => isPro;
+  bool get canUseUnlimitedSims => isPro;
 
   // Always free
-  bool get canAddTransactions   => true;
-  bool get canUseBasicRunway    => true;
-  bool get canShare             => true;
-  bool get canUseBudget         => true;
-  bool get canAddFirstLoan      => true;
-  bool get canUseOneSim         => true;
+  bool get canAddTransactions => true;
+  bool get canUseBasicRunway => true;
+  bool get canShare => true;
+  bool get canUseBudget => true;
+  bool get canAddFirstLoan => true;
+  bool get canUseOneSim => true;
 }
 
 final entitlementProvider =
     AsyncNotifierProvider<EntitlementNotifier, EntitlementState>(
-        EntitlementNotifier.new);
+      EntitlementNotifier.new,
+    );
