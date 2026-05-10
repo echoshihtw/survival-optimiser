@@ -1,5 +1,5 @@
 name: app
-description: Survival Optimizer entry point
+description: Runway app entry point
 publish_to: none
 resolution: workspace
 version: 1.0.0+1

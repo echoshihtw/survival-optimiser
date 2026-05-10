@@ -1,9 +1,9 @@
-# Survival Optimiser
+# Runway
 ### Financial clarity for what matters
 
 > One number matters: your runway.
 
-Awareness is a personal financial survival app built for people navigating a defined financial chapter — studying abroad, between jobs, bootstrapping a project, or living off savings. It answers one question at all times: **how long can you survive?**
+Runway is a personal financial runway app built for people navigating a defined financial chapter — studying abroad, between jobs, bootstrapping a project, or living off savings. It answers one question at all times: **how long can your money last?**
 
 ---
 

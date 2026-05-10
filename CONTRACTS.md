@@ -7,7 +7,7 @@
 ## 1. Product Contract
 
 ### 1.1 Purpose
-Awareness is a **personal financial survival tool**, not a budgeting app, not a portfolio tracker. Every feature must answer: *does this help the user know how long they can survive?*
+Runway is a **personal financial runway tool**, not a budgeting app, not a portfolio tracker. Every feature must answer: *does this help the user know how long their money can last?*
 
 ### 1.2 The One Number
 Runway is the hero metric. It is always the largest, most prominent number on screen. Nothing competes with it.

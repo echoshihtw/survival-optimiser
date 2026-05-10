@@ -53,7 +53,7 @@ class SurvivalApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider).value;
     return MaterialApp.router(
-      title: 'AWARENESS',
+      title: 'Runway',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
       routerConfig: appRouter,

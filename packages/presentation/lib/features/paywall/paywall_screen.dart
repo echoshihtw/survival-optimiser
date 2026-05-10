@@ -98,7 +98,7 @@ class PaywallScreen extends ConsumerWidget {
     'subscriptions' => 'Subscriptions is\na Pro feature.',
     'loan_limit'    => 'Multiple loans is\na Pro feature.',
     'simulation'    => 'Unlimited simulations\nis a Pro feature.',
-    _               => 'Unlock Awareness Pro.',
+    _               => 'Unlock Runway Pro.',
   };
 
   static const _proFeatures = [
