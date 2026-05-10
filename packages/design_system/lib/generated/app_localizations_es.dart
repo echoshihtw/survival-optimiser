@@ -184,7 +184,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navHud => 'HUD';
 
   @override
-  String get navLog => 'REGISTRO';
+  String get navLog => 'LOG';
 
   @override
   String get navSim => 'SIM';

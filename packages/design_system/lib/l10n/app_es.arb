@@ -58,7 +58,7 @@
   "addNoData": "> AGREGA TRANSACCIONES PARA VER CRONOLOGÍA",
   "loading": "CARGANDO...",
   "navHud": "HUD",
-  "navLog": "REGISTRO",
+  "navLog": "LOG",
   "navSim": "SIM",
   "typeExpense": "GASTO",
   "typeIncome": "INGRESO",
