@@ -11,6 +11,14 @@ ICON_SRC      := assets/brand/runway-icon-1024.png
 APP_ICON_ASSET := $(APP_DIR)/assets/brand/runway-icon-1024.png
 IOS_ICON_DIR  := $(APP_DIR)/ios/Runner/Assets.xcassets/AppIcon.appiconset
 ANDROID_RES   := $(APP_DIR)/android/app/src/main/res
+IOS_EXPORT_METHOD ?= app-store
+IPA_FLAGS     := --release --export-method $(IOS_EXPORT_METHOD)
+ifneq ($(BUILD_NAME),)
+IPA_FLAGS     += --build-name $(BUILD_NAME)
+endif
+ifneq ($(BUILD_NUMBER),)
+IPA_FLAGS     += --build-number $(BUILD_NUMBER)
+endif
 
 # ============================================================================
 # HELP
@@ -206,6 +214,19 @@ test-coverage: ## Run tests with coverage report
 build-ios: ## Build iOS app (release)
 	cd $(APP_DIR) && $(FVM) build ios --release
 	@echo "✓ iOS build complete"
+
+.PHONY: testflight-check
+testflight-check: gen-icons gen-l10n l10n-check analyze test ## Run checks before a TestFlight build
+	@echo "✓ TestFlight preflight checks passed"
+
+.PHONY: build-testflight
+build-testflight: gen-icons gen-l10n ## Build signed IPA for TestFlight/App Store Connect
+	@mkdir -p $(APP_DIR)/build/ios/ipa
+	@touch $(APP_DIR)/build/ios/ipa/.build-testflight-start
+	cd $(APP_DIR) && $(FVM) build ipa $(IPA_FLAGS)
+	@test -n "$$(find $(APP_DIR)/build/ios/ipa -maxdepth 1 -name '*.ipa' -newer $(APP_DIR)/build/ios/ipa/.build-testflight-start -print -quit)" || (echo "✗ IPA export failed. Open $(APP_DIR)/build/ios/archive/Runner.xcarchive in Xcode to resolve signing/export." && exit 1)
+	@echo "✓ TestFlight IPA build complete"
+	@echo "  IPA: $(APP_DIR)/build/ios/ipa/*.ipa"
 
 .PHONY: build-android
 build-android: ## Build Android APK (release)
