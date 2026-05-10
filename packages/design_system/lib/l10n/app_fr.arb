@@ -1,7 +1,7 @@
 {
   "@@locale": "fr",
-  "appTitle": "OPTIMISEUR DE SURVIE",
-  "hudTitle": "SURVIE.EXE",
+  "appTitle": "Runway",
+  "hudTitle": "Runway",
   "sysOnline": "SYS: EN LIGNE",
   "lifeForce": "FORCE VITALE",
   "statusLabel": "STATUT",

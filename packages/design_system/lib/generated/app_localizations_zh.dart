@@ -9,10 +9,10 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => '生存優化器';
+  String get appTitle => 'Runway';
 
   @override
-  String get hudTitle => '生存系統';
+  String get hudTitle => 'Runway';
 
   @override
   String get sysOnline => '系統：上線';
@@ -596,10 +596,10 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   AppLocalizationsZhTw() : super('zh_TW');
 
   @override
-  String get appTitle => '生存優化器';
+  String get appTitle => 'Runway';
 
   @override
-  String get hudTitle => '生存系統';
+  String get hudTitle => 'Runway';
 
   @override
   String get sysOnline => '系統：上線';

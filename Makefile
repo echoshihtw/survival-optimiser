@@ -7,6 +7,10 @@ SHELL         := /bin/bash
 APP_DIR       := app
 APP_ID        := com.silverfern.survivaloptimizer
 FVM           := fvm flutter
+ICON_SRC      := assets/brand/runway-icon-1024.png
+APP_ICON_ASSET := $(APP_DIR)/assets/brand/runway-icon-1024.png
+IOS_ICON_DIR  := $(APP_DIR)/ios/Runner/Assets.xcassets/AppIcon.appiconset
+ANDROID_RES   := $(APP_DIR)/android/app/src/main/res
 
 # ============================================================================
 # HELP
@@ -90,6 +94,57 @@ gen-l10n: ## Generate localizations from ARB files
 
 .PHONY: gen-all
 gen-all: gen gen-l10n ## Run all code generation
+
+# ============================================================================
+# BRAND ASSETS
+# ============================================================================
+
+.PHONY: gen-icons
+gen-icons: gen-icons-app gen-icons-ios gen-icons-android ## Generate app + native launcher icons from master icon
+	@echo "✓ Launcher icons generated from $(ICON_SRC)"
+
+.PHONY: gen-icons-app
+gen-icons-app: ## Sync master icon into Flutter app assets
+	@test -f "$(ICON_SRC)" || (echo "✗ Missing $(ICON_SRC)" && exit 1)
+	@mkdir -p "$(dir $(APP_ICON_ASSET))"
+	@cp "$(ICON_SRC)" "$(APP_ICON_ASSET)"
+	@echo "✓ Flutter app icon asset synced"
+
+.PHONY: gen-icons-ios
+gen-icons-ios: ## Generate iOS AppIcon assets from master icon
+	@test -f "$(ICON_SRC)" || (echo "✗ Missing $(ICON_SRC)" && exit 1)
+	@echo "→ Generating iOS launcher icons..."
+	@sips --resampleHeightWidth 40 40 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-40 1.png" >/dev/null
+	@sips --resampleHeightWidth 60 60 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-60.png" >/dev/null
+	@sips --resampleHeightWidth 29 29 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-29.png" >/dev/null
+	@sips --resampleHeightWidth 58 58 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-58.png" >/dev/null
+	@sips --resampleHeightWidth 87 87 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-87.png" >/dev/null
+	@sips --resampleHeightWidth 80 80 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-80 1.png" >/dev/null
+	@sips --resampleHeightWidth 120 120 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-120.png" >/dev/null
+	@sips --resampleHeightWidth 120 120 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-120 1.png" >/dev/null
+	@sips --resampleHeightWidth 180 180 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-180.png" >/dev/null
+	@sips --resampleHeightWidth 20 20 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-20.png" >/dev/null
+	@sips --resampleHeightWidth 40 40 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-40 2.png" >/dev/null
+	@sips --resampleHeightWidth 29 29 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-29 1.png" >/dev/null
+	@sips --resampleHeightWidth 58 58 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-58 1.png" >/dev/null
+	@sips --resampleHeightWidth 40 40 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-40.png" >/dev/null
+	@sips --resampleHeightWidth 80 80 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-80.png" >/dev/null
+	@sips --resampleHeightWidth 76 76 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-76.png" >/dev/null
+	@sips --resampleHeightWidth 152 152 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-152.png" >/dev/null
+	@sips --resampleHeightWidth 167 167 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-167.png" >/dev/null
+	@sips --resampleHeightWidth 1024 1024 "$(ICON_SRC)" --out "$(IOS_ICON_DIR)/Icon-1024-simple.png" >/dev/null
+	@echo "✓ iOS launcher icons generated"
+
+.PHONY: gen-icons-android
+gen-icons-android: ## Generate Android mipmap launcher icons from master icon
+	@test -f "$(ICON_SRC)" || (echo "✗ Missing $(ICON_SRC)" && exit 1)
+	@echo "→ Generating Android launcher icons..."
+	@sips --resampleHeightWidth 48 48 "$(ICON_SRC)" --out "$(ANDROID_RES)/mipmap-mdpi/ic_launcher.png" >/dev/null
+	@sips --resampleHeightWidth 72 72 "$(ICON_SRC)" --out "$(ANDROID_RES)/mipmap-hdpi/ic_launcher.png" >/dev/null
+	@sips --resampleHeightWidth 96 96 "$(ICON_SRC)" --out "$(ANDROID_RES)/mipmap-xhdpi/ic_launcher.png" >/dev/null
+	@sips --resampleHeightWidth 144 144 "$(ICON_SRC)" --out "$(ANDROID_RES)/mipmap-xxhdpi/ic_launcher.png" >/dev/null
+	@sips --resampleHeightWidth 192 192 "$(ICON_SRC)" --out "$(ANDROID_RES)/mipmap-xxxhdpi/ic_launcher.png" >/dev/null
+	@echo "✓ Android launcher icons generated"
 
 # ============================================================================
 # QUALITY

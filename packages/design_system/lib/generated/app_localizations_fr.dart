@@ -9,10 +9,10 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get appTitle => 'OPTIMISEUR DE SURVIE';
+  String get appTitle => 'Runway';
 
   @override
-  String get hudTitle => 'SURVIE.EXE';
+  String get hudTitle => 'Runway';
 
   @override
   String get sysOnline => 'SYS: EN LIGNE';

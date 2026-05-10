@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
-  "appTitle": "SURVIVAL OPTIMIZER",
-  "hudTitle": "SURVIVAL.EXE",
+  "appTitle": "Runway",
+  "hudTitle": "Runway",
   "sysOnline": "SYS: ONLINE",
   "lifeForce": "LIFE FORCE",
   "statusLabel": "STATUS",

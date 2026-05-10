@@ -9,10 +9,10 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get appTitle => 'サバイバル最適化';
+  String get appTitle => 'Runway';
 
   @override
-  String get hudTitle => 'SURVIVAL.EXE';
+  String get hudTitle => 'Runway';
 
   @override
   String get sysOnline => 'システム：オンライン';

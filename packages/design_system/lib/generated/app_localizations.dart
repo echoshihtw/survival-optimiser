@@ -110,13 +110,13 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'SURVIVAL OPTIMIZER'**
+  /// **'Runway'**
   String get appTitle;
 
   /// No description provided for @hudTitle.
   ///
   /// In en, this message translates to:
-  /// **'SURVIVAL.EXE'**
+  /// **'Runway'**
   String get hudTitle;
 
   /// No description provided for @sysOnline.
