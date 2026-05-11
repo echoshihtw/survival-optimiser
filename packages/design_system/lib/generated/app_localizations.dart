@@ -1058,31 +1058,31 @@ abstract class AppLocalizations {
   /// No description provided for @bootRunwayCheck.
   ///
   /// In en, this message translates to:
-  /// **'> RUNWAY CHECK...'**
+  /// **'Checking your runway...'**
   String get bootRunwayCheck;
 
   /// No description provided for @bootIncomeStopped.
   ///
   /// In en, this message translates to:
-  /// **'> IF YOUR INCOME STOPPED TODAY...'**
+  /// **'Looking at what changes if income pauses...'**
   String get bootIncomeStopped;
 
   /// No description provided for @bootCountingCashDays.
   ///
   /// In en, this message translates to:
-  /// **'> COUNTING CASH DAYS...'**
+  /// **'Estimating your breathing room...'**
   String get bootCountingCashDays;
 
   /// No description provided for @bootRemovingComfortFilter.
   ///
   /// In en, this message translates to:
-  /// **'> REMOVING THE COMFORT FILTER...'**
+  /// **'Separating essentials from noise...'**
   String get bootRemovingComfortFilter;
 
   /// No description provided for @bootRealityCheckReady.
   ///
   /// In en, this message translates to:
-  /// **'> REALITY CHECK READY.'**
+  /// **'Your financial picture is ready.'**
   String get bootRealityCheckReady;
 
   /// No description provided for @ifIncomeStoppedToday.
