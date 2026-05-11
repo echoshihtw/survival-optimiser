@@ -12,6 +12,8 @@ export 'use_cases/delete_loan_use_case.dart';
 export 'use_cases/add_subscription_use_case.dart';
 export 'use_cases/edit_subscription_use_case.dart';
 export 'use_cases/delete_subscription_use_case.dart';
+export 'use_cases/create_backup_use_case.dart';
+export 'use_cases/restore_backup_use_case.dart';
 
 export 'providers/repository_provider.dart';
 export 'providers/transaction_provider.dart';
@@ -26,3 +28,4 @@ export 'providers/display_provider.dart';
 export 'feature_flags.dart';
 export 'analytics_service.dart';
 export 'providers/entitlement_provider.dart';
+export 'providers/backup_provider.dart';

@@ -15,6 +15,8 @@ import '../daos/subscription_dao.dart';
 
 part 'app_database.g.dart';
 
+const runwayDatabaseSchemaVersion = 4;
+
 @DriftDatabase(
   tables: [Transactions, Loans, Subscriptions],
   daos: [TransactionDao, LoanDao, SubscriptionDao],
@@ -24,7 +26,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => runwayDatabaseSchemaVersion;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -43,6 +45,14 @@ class AppDatabase extends _$AppDatabase {
     },
   );
 }
+
+Future<File> runwayDatabaseFile() async {
+  final dir = await getApplicationSupportDirectory();
+  await dir.create(recursive: true);
+  return File(p.join(dir.path, 'survival.db'));
+}
+
+Future<String> runwayDatabaseKey() => _getOrCreateKey();
 
 /// Retrieves or creates a secure encryption key
 /// Stored in iOS Secure Enclave / Android Keystore
@@ -71,17 +81,25 @@ Future<String> _getOrCreateKey() async {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final dir  = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dir.path, 'survival.db'));
-    // ignore: unused_local_variable
-    final dbKey    = await _getOrCreateKey();
+    final file = await runwayDatabaseFile();
+    final dbKey = await _getOrCreateKey();
     final pragmaKey = "PRAGMA key = '$dbKey';";
     return NativeDatabase.createInBackground(
       file,
       setup: (db) {
-        db.execute(pragmaKey);
-        db.execute('PRAGMA journal_mode=WAL;');
-        db.execute('SELECT count(*) FROM sqlite_master;');
+        try {
+          db.execute(pragmaKey);
+          db.execute('SELECT count(*) FROM sqlite_master;');
+          db.execute('PRAGMA journal_mode=WAL;');
+        } catch (_) {
+          // Key mismatch: DB was restored from backup without its encryption key.
+          // Delete the unreadable file; the next launch will create a fresh DB.
+          if (file.existsSync()) {
+            file.deleteSync();
+          }
+          db.execute(pragmaKey);
+          db.execute('PRAGMA journal_mode=WAL;');
+        }
       },
     );
   });

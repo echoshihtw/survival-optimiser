@@ -8,6 +8,7 @@ import 'package:design_system/design_system.dart';
 import 'package:presentation/router/app_router.dart';
 import 'package:application/application.dart';
 import 'package:data/data.dart';
+import 'package:domain/domain.dart';
 import 'firebase_options.dart';
 import 'firebase_analytics_service.dart';
 
@@ -28,10 +29,12 @@ void main() async {
     debugPrint('Firebase init failed: $e');
   }
 
-  final db       = AppDatabase();
-  final txRepo   = DriftTransactionRepository(db);
+  final db = AppDatabase();
+  final txRepo = DriftTransactionRepository(db);
   final loanRepo = DriftLoanRepository(db);
-  final subRepo  = DriftSubscriptionRepository(db);
+  final subRepo = DriftSubscriptionRepository(db);
+  final iCloudBackupRepo = ICloudBackupRepository();
+  final googleBackupRepo = GDriveBackupRepository();
 
   runApp(
     ProviderScope(
@@ -40,6 +43,12 @@ void main() async {
         transactionRepositoryProvider.overrideWithValue(txRepo),
         loanRepositoryProvider.overrideWithValue(loanRepo),
         subscriptionRepositoryProvider.overrideWithValue(subRepo),
+        backupRepositoryProvider(
+          BackupProvider.icloud,
+        ).overrideWithValue(iCloudBackupRepo),
+        backupRepositoryProvider(
+          BackupProvider.google,
+        ).overrideWithValue(googleBackupRepo),
       ],
       child: const SurvivalApp(),
     ),

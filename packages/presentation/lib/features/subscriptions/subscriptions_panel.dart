@@ -101,28 +101,7 @@ class _EmptySummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 34,
-          height: 34,
-          decoration: BoxDecoration(
-            color: AppColors.purple.withAlpha(16),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.purple.withAlpha(45)),
-          ),
-          child: const Icon(
-            Icons.subscriptions_rounded,
-            color: AppColors.purple,
-            size: 18,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.sm),
-        Expanded(
-          child: Text(l10n.noSubscriptions, style: AppTextStyles.bodySmall),
-        ),
-      ],
-    );
+    return Text(l10n.noSubscriptions, style: AppTextStyles.bodySmall);
   }
 }
 

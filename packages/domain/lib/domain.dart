@@ -15,10 +15,12 @@ export 'entities/loan.dart';
 export 'entities/loan_summary.dart';
 export 'entities/subscription.dart';
 export 'entities/budget.dart';
+export 'entities/backup_metadata.dart';
 
 export 'repositories/transaction_repository.dart';
 export 'repositories/loan_repository.dart';
 export 'repositories/subscription_repository.dart';
+export 'repositories/backup_repository.dart';
 
 export 'logic/monthly_aggregator.dart';
 export 'logic/survival_engine.dart';
