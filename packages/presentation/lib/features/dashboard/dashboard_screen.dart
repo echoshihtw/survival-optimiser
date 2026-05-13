@@ -5,7 +5,7 @@ import 'package:application/application.dart';
 import 'widgets/metrics_panel.dart';
 import 'widgets/investable_bar.dart';
 import 'widgets/cash_chart.dart';
-import 'widgets/life_force_card.dart';
+import 'widgets/runway_card.dart';
 import 'widgets/getting_started_card.dart';
 import '../config/config_screen.dart';
 import '../loans/liabilities_panel.dart';
@@ -20,18 +20,25 @@ class DashboardScreen extends ConsumerWidget {
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(top: MediaQuery.of(ctx).padding.top + 8),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: AppColors.background,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(AppSpacing.cardRadius),
+      builder: (ctx) {
+        final media = MediaQuery.of(ctx);
+        final topGap = media.padding.top + 8;
+        return Padding(
+          padding: EdgeInsets.only(top: topGap),
+          child: SizedBox(
+            height: media.size.height - topGap,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(AppSpacing.cardRadius),
+                ),
+              ),
+              child: const ConfigScreen(),
             ),
           ),
-          child: const ConfigScreen(),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -41,42 +48,45 @@ class DashboardScreen extends ConsumerWidget {
     final months = ref.watch(projectedMonthsProvider);
 
     return GradientScaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: _DashboardHeader(onConfig: () => _showConfig(context)),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                const GettingStartedCard(),
-                LifeForceCard(model: model),
-                const SizedBox(height: AppSpacing.cardGap),
-                MetricsPanel(model: model),
-                const SizedBox(height: AppSpacing.cardGap),
-                if (FeatureFlags.investments) const InvestableBar(),
-                if (FeatureFlags.investments)
+      body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.only(
+          bottom: AppSpacing.xxxl + MediaQuery.paddingOf(context).bottom,
+        ),
+        child: Column(
+          children: [
+            _DashboardHeader(onConfig: () => _showConfig(context)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: Column(
+                children: [
+                  const GettingStartedCard(),
+                  RunwayCard(model: model),
                   const SizedBox(height: AppSpacing.cardGap),
-                const LiabilitiesPanel(),
-                const SizedBox(height: AppSpacing.cardGap),
-                const SubscriptionsPanel(),
-                const SizedBox(height: AppSpacing.cardGap),
-                NeoExpandableCard(
-                  title: 'CASH TIMELINE',
-                  accentColor: SC.accentNeutral,
-                  initiallyExpanded: false,
-                  summary: Text(
-                    '${months.length} months projected',
-                    style: AppTextStyles.bodySmall,
+                  MetricsPanel(model: model),
+                  const SizedBox(height: AppSpacing.cardGap),
+                  const LiabilitiesPanel(),
+                  const SizedBox(height: AppSpacing.cardGap),
+                  const SubscriptionsPanel(),
+                  const SizedBox(height: AppSpacing.cardGap),
+                  if (FeatureFlags.investments) const InvestableBar(),
+                  if (FeatureFlags.investments)
+                    const SizedBox(height: AppSpacing.cardGap),
+                  NeoExpandableCard(
+                    title: 'Runway projection',
+                    accentColor: SC.accentNeutral,
+                    initiallyExpanded: false,
+                    summary: Text(
+                      '${months.length} months ahead',
+                      style: AppTextStyles.bodySmall,
+                    ),
+                    details: CashChart(months: months),
                   ),
-                  details: CashChart(months: months),
-                ),
-                const SizedBox(height: AppSpacing.xxxl),
-              ]),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -131,11 +141,11 @@ class _DashboardHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'RUNWAY',
+                  'Runway',
                   style: AppTextStyles.body.copyWith(
                     color: AppColors.neonGreen,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 1.5,
+                    letterSpacing: 0,
                     fontSize: 14,
                   ),
                 ),
@@ -167,7 +177,7 @@ class _DashboardHeader extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
-                    'CONFIG',
+                    'Settings',
                     style: AppTextStyles.caption.copyWith(
                       color: AppColors.textPrimary,
                     ),
