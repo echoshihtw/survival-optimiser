@@ -32,149 +32,149 @@ class ScenariosScreen extends ConsumerWidget {
     };
 
     return GradientScaffold(
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: AppSpacing.sm),
-              Text(l10n.scenarioSimulator, style: AppTextStyles.title),
-              Text(
-                l10n.whatIfAnalysis,
-                style: AppTextStyles.caption.copyWith(letterSpacing: 1.5),
-              ),
-              const SizedBox(height: AppSpacing.xl),
+      body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg + MediaQuery.paddingOf(context).bottom,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: AppSpacing.sm),
+            Text(l10n.scenarioSimulator, style: AppTextStyles.title),
+            Text(
+              l10n.whatIfAnalysis,
+              style: AppTextStyles.caption.copyWith(letterSpacing: 1.5),
+            ),
+            const SizedBox(height: AppSpacing.xl),
 
-              NeoCard(
-                title: l10n.current,
-                accentColor: AppColors.green,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _tile(
-                            l10n.runway,
-                            fmtRunway(realModel.runwayMonths),
-                            runwayColor(realModel.survivalStatus),
-                          ),
+            NeoCard(
+              title: l10n.current,
+              accentColor: AppColors.green,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _tile(
+                          l10n.runway,
+                          fmtRunway(realModel.runwayMonths),
+                          runwayColor(realModel.survivalStatus),
                         ),
-                        Expanded(
-                          child: _tile(
-                            l10n.totalPerMonth,
-                            '-${fmt(realModel.totalMonthlyOutflow)}',
-                            AppColors.textPrimary,
-                          ),
+                      ),
+                      Expanded(
+                        child: _tile(
+                          l10n.totalPerMonth,
+                          '-${fmt(realModel.totalMonthlyOutflow)}',
+                          AppColors.textPrimary,
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _tile(
-                            l10n.cash,
-                            fmt(realModel.currentCash),
-                            AppColors.textPrimary,
-                          ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _tile(
+                          l10n.cash,
+                          fmt(realModel.currentCash),
+                          AppColors.textPrimary,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.cardGap),
+            ),
+            const SizedBox(height: AppSpacing.cardGap),
 
-              NeoCard(
-                title: l10n.simulate,
-                accentColor: AppColors.purple,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l10n.simHint, style: AppTextStyles.caption),
-                    const SizedBox(height: AppSpacing.md),
-                    _SimInput(
-                      label: l10n.burnRateOverride,
-                      hint: realModel.burnRate > 0
-                          ? realModel.burnRate.toStringAsFixed(0)
-                          : '50000',
-                      initialValue: scenario.burnRateOverride?.toStringAsFixed(
-                        0,
-                      ),
-                      resetVersion: scenario.resetVersion,
-                      focusOnReset: true,
-                      onChanged: (v) {
-                        final value = double.tryParse(v);
-                        ref
-                            .read(scenarioProvider.notifier)
-                            .setBurnRateOverride(value);
-                      },
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    _SimInput(
-                      label: l10n.simulatedIncome,
-                      hint: '0',
-                      initialValue: scenario.simulatedIncome?.toStringAsFixed(
-                        0,
-                      ),
-                      resetVersion: scenario.resetVersion,
-                      focusOnReset: false,
-                      onChanged: (v) {
-                        final value = double.tryParse(v);
-                        ref
-                            .read(scenarioProvider.notifier)
-                            .setSimulatedIncome(value);
-                      },
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    _simulationResult(
-                      l10n: l10n,
-                      scenario: scenario,
-                      realModel: realModel,
-                      simModel: simModel,
-                      fmtRunway: fmtRunway,
-                      runwayColor: runwayColor,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    NeoButton(
-                      label: 'RUN SIMULATION',
-                      variant: NeoButtonVariant.primary,
-                      fullWidth: true,
-                      onPressed:
-                          realModel.currentCash == 0 ||
-                              scenario.simulatedIncome == null ||
-                              scenario.isCalculating ||
-                              scenario.isActive
-                          ? null
-                          : () {
-                              final isPro =
-                                  FeatureFlags.devProEntitlement ||
-                                  (ref.read(entitlementProvider).value?.isPro ??
-                                      false);
-                              if (!isPro && scenario.hasRunSimulation) {
-                                showPaywall(context, trigger: 'simulation');
-                                return;
-                              }
-                              ref.read(scenarioProvider.notifier).activate();
-                            },
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    NeoButton(
-                      label: l10n.resetSim,
-                      variant: NeoButtonVariant.ghost,
-                      fullWidth: true,
-                      onPressed: () {
-                        ref.read(scenarioProvider.notifier).reset();
-                      },
-                    ),
-                  ],
-                ),
+            NeoCard(
+              title: l10n.simulate,
+              accentColor: AppColors.purple,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.simHint, style: AppTextStyles.caption),
+                  const SizedBox(height: AppSpacing.md),
+                  _SimInput(
+                    label: l10n.burnRateOverride,
+                    hint: realModel.burnRate > 0
+                        ? realModel.burnRate.toStringAsFixed(0)
+                        : '50000',
+                    initialValue: scenario.burnRateOverride?.toStringAsFixed(0),
+                    resetVersion: scenario.resetVersion,
+                    focusOnReset: true,
+                    onChanged: (v) {
+                      final value = double.tryParse(v);
+                      ref
+                          .read(scenarioProvider.notifier)
+                          .setBurnRateOverride(value);
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _SimInput(
+                    label: l10n.simulatedIncome,
+                    hint: '0',
+                    initialValue: scenario.simulatedIncome?.toStringAsFixed(0),
+                    resetVersion: scenario.resetVersion,
+                    focusOnReset: false,
+                    onChanged: (v) {
+                      final value = double.tryParse(v);
+                      ref
+                          .read(scenarioProvider.notifier)
+                          .setSimulatedIncome(value);
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _simulationResult(
+                    l10n: l10n,
+                    scenario: scenario,
+                    realModel: realModel,
+                    simModel: simModel,
+                    fmtRunway: fmtRunway,
+                    runwayColor: runwayColor,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  NeoButton(
+                    label: 'RUN SIMULATION',
+                    variant: NeoButtonVariant.primary,
+                    fullWidth: true,
+                    onPressed:
+                        realModel.currentCash == 0 ||
+                            scenario.simulatedIncome == null ||
+                            scenario.isCalculating ||
+                            scenario.isActive
+                        ? null
+                        : () {
+                            final isPro =
+                                FeatureFlags.devProEntitlement ||
+                                (ref.read(entitlementProvider).value?.isPro ??
+                                    false);
+                            if (!isPro && scenario.hasRunSimulation) {
+                              showPaywall(context, trigger: 'simulation');
+                              return;
+                            }
+                            ref.read(scenarioProvider.notifier).activate();
+                          },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  NeoButton(
+                    label: l10n.resetSim,
+                    variant: NeoButtonVariant.ghost,
+                    fullWidth: true,
+                    onPressed: () {
+                      ref.read(scenarioProvider.notifier).reset();
+                    },
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.xxxl),
-            ],
-          ),
+            ),
+            const SizedBox(height: AppSpacing.xxxl),
+          ],
         ),
       ),
     );
