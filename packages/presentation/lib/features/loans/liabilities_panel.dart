@@ -13,11 +13,10 @@ class LiabilitiesPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final summaries = ref.watch(loanSummariesProvider);
     final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
     final nf = NumberFormat('#,##0', 'en_US');
     final total = ref.watch(totalMonthlyLoanPaymentProvider);
-    final active = summaries.where((s) => s.loan.isActive).toList();
+    final active = ref.watch(activeLoanSummariesProvider);
 
     final summary = active.isEmpty
         ? Text(l10n.noActiveLoans, style: AppTextStyles.bodySmall)

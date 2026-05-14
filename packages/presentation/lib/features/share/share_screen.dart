@@ -22,7 +22,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
 
   Future<void> _shareImage(ModelState model) async {
     final copy = context.l10n.runwayShare;
-    final identity = copy.identityLabel(model.badge);
+    final goal = ref.read(runwayGoalProvider).value;
     setState(() => _sharing = true);
     try {
       final boundary =
@@ -39,7 +39,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path, mimeType: 'image/png')],
-          text: copy.shareImageText(model.runwayDays, identity),
+          text: copy.shareImageText(model.runwayDays, goal, model.runwayMonths),
         ),
       );
     } catch (e) {
@@ -51,14 +51,10 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
 
   Future<void> _shareText(ModelState model) async {
     final copy = context.l10n.runwayShare;
-    final identity = copy.identityLabel(model.badge);
+    final goal = ref.read(runwayGoalProvider).value;
     await SharePlus.instance.share(
       ShareParams(
-        text: copy.shareTextMessage(
-          model.runwayDays,
-          identity,
-          model.badge.percentile,
-        ),
+        text: copy.shareTextMessage(model.runwayDays, goal, model.runwayMonths),
       ),
     );
   }
@@ -66,6 +62,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
   @override
   Widget build(BuildContext context) {
     final model = ref.watch(modelProvider);
+    final goal = ref.watch(runwayGoalProvider).value;
     final copy = context.l10n.runwayShare;
 
     return GradientScaffold(
@@ -113,7 +110,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
               child: Center(
                 child: RepaintBoundary(
                   key: _repaintKey,
-                  child: _ShareCard(model: model),
+                  child: _ShareCard(model: model, goal: goal),
                 ),
               ),
             ),
@@ -147,14 +144,13 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
 
 class _ShareCard extends StatelessWidget {
   final ModelState model;
-  const _ShareCard({required this.model});
+  final RunwayGoal? goal;
+
+  const _ShareCard({required this.model, required this.goal});
 
   @override
   Widget build(BuildContext context) {
     final copy = context.l10n.runwayShare;
-    final badge = model.badge;
-    final badgeTitle = copy.badgeTitle(badge);
-    final emotionalLine = copy.emotionalLine(model.runwayDays);
     final color = switch (model.survivalStatus) {
       SurvivalStatus.stable => AppColors.neonGreen,
       SurvivalStatus.caution => AppColors.gold,
@@ -279,45 +275,8 @@ class _ShareCard extends StatelessWidget {
 
                   const SizedBox(height: 28),
 
-                  Row(
-                    children: [
-                      Text(badge.emoji, style: const TextStyle(fontSize: 28)),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              badgeTitle,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFFCDD5E0),
-                              ),
-                            ),
-                            Text(
-                              emotionalLine,
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: Color(0xFF6B7F96),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  Text(
-                    copy.youOutlastPeople(badge.percentile),
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: color,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  if (goal != null)
+                    _GoalShareBlock(model: model, goal: goal!, color: color),
 
                   const Spacer(),
 
@@ -325,7 +284,7 @@ class _ShareCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        copy.canYouBeatThis,
+                        copy.privateByDefault,
                         style: TextStyle(
                           fontSize: 10,
                           color: Color(0xFF6B7F96),
@@ -347,6 +306,64 @@ class _ShareCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _GoalShareBlock extends StatelessWidget {
+  const _GoalShareBlock({
+    required this.model,
+    required this.goal,
+    required this.color,
+  });
+
+  final ModelState model;
+  final RunwayGoal goal;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final copy = context.l10n.runwayShare;
+    final percent = calculateRunwayGoalProgressPercent(
+      runwayMonths: model.runwayMonths.toDouble(),
+      targetMonths: goal.targetMonths,
+    );
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF071120),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withAlpha(45)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            goal.name,
+            style: const TextStyle(
+              fontSize: 11,
+              letterSpacing: 1.6,
+              color: Color(0xFF6B7F96),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            copy.goalProgress(percent, goal.targetMonths),
+            style: TextStyle(
+              fontSize: 15,
+              color: color,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            copy.basedOnGoal,
+            style: const TextStyle(fontSize: 11, color: Color(0xFF6B7F96)),
+          ),
+        ],
       ),
     );
   }
@@ -434,164 +451,59 @@ class _RunwayShareCopy {
     _ => 'SHARE AS TEXT',
   };
 
-  String get canYouBeatThis => switch (_lang) {
-    'es' => '¿Puedes superar esto?',
-    'fr' => 'Pouvez-vous faire mieux ?',
-    'it' => 'Riesci a batterlo?',
-    'ja' => 'これを超えられますか？',
-    'zh' => _isTraditionalChinese ? '你能超過嗎？' : '你能超过吗？',
-    _ => 'Can you beat this?',
-  };
-
-  String youOutlastPeople(int percentile) => switch (_lang) {
-    'es' => 'Sobrevives más que el $percentile% de las personas',
-    'fr' => 'Vous tenez plus longtemps que $percentile% des gens',
-    'it' => 'Resisti più del $percentile% delle persone',
-    'ja' => 'あなたは$percentile%の人より長く持ちます',
+  String goalProgress(int percent, int months) => switch (_lang) {
+    'es' => '$percent% de un objetivo de $months meses',
+    'fr' => '$percent% d’un objectif de $months mois',
+    'it' => '$percent% di un obiettivo di $months mesi',
+    'ja' => '$monthsか月目標の$percent%',
     'zh' =>
       _isTraditionalChinese
-          ? '你比 $percentile% 的人撐得更久'
-          : '你比 $percentile% 的人撑得更久',
-    _ => 'You outlast $percentile% of people',
+          ? '達成 $months 個月目標的 $percent%'
+          : '达成 $months 个月目标的 $percent%',
+    _ => '$percent% of a $months-month target',
   };
 
-  String shareImageText(int days, String identity) => switch (_lang) {
-    'es' =>
-      'Si mi ingreso se detuviera hoy, sobrevivo $days días. $identity. ¿Puedes superar esto? RUNWAY',
-    'fr' =>
-      "Si mes revenus s'arrêtaient aujourd'hui, je tiens $days jours. $identity. Pouvez-vous faire mieux ? RUNWAY",
-    'it' =>
-      'Se il mio reddito si fermasse oggi, resisto $days giorni. $identity. Riesci a batterlo? RUNWAY',
-    'ja' => '今日収入が止まったら、私は$days日生きられます。$identity。これを超えられますか？ RUNWAY',
-    'zh' =>
-      _isTraditionalChinese
-          ? '如果我的收入今天停止，我能撐 $days 天。$identity。你能超過嗎？RUNWAY'
-          : '如果我的收入今天停止，我能撑 $days 天。$identity。你能超过吗？RUNWAY',
-    _ =>
-      'If my income stopped today, I survive $days days. $identity. Can you beat this? RUNWAY',
+  String get basedOnGoal => switch (_lang) {
+    'es' => 'Basado solo en efectivo disponible y gasto mensual.',
+    'fr' => 'Basé uniquement sur les liquidités et le coût mensuel.',
+    'it' => 'Basato solo su cassa disponibile e spesa mensile.',
+    'ja' => '手元資金と月間支出だけに基づきます。',
+    'zh' => _isTraditionalChinese ? '僅根據可用現金與每月支出計算。' : '仅根据可用现金与每月支出计算。',
+    _ => 'Based only on available cash and monthly burn.',
   };
 
-  String shareTextMessage(int days, String identity, int percentile) =>
-      '${shareImageText(days, identity)} ${youOutlastPeople(percentile)}.';
-
-  String get emotionExposed => switch (_lang) {
-    'es' => 'Estás expuesto',
-    'fr' => 'Vous êtes exposé',
-    'it' => 'Sei esposto',
-    'ja' => 'かなり危険です',
-    'zh' => _isTraditionalChinese ? '你暴露在風險中' : '你暴露在风险中',
-    _ => "You're exposed",
+  String get privateByDefault => switch (_lang) {
+    'es' => 'Privado por defecto',
+    'fr' => 'Privé par défaut',
+    'it' => 'Privato per impostazione predefinita',
+    'ja' => '標準でプライベート',
+    'zh' => _isTraditionalChinese ? '預設保密' : '默认保密',
+    _ => 'Private by default',
   };
 
-  String get emotionCloser => switch (_lang) {
-    'es' => 'Estás más cerca de lo que parece',
-    'fr' => "C'est plus proche qu'il n'y paraît",
-    'it' => 'È più vicino di quanto sembri',
-    'ja' => '思ったより近いです',
-    'zh' => '比你感觉的更近',
-    _ => "You're closer than it feels",
-  };
-
-  String get emotionBreathingRoom => switch (_lang) {
-    'es' => 'Tienes algo de margen',
-    'fr' => "Vous avez un peu d'air",
-    'it' => "Hai un po' di respiro",
-    'ja' => '少し余裕があります',
-    'zh' => _isTraditionalChinese ? '你還有一點喘息空間' : '你还有一点喘息空间',
-    _ => 'You have some breathing room',
-  };
-
-  String get emotionSaferMost => switch (_lang) {
-    'es' => 'Estás más seguro que la mayoría',
-    'fr' => 'Vous êtes plus en sécurité que la plupart',
-    'it' => 'Sei più al sicuro della maggior parte',
-    'ja' => '多くの人より安全です',
-    'zh' => _isTraditionalChinese ? '你比大多數人更安全' : '你比大多数人更安全',
-    _ => "You're safer than most",
-  };
-
-  String get emotionAheadMost => switch (_lang) {
-    'es' => 'Vas por delante de la mayoría',
-    'fr' => 'Vous êtes devant la plupart des gens',
-    'it' => 'Sei avanti rispetto alla maggior parte',
-    'ja' => '多くの人より先にいます',
-    'zh' => _isTraditionalChinese ? '你領先大多數人' : '你领先大多数人',
-    _ => "You're ahead of most people",
-  };
-
-  String get badgeSurvivalMode => switch (_lang) {
-    'es' => 'Modo supervivencia',
-    'fr' => 'Mode survie',
-    'it' => 'Modalità sopravvivenza',
-    'ja' => 'サバイバルモード',
-    'zh' => '生存模式',
-    _ => 'Survival Mode',
-  };
-
-  String get badgeFinancialRookie => switch (_lang) {
-    'es' => 'Novato financiero',
-    'fr' => 'Débutant financier',
-    'it' => 'Principiante finanziario',
-    'ja' => '金融ルーキー',
-    'zh' => _isTraditionalChinese ? '財務新手' : '财务新手',
-    _ => 'Financial Rookie',
-  };
-
-  String get badgeGettingBy => switch (_lang) {
-    'es' => 'Saliendo adelante',
-    'fr' => 'Vous tenez le coup',
-    'it' => 'Te la cavi',
-    'ja' => 'なんとか持ちこたえ中',
-    'zh' => _isTraditionalChinese ? '勉強撐住' : '勉强撑住',
-    _ => 'Getting By',
-  };
-
-  String get badgeFinanciallyStable => switch (_lang) {
-    'es' => 'Financieramente estable',
-    'fr' => 'Financièrement stable',
-    'it' => 'Finanziariamente stabile',
-    'ja' => '経済的に安定',
-    'zh' => _isTraditionalChinese ? '財務穩定' : '财务稳定',
-    _ => 'Financially Stable',
-  };
-
-  String get badgeFinancialFortress => switch (_lang) {
-    'es' => 'Fortaleza financiera',
-    'fr' => 'Forteresse financière',
-    'it' => 'Fortezza finanziaria',
-    'ja' => '金融要塞',
-    'zh' => _isTraditionalChinese ? '財務堡壘' : '财务堡垒',
-    _ => 'Financial Fortress',
-  };
-
-  String get badgeEscapeVelocity => switch (_lang) {
-    'es' => 'Velocidad de escape',
-    'fr' => "Vitesse d'évasion",
-    'it' => 'Velocità di fuga',
-    'ja' => '脱出速度',
-    'zh' => '逃逸速度',
-    _ => 'Escape Velocity',
-  };
-
-  String identityLabel(IdentityBadge badge) =>
-      '${badgeTitle(badge)} ${badge.emoji}';
-
-  String emotionalLine(int days) {
-    if (days < 30) return emotionExposed;
-    if (days < 90) return emotionCloser;
-    if (days < 180) return emotionBreathingRoom;
-    if (days < 365) return emotionSaferMost;
-    return emotionAheadMost;
-  }
-
-  String badgeTitle(IdentityBadge badge) {
-    return switch (badge) {
-      IdentityBadge.survivalMode => badgeSurvivalMode,
-      IdentityBadge.financialRookie => badgeFinancialRookie,
-      IdentityBadge.gettingBy => badgeGettingBy,
-      IdentityBadge.financiallyStable => badgeFinanciallyStable,
-      IdentityBadge.financialFortress => badgeFinancialFortress,
-      IdentityBadge.escapeVelocity => badgeEscapeVelocity,
+  String shareImageText(int days, RunwayGoal? goal, int runwayMonths) {
+    final base = switch (_lang) {
+      'es' => 'Si mi ingreso se detuviera hoy, mi runway sería de $days días.',
+      'fr' =>
+        "Si mes revenus s'arrêtaient aujourd'hui, mon runway serait de $days jours.",
+      'it' =>
+        'Se il mio reddito si fermasse oggi, il mio runway sarebbe di $days giorni.',
+      'ja' => '今日収入が止まった場合、ランウェイは$days日です。',
+      'zh' =>
+        _isTraditionalChinese
+            ? '如果我的收入今天停止，我的跑道是 $days 天。'
+            : '如果我的收入今天停止，我的跑道是 $days 天。',
+      _ => 'If my income stopped today, my runway is $days days.',
     };
+    if (goal == null) return '$base RUNWAY';
+
+    final percent = calculateRunwayGoalProgressPercent(
+      runwayMonths: runwayMonths.toDouble(),
+      targetMonths: goal.targetMonths,
+    );
+    return '$base ${goal.name}: ${goalProgress(percent, goal.targetMonths)}. RUNWAY';
   }
+
+  String shareTextMessage(int days, RunwayGoal? goal, int runwayMonths) =>
+      shareImageText(days, goal, runwayMonths);
 }

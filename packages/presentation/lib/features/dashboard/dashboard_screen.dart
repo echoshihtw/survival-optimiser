@@ -73,11 +73,11 @@ class DashboardScreen extends ConsumerWidget {
                   if (FeatureFlags.investments)
                     const SizedBox(height: AppSpacing.cardGap),
                   NeoExpandableCard(
-                    title: 'Runway projection',
+                    title: context.l10n.runwayProjection,
                     accentColor: SC.accentNeutral,
                     initiallyExpanded: false,
                     summary: Text(
-                      '${months.length} months ahead',
+                      context.l10n.monthsProjected(months.length),
                       style: AppTextStyles.bodySmall,
                     ),
                     details: CashChart(months: months),
@@ -141,7 +141,7 @@ class _DashboardHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Runway',
+                  context.l10n.appTitle,
                   style: AppTextStyles.body.copyWith(
                     color: AppColors.neonGreen,
                     fontWeight: FontWeight.w700,
@@ -177,7 +177,7 @@ class _DashboardHeader extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
-                    'Settings',
+                    context.l10n.config,
                     style: AppTextStyles.caption.copyWith(
                       color: AppColors.textPrimary,
                     ),

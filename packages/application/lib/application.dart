@@ -23,6 +23,8 @@ export 'providers/loan_provider.dart';
 export 'providers/subscription_provider.dart';
 export 'providers/budget_provider.dart';
 export 'providers/display_provider.dart';
+export 'providers/runway_goal_provider.dart';
+export 'providers/financial_assumptions_provider.dart';
 export 'feature_flags.dart';
 export 'analytics_service.dart';
 export 'providers/entitlement_provider.dart';

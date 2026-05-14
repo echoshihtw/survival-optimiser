@@ -204,4 +204,39 @@ void main() {
       expect(totalMonthlyPayment([]), 0);
     });
   });
+
+  group('activeLoanSummaries', () {
+    test('excludes fully paid loans from active home pressure', () {
+      final openLoan = makeLoan(
+        id: 'open',
+        name: 'Open',
+        originalAmount: 100000,
+        monthlyPayment: 10000,
+      );
+      final paidLoan = makeLoan(
+        id: 'paid',
+        name: 'Paid',
+        originalAmount: 50000,
+        monthlyPayment: 5000,
+      );
+      final summaries = computeLoanSummaries(
+        loans: [openLoan, paidLoan],
+        transactions: [
+          makeTx(
+            year: 2025,
+            month: 1,
+            day: 1,
+            type: TransactionType.repayment,
+            amount: 50000,
+            loanId: 'paid',
+          ),
+        ],
+      );
+
+      final active = activeLoanSummaries(summaries);
+
+      expect(active.map((summary) => summary.loan.id), ['open']);
+      expect(totalMonthlyPaymentFromSummaries(summaries), 10000);
+    });
+  });
 }

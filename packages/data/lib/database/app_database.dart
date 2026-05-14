@@ -24,7 +24,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -39,6 +39,11 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 4) {
         await m.addColumn(loans, loans.originalTermMonths);
+      }
+      if (from < 5) {
+        await customStatement(
+          'ALTER TABLE "transactions" ADD COLUMN "category" TEXT;',
+        );
       }
     },
   );

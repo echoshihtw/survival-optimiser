@@ -1,3 +1,4 @@
+import '../enums/expense_category.dart';
 import '../enums/transaction_type.dart';
 import '../value_objects/money.dart';
 import '../value_objects/survival_month.dart';
@@ -10,6 +11,7 @@ class Transaction {
   final Money amount;
   final String? note;
   final String? loanId; // links REPAY to a specific loan
+  final ExpenseCategory? category; // only set when type == expense
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -20,6 +22,7 @@ class Transaction {
     required this.amount,
     this.note,
     this.loanId,
+    this.category,
     required this.createdAt,
     required this.updatedAt,
   }) : month = SurvivalMonth(date);
@@ -33,6 +36,9 @@ class Transaction {
     Money? amount,
     String? note,
     String? loanId,
+    bool clearLoanId = false,
+    ExpenseCategory? category,
+    bool clearCategory = false,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -42,7 +48,8 @@ class Transaction {
       type: type ?? this.type,
       amount: amount ?? this.amount,
       note: note ?? this.note,
-      loanId: loanId ?? this.loanId,
+      loanId: clearLoanId ? null : (loanId ?? this.loanId),
+      category: clearCategory ? null : (category ?? this.category),
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

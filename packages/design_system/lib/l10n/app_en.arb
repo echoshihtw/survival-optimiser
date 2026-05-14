@@ -2,11 +2,11 @@
   "@@locale": "en",
   "appTitle": "Runway",
   "hudTitle": "Runway",
-  "sysOnline": "SYS: ONLINE",
-  "lifeForce": "LIFE FORCE",
-  "statusLabel": "STATUS",
-  "pressureLabel": "PRESSURE",
-  "metrics": "METRICS",
+  "sysOnline": "Ready",
+  "lifeForce": "RUNWAY READINESS",
+  "statusLabel": "Position",
+  "pressureLabel": "Pressure",
+  "metrics": "Signals",
   "cash": "CASH",
   "burnPerMonth": "BURN/MO",
   "loanPerMonth": "DEBT/MO",
@@ -14,13 +14,13 @@
   "runOut": "RUN OUT",
   "investable": "INVESTABLE",
   "cashTimeline": "CASH TIMELINE",
-  "config": "CONFIG",
+  "config": "Settings",
   "monthlyLoanPayment": "MONTHLY LOAN PAYMENT",
   "tapToSet": "TAP TO SET",
   "edit": "EDIT",
   "save": "SAVE",
   "clear": "CLEAR",
-  "loanAffectsInfo": "> LOAN/MO AFFECTS PRESSURE RATIO AND INVESTABLE CASH",
+  "loanAffectsInfo": "Loan payments reduce flexibility and shorten runway.",
   "transactionLog": "TRANSACTION LOG",
   "newEntry": "+ NEW",
   "noEntries": "No entries yet\nTap + ADD to log your first entry",
@@ -34,18 +34,18 @@
   "confirm": "CONFIRM",
   "abort": "ABORT",
   "purgeEntry": "> PURGE ENTRY?",
-  "scenarioSimulator": "SCENARIO SIMULATOR",
-  "overrideInputs": "OVERRIDE INPUTS",
-  "burnRateOverride": "BURN RATE OVERRIDE",
-  "simulatedIncome": "SIMULATED INCOME/MO",
-  "simResults": "SIM RESULTS",
-  "simRunway": "SIM RUNWAY",
-  "simRunOut": "SIM RUN OUT",
-  "simInvestable": "SIM INVESTABLE",
-  "deltaVsActual": "DELTA vs ACTUAL",
-  "deltaRunway": "DELTA RUNWAY",
-  "deltaInvestable": "DELTA INVESTABLE",
-  "resetSim": "RESET SIM",
+  "scenarioSimulator": "Scenario planning",
+  "overrideInputs": "Planning inputs",
+  "burnRateOverride": "Monthly burn",
+  "simulatedIncome": "Income change / month",
+  "simResults": "Projected impact",
+  "simRunway": "Projected runway",
+  "simRunOut": "Projected run-out",
+  "simInvestable": "Projected optionality",
+  "deltaVsActual": "Change from today",
+  "deltaRunway": "Runway change",
+  "deltaInvestable": "Optionality change",
+  "resetSim": "Reset scenario",
   "months": "MONTHS",
   "stable": "STABLE",
   "caution": "CAUTION",
@@ -57,9 +57,9 @@
   "currency": "CURRENCY",
   "addNoData": "> ADD TRANSACTIONS TO SEE TIMELINE",
   "loading": "LOADING...",
-  "navHud": "HUD",
+  "navHud": "Home",
   "navLog": "LOG",
-  "navSim": "SIM",
+  "navSim": "Plan",
   "typeExpense": "EXPENSE",
   "typeIncome": "INCOME",
   "typeLoan": "LOAN",
@@ -100,8 +100,11 @@
   "noSubscriptions": "> NO ACTIVE SUBSCRIPTIONS",
   "subscriptionName": "NAME",
   "subscriptionAmount": "AMOUNT",
+  "subscriptionPaymentAmount": "PAYMENT AMOUNT",
   "subscriptionCycle": "BILLING CYCLE",
+  "subscriptionCoveragePeriod": "COVERAGE PERIOD",
   "subscriptionCategory": "CATEGORY",
+  "subscriptionPaymentDate": "PAYMENT DATE",
   "subscriptionNextBilling": "NEXT BILLING",
   "subscriptionDaysLeft": "DAYS",
   "totalPerMonth": "TOTAL/MO",
@@ -132,7 +135,7 @@
   "subscrPerYear": "SUBSCR/YR",
   "removeConfirm": "REMOVE?",
   "remove": "REMOVE",
-  "monthsProjected": "{count} MONTHS PROJECTED",
+  "monthsProjected": "{count} months ahead",
   "@monthsProjected": {
     "placeholders": {
       "count": {
@@ -144,8 +147,7 @@
   "breakdown": "BREAKDOWN",
   "safetyFund": "SAFETY FUND",
   "safety": "SAFETY",
-  "deployableCapital": "DEPLOYABLE CAPITAL — SEPARATE FROM SURVIVAL BUFFER",
-  "survivalCharge": "SURVIVAL CHARGE",
+  "deployableCapital": "Optional capital after protecting your runway",
   "historyEntries": "HISTORY & ENTRIES",
   "addEntry": "+ ADD",
   "willRemoveLoan": "WILL ALSO REMOVE FROM LIABILITIES",
@@ -153,10 +155,10 @@
   "planned": "PLANNED",
   "whatIfAnalysis": "WHAT-IF ANALYSIS",
   "current": "CURRENT",
-  "simulate": "SIMULATE",
+  "simulate": "Plan",
   "simHint": "OVERRIDE BURN RATE OR ADD INCOME TO SEE IMPACT ON RUNWAY",
-  "simulation": "SIMULATION",
-  "enterValuesToSim": "ENTER VALUES ABOVE TO SIMULATE",
+  "simulation": "Scenario",
+  "enterValuesToSim": "Enter values above to see the impact",
   "perMonth": "/ MONTH",
   "prefsBudget": "PREFERENCES & BUDGET",
   "close": "CLOSE",
@@ -168,6 +170,34 @@
   "setBudget": "SET BUDGET",
   "rentFixedCosts": "RENT / FIXED COSTS",
   "subscrDebtAuto": "SUBSCRIPTIONS + DEBT ADDED AUTOMATICALLY",
+  "futureAssumptions": "Future assumptions",
+  "expectedInflow": "Expected inflow",
+  "expectedBurn": "Expected burn",
+  "notSet": "Not set",
+  "usingCurrentBurn": "Using current burn",
+  "assumptionsProjectionOnly": "Assumptions affect future projections only. They do not create transactions.",
+  "setAssumptions": "Set assumptions",
+  "expectedMonthlyInflow": "Expected monthly inflow",
+  "expectedMonthlyBurn": "Expected monthly burn",
+  "useCurrentBurn": "Use current burn",
+  "futureInflowHint": "Use neutral future inflow here: freelance retainers, contract work, creator income, dividends, or any expected inflow.",
+  "runwayGoal": "Runway goal",
+  "goal": "Goal",
+  "none": "None",
+  "target": "Target",
+  "optional": "Optional",
+  "monthsValue": "{count} months",
+  "@monthsValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "goalsContextHint": "Goals add context to your runway. They are not a score.",
+  "setGoal": "Set goal",
+  "goalName": "Goal name",
+  "targetMonths": "Target months",
   "display": "DISPLAY",
   "glassEffect": "GLASS EFFECT",
   "glassEffectHint": "GPU INTENSIVE — DISABLE ON OLDER DEVICES",
@@ -178,21 +208,52 @@
   "bootRemovingComfortFilter": "Separating essentials from noise...",
   "bootRealityCheckReady": "Your financial picture is ready.",
   "ifIncomeStoppedToday": "If your income stopped today",
-  "daysUpper": "DAYS",
-  "yourRunway": "Your runway",
-  "emotionExposed": "You're exposed",
-  "emotionCloser": "You're closer than it feels",
-  "emotionBreathingRoom": "You have some breathing room",
-  "emotionSaferMost": "You're safer than most",
-  "emotionAheadMost": "You're ahead of most people",
-  "youOutlastPeople": "You outlast {percentile}% of people",
-  "@youOutlastPeople": {
+  "ifIncomePausedToday": "If income paused today",
+  "monthSingular": "month",
+  "monthPlural": "months",
+  "noProjectedRunOut": "No projected run-out",
+  "aboutDaysOfFreedom": "About {days} days of freedom",
+  "@aboutDaysOfFreedom": {
     "placeholders": {
-      "percentile": {
+      "days": {
         "type": "int"
       }
     }
   },
+  "sustainableWithExpectedInflow": "Sustainable with your expected inflow",
+  "shortByPerMonth": "Short by {amount} / month",
+  "@shortByPerMonth": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalTargetProgress": "{months} month target. Progress toward your goal, not a score.",
+  "@goalTargetProgress": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "monthlyBurn": "Monthly burn",
+  "flexibility": "Flexibility",
+  "availableCash": "Available cash",
+  "historicalBurn": "Historical burn",
+  "notEnoughHistory": "Not enough history",
+  "projectionSource": "Projection source",
+  "usingAssumptions": "Using assumptions",
+  "fixedPressure": "Fixed pressure",
+  "actualBurn": "Actual burn",
+  "actualBurnHigh": "Actual burn ▲",
+  "plannedEssentials": "Planned essentials",
+  "recurringCosts": "Recurring costs",
+  "debtCommitments": "Debt commitments",
+  "pressureFlexibility": "Pressure & flexibility",
+  "runwayProjection": "Runway projection",
+  "daysUpper": "DAYS",
+  "yourRunway": "Your runway",
   "loseIncome": "Lose income",
   "higherExpenses": "Higher expenses",
   "incomeSetToZero": "Income set to 0",
@@ -208,37 +269,5 @@
   "shareSafeHint": "No savings. No expenses. Just your runway.",
   "preparing": "PREPARING...",
   "shareImage": "SHARE IMAGE",
-  "shareAsText": "SHARE AS TEXT",
-  "canYouBeatThis": "Can you beat this?",
-  "shareImageText": "If my income stopped today, I survive {days} days. {identity}. Can you beat this? RUNWAY",
-  "@shareImageText": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      },
-      "identity": {
-        "type": "String"
-      }
-    }
-  },
-  "shareTextMessage": "If my income stopped today, I survive {days} days. {identity}. You outlast {percentile}% of people. Can you beat this? RUNWAY",
-  "@shareTextMessage": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      },
-      "identity": {
-        "type": "String"
-      },
-      "percentile": {
-        "type": "int"
-      }
-    }
-  },
-  "badgeSurvivalMode": "Survival Mode",
-  "badgeFinancialRookie": "Financial Rookie",
-  "badgeGettingBy": "Getting By",
-  "badgeFinanciallyStable": "Financially Stable",
-  "badgeFinancialFortress": "Financial Fortress",
-  "badgeEscapeVelocity": "Escape Velocity"
+  "shareAsText": "SHARE AS TEXT"
 }

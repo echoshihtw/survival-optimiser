@@ -37,22 +37,11 @@ class TransactionsScreen extends ConsumerWidget {
                 AppSpacing.lg,
                 AppSpacing.sm,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(l10n.transactionLog, style: AppTextStyles.title),
-                      Text(l10n.historyEntries, style: AppTextStyles.caption),
-                    ],
-                  ),
-                  NeoButton(
-                    label: l10n.addEntry,
-                    variant: NeoButtonVariant.primary,
-                    onPressed: () => _showAddMenu(context, ref),
-                  ),
-                ],
+              child: _TransactionsHeader(
+                title: l10n.transactionLog,
+                subtitle: l10n.historyEntries,
+                addLabel: l10n.addEntry,
+                onAdd: () => _showAddMenu(context, ref),
               ),
             ),
             const Divider(color: AppColors.cardBorder, height: 1),
@@ -343,6 +332,7 @@ class TransactionsScreen extends ConsumerWidget {
     WidgetRef ref,
     TransactionType preselectedType,
   ) {
+    final loans = _loanChoices(ref);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -355,7 +345,8 @@ class TransactionsScreen extends ConsumerWidget {
       builder: (_) => TransactionForm(
         existing: null,
         preselectedType: preselectedType,
-        onSubmit: (type, amount, date, note) async {
+        loans: loans,
+        onSubmit: (type, amount, date, note, category, loanId) async {
           final now = DateTime.now();
           final tx = Transaction(
             id: const Uuid().v4(),
@@ -363,6 +354,8 @@ class TransactionsScreen extends ConsumerWidget {
             type: type,
             amount: Money(amount),
             note: note,
+            loanId: type == TransactionType.repayment ? loanId : null,
+            category: category,
             createdAt: now,
             updatedAt: now,
           );
@@ -373,6 +366,7 @@ class TransactionsScreen extends ConsumerWidget {
   }
 
   void _showForm(BuildContext context, WidgetRef ref, Transaction? existing) {
+    final loans = _loanChoices(ref, existing: existing);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -384,7 +378,8 @@ class TransactionsScreen extends ConsumerWidget {
       ),
       builder: (_) => TransactionForm(
         existing: existing,
-        onSubmit: (type, amount, date, note) async {
+        loans: loans,
+        onSubmit: (type, amount, date, note, category, loanId) async {
           final now = DateTime.now();
           if (existing == null) {
             final tx = Transaction(
@@ -393,6 +388,8 @@ class TransactionsScreen extends ConsumerWidget {
               type: type,
               amount: Money(amount),
               note: note,
+              loanId: type == TransactionType.repayment ? loanId : null,
+              category: category,
               createdAt: now,
               updatedAt: now,
             );
@@ -403,6 +400,10 @@ class TransactionsScreen extends ConsumerWidget {
               type: type,
               amount: Money(amount),
               note: note,
+              loanId: type == TransactionType.repayment ? loanId : null,
+              clearLoanId: type != TransactionType.repayment,
+              category: category,
+              clearCategory: category == null,
               updatedAt: now,
             );
             await ref.read(editTransactionUseCaseProvider).execute(tx);
@@ -410,6 +411,30 @@ class TransactionsScreen extends ConsumerWidget {
         },
       ),
     );
+  }
+
+  List<Loan> _loanChoices(WidgetRef ref, {Transaction? existing}) {
+    final summaries = ref.read(loanSummariesProvider);
+    final loans = activeLoanSummaries(
+      summaries,
+    ).map((summary) => summary.loan).toList();
+    final existingLoanId = existing?.loanId;
+    if (existingLoanId != null &&
+        !loans.any((loan) => loan.id == existingLoanId)) {
+      LoanSummary? existingSummary;
+      for (final summary in summaries) {
+        if (summary.loan.id == existingLoanId) {
+          existingSummary = summary;
+          break;
+        }
+      }
+      if (existingSummary != null) loans.add(existingSummary.loan);
+    }
+    loans.sort((a, b) {
+      if (a.isActive != b.isActive) return a.isActive ? -1 : 1;
+      return a.name.compareTo(b.name);
+    });
+    return loans;
   }
 
   void _confirmDelete(BuildContext context, WidgetRef ref, Transaction tx) {
@@ -465,6 +490,118 @@ class TransactionsScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _TransactionsHeader extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String addLabel;
+  final VoidCallback onAdd;
+
+  const _TransactionsHeader({
+    required this.title,
+    required this.subtitle,
+    required this.addLabel,
+    required this.onAdd,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 380;
+        final titleBlock = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: AppTextStyles.title,
+              maxLines: compact ? 2 : 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              subtitle,
+              style: AppTextStyles.caption,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        );
+
+        if (compact) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleBlock,
+              const SizedBox(height: AppSpacing.sm),
+              Align(
+                alignment: Alignment.centerRight,
+                child: _HeaderAddButton(label: addLabel, onTap: onAdd),
+              ),
+            ],
+          );
+        }
+
+        return Row(
+          children: [
+            Expanded(child: titleBlock),
+            const SizedBox(width: AppSpacing.md),
+            _HeaderAddButton(label: addLabel, onTap: onAdd),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _HeaderAddButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _HeaderAddButton({required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 190),
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm + 2,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.neonGreen,
+            borderRadius: BorderRadius.circular(50),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.add_rounded,
+                color: AppColors.background,
+                size: 18,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Flexible(
+                child: Text(
+                  label.replaceFirst('+', '').trim(),
+                  style: AppTextStyles.button.copyWith(
+                    color: AppColors.background,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

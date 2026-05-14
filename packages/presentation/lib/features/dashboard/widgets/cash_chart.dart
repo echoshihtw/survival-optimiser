@@ -37,50 +37,51 @@ class CashChart extends StatelessWidget {
 
     return SizedBox(
       height: 160,
-      child: LineChart(
-        LineChartData(
-          backgroundColor: AppColors.background,
-          gridData: FlGridData(
-            show: true,
-            getDrawingHorizontalLine: (_) =>
-                FlLine(color: AppColors.panelBorder, strokeWidth: 1),
-            getDrawingVerticalLine: (_) =>
-                FlLine(color: AppColors.panelBorder, strokeWidth: 1),
+      child: IgnorePointer(
+        child: LineChart(
+          LineChartData(
+            lineTouchData: const LineTouchData(enabled: false),
+            backgroundColor: AppColors.background,
+            gridData: FlGridData(
+              show: true,
+              getDrawingHorizontalLine: (_) =>
+                  FlLine(color: AppColors.panelBorder, strokeWidth: 1),
+              getDrawingVerticalLine: (_) =>
+                  FlLine(color: AppColors.panelBorder, strokeWidth: 1),
+            ),
+            borderData: FlBorderData(show: false),
+            titlesData: const FlTitlesData(show: false),
+            minY: minY < 0 ? minY * 1.1 : 0,
+            maxY: maxY * 1.1,
+            lineBarsData: [
+              // Balance line
+              LineChartBarData(
+                spots: spots,
+                isCurved: false,
+                color: AppColors.primaryGreen,
+                barWidth: 2,
+                dotData: const FlDotData(show: false),
+              ),
+              // Zero line
+              LineChartBarData(
+                spots: [FlSpot(0, 0), FlSpot(months.length - 1.0, 0)],
+                isCurved: false,
+                color: AppColors.danger,
+                barWidth: 1,
+                dotData: const FlDotData(show: false),
+                dashArray: [4, 4],
+              ),
+              // Safety threshold line
+              LineChartBarData(
+                spots: [],
+                isCurved: false,
+                color: AppColors.gold,
+                barWidth: 1,
+                dotData: const FlDotData(show: false),
+                dashArray: [4, 4],
+              ),
+            ],
           ),
-          borderData: FlBorderData(show: false),
-          titlesData: const FlTitlesData(show: false),
-          minY: minY < 0 ? minY * 1.1 : 0,
-          maxY: maxY * 1.1,
-          lineBarsData: [
-            // Balance line
-            LineChartBarData(
-              spots: spots,
-              isCurved: false,
-              color: AppColors.primaryGreen,
-              barWidth: 2,
-              dotData: const FlDotData(show: false),
-            ),
-            // Zero line
-            LineChartBarData(
-              spots: [FlSpot(0, 0), FlSpot(months.length - 1.0, 0)],
-              isCurved: false,
-              color: AppColors.danger,
-              barWidth: 1,
-              dotData: const FlDotData(show: false),
-              dashArray: [4, 4],
-            ),
-            // Safety threshold line
-            LineChartBarData(
-              spots: [
-
-              ],
-              isCurved: false,
-              color: AppColors.gold,
-              barWidth: 1,
-              dotData: const FlDotData(show: false),
-              dashArray: [4, 4],
-            ),
-          ],
         ),
       ),
     );

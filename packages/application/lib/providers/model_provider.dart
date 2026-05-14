@@ -5,12 +5,16 @@ import 'loan_provider.dart';
 import 'scenario_provider.dart';
 import 'subscription_provider.dart';
 import 'budget_provider.dart';
+import 'financial_assumptions_provider.dart';
 
 final modelProvider = Provider<ModelState>((ref) {
   final asyncTransactions = ref.watch(transactionsProvider);
   final monthlyPayment = ref.watch(totalMonthlyLoanPaymentProvider);
   final subscriptionCost = ref.watch(subscriptionMonthlyTotalProvider);
   final budget = ref.watch(budgetProvider).value ?? const Budget();
+  final assumptions =
+      ref.watch(financialAssumptionsProvider).value ??
+      const FinancialAssumptions();
 
   return asyncTransactions.when(
     data: (transactions) {
@@ -33,6 +37,8 @@ final modelProvider = Provider<ModelState>((ref) {
         monthlyPayment: monthlyPayment,
         subscriptionMonthlyCost: subscriptionCost,
         budgetBurnRate: totalBurn > 0 ? totalBurn : null,
+        expectedMonthlyInflow: assumptions.expectedMonthlyInflow,
+        expectedMonthlyBurnOverride: assumptions.expectedMonthlyBurnOverride,
       );
     },
     loading: () {
@@ -42,6 +48,8 @@ final modelProvider = Provider<ModelState>((ref) {
         monthlyPayment: monthlyPayment,
         subscriptionMonthlyCost: subscriptionCost,
         budgetBurnRate: totalBurn > 0 ? totalBurn : null,
+        expectedMonthlyInflow: assumptions.expectedMonthlyInflow,
+        expectedMonthlyBurnOverride: assumptions.expectedMonthlyBurnOverride,
       );
     },
     error: (_, __) {
@@ -51,6 +59,8 @@ final modelProvider = Provider<ModelState>((ref) {
         monthlyPayment: monthlyPayment,
         subscriptionMonthlyCost: subscriptionCost,
         budgetBurnRate: totalBurn > 0 ? totalBurn : null,
+        expectedMonthlyInflow: assumptions.expectedMonthlyInflow,
+        expectedMonthlyBurnOverride: assumptions.expectedMonthlyBurnOverride,
       );
     },
   );
@@ -61,6 +71,9 @@ final projectedMonthsProvider = Provider<List<MonthlyState>>((ref) {
   final monthlyPayment = ref.watch(totalMonthlyLoanPaymentProvider);
   final subscriptionCost = ref.watch(subscriptionMonthlyTotalProvider);
   final budget = ref.watch(budgetProvider).value ?? const Budget();
+  final assumptions =
+      ref.watch(financialAssumptionsProvider).value ??
+      const FinancialAssumptions();
 
   return asyncTransactions.whenOrNull(
         data: (transactions) {
@@ -71,7 +84,9 @@ final projectedMonthsProvider = Provider<List<MonthlyState>>((ref) {
           final effectiveVar = actualBurn > budgetBase
               ? actualBurn
               : budgetBase;
-          final totalOutflow = effectiveVar + subscriptionCost + monthlyPayment;
+          final totalOutflow =
+              assumptions.expectedMonthlyBurnOverride ??
+              effectiveVar + subscriptionCost + monthlyPayment;
           return projectMonthsForward(known: months, burnRate: totalOutflow);
         },
       ) ??
@@ -145,6 +160,5 @@ ModelState _computeScenarioModel({
     pressureRatio: variableBurnRate > 0
         ? (monthlyPayment + subscriptionMonthlyCost) / variableBurnRate
         : 0.0,
-    badge: IdentityBadgeX.fromDays(runwayDays),
   );
 }

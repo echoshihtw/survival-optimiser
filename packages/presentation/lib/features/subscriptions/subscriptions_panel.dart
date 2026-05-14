@@ -4,6 +4,7 @@ import 'package:design_system/design_system.dart';
 import 'package:application/application.dart';
 import 'package:domain/domain.dart';
 import 'package:intl/intl.dart';
+import 'subscription_form.dart';
 
 class SubscriptionsPanel extends ConsumerWidget {
   const SubscriptionsPanel({super.key});
@@ -74,6 +75,7 @@ class SubscriptionsPanel extends ConsumerWidget {
                   nf: nf,
                   showCategoryLabel: showCatLabel,
                   showDivider: i < sorted.length - 1,
+                  onEdit: () => _showEditSubscription(context, ref, sorted[i]),
                 ),
             ],
           );
@@ -90,6 +92,43 @@ class SubscriptionsPanel extends ConsumerWidget {
               '${active.length}',
               style: AppTextStyles.caption.copyWith(color: AppColors.purple),
             ),
+    );
+  }
+
+  void _showEditSubscription(
+    BuildContext context,
+    WidgetRef ref,
+    Subscription subscription,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppSpacing.cardRadius),
+        ),
+      ),
+      builder: (_) => SubscriptionForm(
+        existing: subscription,
+        onSubmit: (name, category, amount, cycle, startDate, note) async {
+          final updated = Subscription(
+            id: subscription.id,
+            name: name,
+            category: category,
+            amount: amount,
+            cycle: cycle,
+            startDate: startDate,
+            nextBillingDate: computeNextBillingDate(startDate, cycle),
+            note: note,
+            isActive: subscription.isActive,
+            createdAt: subscription.createdAt,
+            updatedAt: DateTime.now(),
+          );
+          await ref.read(editSubscriptionUseCaseProvider).execute(updated);
+          return true;
+        },
+      ),
     );
   }
 }
@@ -228,6 +267,7 @@ class _SubRow extends StatelessWidget {
   final NumberFormat nf;
   final bool showCategoryLabel;
   final bool showDivider;
+  final VoidCallback onEdit;
 
   const _SubRow({
     required this.sub,
@@ -235,6 +275,7 @@ class _SubRow extends StatelessWidget {
     required this.nf,
     this.showCategoryLabel = false,
     required this.showDivider,
+    required this.onEdit,
   });
 
   @override
@@ -247,82 +288,89 @@ class _SubRow extends StatelessWidget {
         ? AppColors.gold
         : AppColors.textDim;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-      decoration: BoxDecoration(
-        border: showDivider
-            ? const Border(bottom: BorderSide(color: AppColors.cardBorder))
-            : null,
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-              color: daysColor.withAlpha(16),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: daysColor.withAlpha(55)),
+    return GestureDetector(
+      onTap: onEdit,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        decoration: BoxDecoration(
+          border: showDivider
+              ? const Border(bottom: BorderSide(color: AppColors.cardBorder))
+              : null,
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: daysColor.withAlpha(16),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: daysColor.withAlpha(55)),
+              ),
+              margin: const EdgeInsets.only(right: AppSpacing.sm),
+              child: Icon(Icons.autorenew_rounded, color: daysColor, size: 15),
             ),
-            margin: const EdgeInsets.only(right: AppSpacing.sm),
-            child: Icon(Icons.autorenew_rounded, color: daysColor, size: 15),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        sub.name.toUpperCase(),
-                        style: AppTextStyles.body,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (showCategoryLabel) ...[
-                      const SizedBox(width: AppSpacing.xs),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xs,
-                          vertical: 1,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.purple.withAlpha(20),
-                          borderRadius: BorderRadius.circular(3),
-                          border: Border.all(
-                            color: AppColors.purple.withAlpha(60),
-                          ),
-                        ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
                         child: Text(
-                          sub.category == SubscriptionCategory.personal
-                              ? l10n.personal
-                              : l10n.business,
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.purple,
-                            fontSize: 9,
-                          ),
+                          sub.name.toUpperCase(),
+                          style: AppTextStyles.body,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      if (showCategoryLabel) ...[
+                        const SizedBox(width: AppSpacing.xs),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xs,
+                            vertical: 1,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.purple.withAlpha(20),
+                            borderRadius: BorderRadius.circular(3),
+                            border: Border.all(
+                              color: AppColors.purple.withAlpha(60),
+                            ),
+                          ),
+                          child: Text(
+                            sub.category == SubscriptionCategory.personal
+                                ? l10n.personal
+                                : l10n.business,
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.purple,
+                              fontSize: 9,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.xxs),
-                Text(
-                  '${sub.cycle.label} · '
-                  '$symbol ${nf.format(sub.amount)} · '
-                  '≈ $symbol ${nf.format(sub.monthlyEquivalent)}/mo',
-                  style: AppTextStyles.caption,
-                ),
-              ],
+                  ),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(
+                    '${sub.cycle.label} · '
+                    '$symbol ${nf.format(sub.amount)} · '
+                    '≈ $symbol ${nf.format(sub.monthlyEquivalent)}/mo',
+                    style: AppTextStyles.caption,
+                  ),
+                ],
+              ),
             ),
-          ),
-          Text(
-            '${days}D',
-            style: AppTextStyles.metricSmall.copyWith(color: daysColor),
-          ),
-        ],
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              '${days}D',
+              style: AppTextStyles.metricSmall.copyWith(color: daysColor),
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            const Icon(Icons.edit_rounded, color: AppColors.textDim, size: 14),
+          ],
+        ),
       ),
     );
   }

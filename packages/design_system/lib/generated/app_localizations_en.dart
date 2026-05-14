@@ -15,19 +15,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hudTitle => 'Runway';
 
   @override
-  String get sysOnline => 'SYS: ONLINE';
+  String get sysOnline => 'Ready';
 
   @override
-  String get lifeForce => 'LIFE FORCE';
+  String get lifeForce => 'RUNWAY READINESS';
 
   @override
-  String get statusLabel => 'STATUS';
+  String get statusLabel => 'Position';
 
   @override
-  String get pressureLabel => 'PRESSURE';
+  String get pressureLabel => 'Pressure';
 
   @override
-  String get metrics => 'METRICS';
+  String get metrics => 'Signals';
 
   @override
   String get cash => 'CASH';
@@ -51,7 +51,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cashTimeline => 'CASH TIMELINE';
 
   @override
-  String get config => 'CONFIG';
+  String get config => 'Settings';
 
   @override
   String get monthlyLoanPayment => 'MONTHLY LOAN PAYMENT';
@@ -70,7 +70,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loanAffectsInfo =>
-      '> LOAN/MO AFFECTS PRESSURE RATIO AND INVESTABLE CASH';
+      'Loan payments reduce flexibility and shorten runway.';
 
   @override
   String get transactionLog => 'TRANSACTION LOG';
@@ -112,40 +112,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get purgeEntry => '> PURGE ENTRY?';
 
   @override
-  String get scenarioSimulator => 'SCENARIO SIMULATOR';
+  String get scenarioSimulator => 'Scenario planning';
 
   @override
-  String get overrideInputs => 'OVERRIDE INPUTS';
+  String get overrideInputs => 'Planning inputs';
 
   @override
-  String get burnRateOverride => 'BURN RATE OVERRIDE';
+  String get burnRateOverride => 'Monthly burn';
 
   @override
-  String get simulatedIncome => 'SIMULATED INCOME/MO';
+  String get simulatedIncome => 'Income change / month';
 
   @override
-  String get simResults => 'SIM RESULTS';
+  String get simResults => 'Projected impact';
 
   @override
-  String get simRunway => 'SIM RUNWAY';
+  String get simRunway => 'Projected runway';
 
   @override
-  String get simRunOut => 'SIM RUN OUT';
+  String get simRunOut => 'Projected run-out';
 
   @override
-  String get simInvestable => 'SIM INVESTABLE';
+  String get simInvestable => 'Projected optionality';
 
   @override
-  String get deltaVsActual => 'DELTA vs ACTUAL';
+  String get deltaVsActual => 'Change from today';
 
   @override
-  String get deltaRunway => 'DELTA RUNWAY';
+  String get deltaRunway => 'Runway change';
 
   @override
-  String get deltaInvestable => 'DELTA INVESTABLE';
+  String get deltaInvestable => 'Optionality change';
 
   @override
-  String get resetSim => 'RESET SIM';
+  String get resetSim => 'Reset scenario';
 
   @override
   String get months => 'MONTHS';
@@ -181,13 +181,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loading => 'LOADING...';
 
   @override
-  String get navHud => 'HUD';
+  String get navHud => 'Home';
 
   @override
   String get navLog => 'LOG';
 
   @override
-  String get navSim => 'SIM';
+  String get navSim => 'Plan';
 
   @override
   String get typeExpense => 'EXPENSE';
@@ -310,10 +310,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionAmount => 'AMOUNT';
 
   @override
+  String get subscriptionPaymentAmount => 'PAYMENT AMOUNT';
+
+  @override
   String get subscriptionCycle => 'BILLING CYCLE';
 
   @override
+  String get subscriptionCoveragePeriod => 'COVERAGE PERIOD';
+
+  @override
   String get subscriptionCategory => 'CATEGORY';
+
+  @override
+  String get subscriptionPaymentDate => 'PAYMENT DATE';
 
   @override
   String get subscriptionNextBilling => 'NEXT BILLING';
@@ -388,7 +397,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String monthsProjected(int count) {
-    return '$count MONTHS PROJECTED';
+    return '$count months ahead';
   }
 
   @override
@@ -405,10 +414,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deployableCapital =>
-      'DEPLOYABLE CAPITAL — SEPARATE FROM SURVIVAL BUFFER';
-
-  @override
-  String get survivalCharge => 'SURVIVAL CHARGE';
+      'Optional capital after protecting your runway';
 
   @override
   String get historyEntries => 'HISTORY & ENTRIES';
@@ -432,17 +438,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get current => 'CURRENT';
 
   @override
-  String get simulate => 'SIMULATE';
+  String get simulate => 'Plan';
 
   @override
   String get simHint =>
       'OVERRIDE BURN RATE OR ADD INCOME TO SEE IMPACT ON RUNWAY';
 
   @override
-  String get simulation => 'SIMULATION';
+  String get simulation => 'Scenario';
 
   @override
-  String get enterValuesToSim => 'ENTER VALUES ABOVE TO SIMULATE';
+  String get enterValuesToSim => 'Enter values above to see the impact';
 
   @override
   String get perMonth => '/ MONTH';
@@ -478,6 +484,74 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscrDebtAuto => 'SUBSCRIPTIONS + DEBT ADDED AUTOMATICALLY';
 
   @override
+  String get futureAssumptions => 'Future assumptions';
+
+  @override
+  String get expectedInflow => 'Expected inflow';
+
+  @override
+  String get expectedBurn => 'Expected burn';
+
+  @override
+  String get notSet => 'Not set';
+
+  @override
+  String get usingCurrentBurn => 'Using current burn';
+
+  @override
+  String get assumptionsProjectionOnly =>
+      'Assumptions affect future projections only. They do not create transactions.';
+
+  @override
+  String get setAssumptions => 'Set assumptions';
+
+  @override
+  String get expectedMonthlyInflow => 'Expected monthly inflow';
+
+  @override
+  String get expectedMonthlyBurn => 'Expected monthly burn';
+
+  @override
+  String get useCurrentBurn => 'Use current burn';
+
+  @override
+  String get futureInflowHint =>
+      'Use neutral future inflow here: freelance retainers, contract work, creator income, dividends, or any expected inflow.';
+
+  @override
+  String get runwayGoal => 'Runway goal';
+
+  @override
+  String get goal => 'Goal';
+
+  @override
+  String get none => 'None';
+
+  @override
+  String get target => 'Target';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String monthsValue(int count) {
+    return '$count months';
+  }
+
+  @override
+  String get goalsContextHint =>
+      'Goals add context to your runway. They are not a score.';
+
+  @override
+  String get setGoal => 'Set goal';
+
+  @override
+  String get goalName => 'Goal name';
+
+  @override
+  String get targetMonths => 'Target months';
+
+  @override
   String get display => 'DISPLAY';
 
   @override
@@ -508,30 +582,86 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ifIncomeStoppedToday => 'If your income stopped today';
 
   @override
+  String get ifIncomePausedToday => 'If income paused today';
+
+  @override
+  String get monthSingular => 'month';
+
+  @override
+  String get monthPlural => 'months';
+
+  @override
+  String get noProjectedRunOut => 'No projected run-out';
+
+  @override
+  String aboutDaysOfFreedom(int days) {
+    return 'About $days days of freedom';
+  }
+
+  @override
+  String get sustainableWithExpectedInflow =>
+      'Sustainable with your expected inflow';
+
+  @override
+  String shortByPerMonth(String amount) {
+    return 'Short by $amount / month';
+  }
+
+  @override
+  String goalTargetProgress(int months) {
+    return '$months month target. Progress toward your goal, not a score.';
+  }
+
+  @override
+  String get monthlyBurn => 'Monthly burn';
+
+  @override
+  String get flexibility => 'Flexibility';
+
+  @override
+  String get availableCash => 'Available cash';
+
+  @override
+  String get historicalBurn => 'Historical burn';
+
+  @override
+  String get notEnoughHistory => 'Not enough history';
+
+  @override
+  String get projectionSource => 'Projection source';
+
+  @override
+  String get usingAssumptions => 'Using assumptions';
+
+  @override
+  String get fixedPressure => 'Fixed pressure';
+
+  @override
+  String get actualBurn => 'Actual burn';
+
+  @override
+  String get actualBurnHigh => 'Actual burn ▲';
+
+  @override
+  String get plannedEssentials => 'Planned essentials';
+
+  @override
+  String get recurringCosts => 'Recurring costs';
+
+  @override
+  String get debtCommitments => 'Debt commitments';
+
+  @override
+  String get pressureFlexibility => 'Pressure & flexibility';
+
+  @override
+  String get runwayProjection => 'Runway projection';
+
+  @override
   String get daysUpper => 'DAYS';
 
   @override
   String get yourRunway => 'Your runway';
-
-  @override
-  String get emotionExposed => 'You\'re exposed';
-
-  @override
-  String get emotionCloser => 'You\'re closer than it feels';
-
-  @override
-  String get emotionBreathingRoom => 'You have some breathing room';
-
-  @override
-  String get emotionSaferMost => 'You\'re safer than most';
-
-  @override
-  String get emotionAheadMost => 'You\'re ahead of most people';
-
-  @override
-  String youOutlastPeople(int percentile) {
-    return 'You outlast $percentile% of people';
-  }
 
   @override
   String get loseIncome => 'Lose income';
@@ -561,35 +691,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shareAsText => 'SHARE AS TEXT';
-
-  @override
-  String get canYouBeatThis => 'Can you beat this?';
-
-  @override
-  String shareImageText(int days, String identity) {
-    return 'If my income stopped today, I survive $days days. $identity. Can you beat this? RUNWAY';
-  }
-
-  @override
-  String shareTextMessage(int days, String identity, int percentile) {
-    return 'If my income stopped today, I survive $days days. $identity. You outlast $percentile% of people. Can you beat this? RUNWAY';
-  }
-
-  @override
-  String get badgeSurvivalMode => 'Survival Mode';
-
-  @override
-  String get badgeFinancialRookie => 'Financial Rookie';
-
-  @override
-  String get badgeGettingBy => 'Getting By';
-
-  @override
-  String get badgeFinanciallyStable => 'Financially Stable';
-
-  @override
-  String get badgeFinancialFortress => 'Financial Fortress';
-
-  @override
-  String get badgeEscapeVelocity => 'Escape Velocity';
 }

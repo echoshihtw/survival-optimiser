@@ -21,9 +21,14 @@ final loanSummariesProvider = Provider<List<LoanSummary>>((ref) {
   return computeLoanSummaries(loans: loans, transactions: transactions);
 });
 
+final activeLoanSummariesProvider = Provider<List<LoanSummary>>((ref) {
+  final summaries = ref.watch(loanSummariesProvider);
+  return activeLoanSummaries(summaries);
+});
+
 final totalMonthlyLoanPaymentProvider = Provider<double>((ref) {
-  final loans = ref.watch(loansProvider).value ?? [];
-  return totalMonthlyPayment(loans);
+  final summaries = ref.watch(loanSummariesProvider);
+  return totalMonthlyPaymentFromSummaries(summaries);
 });
 
 final addLoanUseCaseProvider = Provider<AddLoanUseCase>((ref) {

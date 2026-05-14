@@ -18,7 +18,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sysOnline => 'SYS: EN LIGNE';
 
   @override
-  String get lifeForce => 'FORCE VITALE';
+  String get lifeForce => 'PRÉPARATION RUNWAY';
 
   @override
   String get statusLabel => 'STATUT';
@@ -310,10 +310,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get subscriptionAmount => 'MONTANT';
 
   @override
+  String get subscriptionPaymentAmount => 'MONTANT PAYÉ';
+
+  @override
   String get subscriptionCycle => 'CYCLE DE FACTURATION';
 
   @override
+  String get subscriptionCoveragePeriod => 'PÉRIODE COUVERTE';
+
+  @override
   String get subscriptionCategory => 'CATÉGORIE';
+
+  @override
+  String get subscriptionPaymentDate => 'DATE DE PAIEMENT';
 
   @override
   String get subscriptionNextBilling => 'PROCHAINE FACTURATION';
@@ -408,9 +417,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'CAPITAL DÉPLOYABLE — SÉPARÉ DU TAMPON DE SURVIE';
 
   @override
-  String get survivalCharge => 'CHARGE DE SURVIE';
-
-  @override
   String get historyEntries => 'HISTORIQUE & ENTRÉES';
 
   @override
@@ -478,6 +484,74 @@ class AppLocalizationsFr extends AppLocalizations {
   String get subscrDebtAuto => 'ABONNEMENTS + DETTES AJOUTÉS AUTOMATIQUEMENT';
 
   @override
+  String get futureAssumptions => 'Hypothèses futures';
+
+  @override
+  String get expectedInflow => 'Entrées attendues';
+
+  @override
+  String get expectedBurn => 'Dépenses attendues';
+
+  @override
+  String get notSet => 'Non défini';
+
+  @override
+  String get usingCurrentBurn => 'Dépense actuelle utilisée';
+
+  @override
+  String get assumptionsProjectionOnly =>
+      'Les hypothèses affectent seulement les projections futures. Elles ne créent pas de transactions.';
+
+  @override
+  String get setAssumptions => 'Définir les hypothèses';
+
+  @override
+  String get expectedMonthlyInflow => 'Entrées mensuelles attendues';
+
+  @override
+  String get expectedMonthlyBurn => 'Dépenses mensuelles attendues';
+
+  @override
+  String get useCurrentBurn => 'Utiliser la dépense actuelle';
+
+  @override
+  String get futureInflowHint =>
+      'Ajoutez ici des entrées futures neutres : missions freelance, contrats, revenus de création, dividendes ou toute entrée attendue.';
+
+  @override
+  String get runwayGoal => 'Objectif de runway';
+
+  @override
+  String get goal => 'Objectif';
+
+  @override
+  String get none => 'Aucun';
+
+  @override
+  String get target => 'Cible';
+
+  @override
+  String get optional => 'Optionnel';
+
+  @override
+  String monthsValue(int count) {
+    return '$count mois';
+  }
+
+  @override
+  String get goalsContextHint =>
+      'Les objectifs donnent du contexte à votre runway. Ce ne sont pas des scores.';
+
+  @override
+  String get setGoal => 'Définir un objectif';
+
+  @override
+  String get goalName => 'Nom de l’objectif';
+
+  @override
+  String get targetMonths => 'Mois cible';
+
+  @override
   String get display => 'AFFICHAGE';
 
   @override
@@ -511,30 +585,86 @@ class AppLocalizationsFr extends AppLocalizations {
       'Si vos revenus s\'arrêtaient aujourd\'hui';
 
   @override
+  String get ifIncomePausedToday => 'Si vos revenus s\'arrêtaient aujourd\'hui';
+
+  @override
+  String get monthSingular => 'mois';
+
+  @override
+  String get monthPlural => 'mois';
+
+  @override
+  String get noProjectedRunOut => 'Aucune date d’épuisement prévue';
+
+  @override
+  String aboutDaysOfFreedom(int days) {
+    return 'Environ $days jours de liberté';
+  }
+
+  @override
+  String get sustainableWithExpectedInflow =>
+      'Soutenable avec vos entrées attendues';
+
+  @override
+  String shortByPerMonth(String amount) {
+    return 'Manque $amount / mois';
+  }
+
+  @override
+  String goalTargetProgress(int months) {
+    return 'Objectif de $months mois. Progression vers votre objectif, pas un score.';
+  }
+
+  @override
+  String get monthlyBurn => 'Dépense mensuelle';
+
+  @override
+  String get flexibility => 'Flexibilité';
+
+  @override
+  String get availableCash => 'Cash disponible';
+
+  @override
+  String get historicalBurn => 'Dépense historique';
+
+  @override
+  String get notEnoughHistory => 'Pas assez d’historique';
+
+  @override
+  String get projectionSource => 'Source de projection';
+
+  @override
+  String get usingAssumptions => 'Hypothèses utilisées';
+
+  @override
+  String get fixedPressure => 'Pression fixe';
+
+  @override
+  String get actualBurn => 'Dépense réelle';
+
+  @override
+  String get actualBurnHigh => 'Dépense réelle ▲';
+
+  @override
+  String get plannedEssentials => 'Essentiels prévus';
+
+  @override
+  String get recurringCosts => 'Coûts récurrents';
+
+  @override
+  String get debtCommitments => 'Engagements de dette';
+
+  @override
+  String get pressureFlexibility => 'Pression & flexibilité';
+
+  @override
+  String get runwayProjection => 'Projection du runway';
+
+  @override
   String get daysUpper => 'JOURS';
 
   @override
   String get yourRunway => 'Votre runway';
-
-  @override
-  String get emotionExposed => 'Vous êtes exposé';
-
-  @override
-  String get emotionCloser => 'C\'est plus proche qu\'il n\'y paraît';
-
-  @override
-  String get emotionBreathingRoom => 'Vous avez un peu d\'air';
-
-  @override
-  String get emotionSaferMost => 'Vous êtes plus en sécurité que la plupart';
-
-  @override
-  String get emotionAheadMost => 'Vous êtes devant la plupart des gens';
-
-  @override
-  String youOutlastPeople(int percentile) {
-    return 'Vous tenez plus longtemps que $percentile% des gens';
-  }
 
   @override
   String get loseIncome => 'Perte de revenus';
@@ -565,35 +695,4 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get shareAsText => 'PARTAGER EN TEXTE';
-
-  @override
-  String get canYouBeatThis => 'Pouvez-vous faire mieux ?';
-
-  @override
-  String shareImageText(int days, String identity) {
-    return 'Si mes revenus s\'arrêtaient aujourd\'hui, je tiens $days jours. $identity. Pouvez-vous faire mieux ? RUNWAY';
-  }
-
-  @override
-  String shareTextMessage(int days, String identity, int percentile) {
-    return 'Si mes revenus s\'arrêtaient aujourd\'hui, je tiens $days jours. $identity. Vous tenez plus longtemps que $percentile% des gens. Pouvez-vous faire mieux ? RUNWAY';
-  }
-
-  @override
-  String get badgeSurvivalMode => 'Mode survie';
-
-  @override
-  String get badgeFinancialRookie => 'Débutant financier';
-
-  @override
-  String get badgeGettingBy => 'Vous tenez le coup';
-
-  @override
-  String get badgeFinanciallyStable => 'Financièrement stable';
-
-  @override
-  String get badgeFinancialFortress => 'Forteresse financière';
-
-  @override
-  String get badgeEscapeVelocity => 'Vitesse d\'évasion';
 }

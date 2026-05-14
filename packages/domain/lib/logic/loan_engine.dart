@@ -43,3 +43,15 @@ double totalMonthlyPayment(List<Loan> loans) {
       .where((l) => l.isActive)
       .fold(0.0, (sum, l) => sum + l.monthlyPayment);
 }
+
+List<LoanSummary> activeLoanSummaries(List<LoanSummary> summaries) {
+  return summaries
+      .where((summary) => summary.loan.isActive && !summary.isFullyPaid)
+      .toList();
+}
+
+double totalMonthlyPaymentFromSummaries(List<LoanSummary> summaries) {
+  return activeLoanSummaries(
+    summaries,
+  ).fold(0.0, (sum, summary) => sum + summary.loan.monthlyPayment);
+}

@@ -190,7 +190,7 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
 
             // Amount
             NeoInput(
-              label: l10n.subscriptionAmount,
+              label: l10n.subscriptionPaymentAmount,
               controller: _amountCtrl,
               inputType: NeoInputType.numeric,
               hint: '1990',
@@ -199,7 +199,7 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
             const SizedBox(height: AppSpacing.md),
 
             // Billing cycle
-            Text(l10n.subscriptionCycle, style: AppTextStyles.label),
+            Text(l10n.subscriptionCoveragePeriod, style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xs),
             Wrap(
               spacing: AppSpacing.xs,
@@ -240,7 +240,7 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
             const SizedBox(height: AppSpacing.md),
 
             // Date
-            Text(l10n.date, style: AppTextStyles.label),
+            Text(l10n.subscriptionPaymentDate, style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xs),
             GestureDetector(
               onTap: _pickDate,

@@ -93,18 +93,35 @@ class TransactionRow extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        _typeLabel(l10n).toUpperCase(),
-                        style: AppTextStyles.body.copyWith(
-                          fontWeight: FontWeight.w600,
+                      Flexible(
+                        child: Text(
+                          _typeLabel(l10n).toUpperCase(),
+                          style: AppTextStyles.body.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (_isPlanned) ...[
                         const SizedBox(width: AppSpacing.xs),
-                        PixelBadge(label: l10n.planned, color: AppColors.textDim),
+                        PixelBadge(
+                          label: l10n.planned,
+                          color: AppColors.textDim,
+                        ),
                       ],
                     ],
                   ),
+                  if (transaction.category != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      '${transaction.category!.group} · ${transaction.category!.label}',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.textDim,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
                   if (transaction.note != null) ...[
                     const SizedBox(height: AppSpacing.xxs),
                     Text(
@@ -119,18 +136,26 @@ class TransactionRow extends ConsumerWidget {
             ),
 
             // Amount + date
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '$sign$symbol $amount',
-                  style: AppTextStyles.metricSmall.copyWith(
-                    color: AppColors.textPrimary,
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 136),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '$sign$symbol $amount',
+                      style: AppTextStyles.metricSmall.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
+                      maxLines: 1,
+                    ),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.xxs),
-                Text(dateStr, style: AppTextStyles.caption),
-              ],
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(dateStr, style: AppTextStyles.caption),
+                ],
+              ),
             ),
           ],
         ),

@@ -64,18 +64,25 @@ class _GettingStartedCardState extends ConsumerState<GettingStartedCard> {
           isScrollControlled: true,
           useSafeArea: true,
           backgroundColor: Colors.transparent,
-          builder: (ctx) => Padding(
-            padding: EdgeInsets.only(top: MediaQuery.of(ctx).padding.top + 8),
-            child: Container(
-              decoration: const BoxDecoration(
-                color: AppColors.background,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(AppSpacing.cardRadius),
+          builder: (ctx) {
+            final media = MediaQuery.of(ctx);
+            final topGap = media.padding.top + 8;
+            return Padding(
+              padding: EdgeInsets.only(top: topGap),
+              child: SizedBox(
+                height: media.size.height - topGap,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: AppColors.background,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(AppSpacing.cardRadius),
+                    ),
+                  ),
+                  child: const ConfigScreen(),
                 ),
               ),
-              child: const ConfigScreen(),
-            ),
-          ),
+            );
+          },
         ),
       ),
       _Step(

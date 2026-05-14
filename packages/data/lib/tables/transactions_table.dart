@@ -7,6 +7,7 @@ class Transactions extends Table {
   RealColumn get amount => real()();
   TextColumn get note => text().nullable()();
   TextColumn get loanId => text().nullable()();
+  TextColumn get category => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 

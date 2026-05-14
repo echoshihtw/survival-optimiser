@@ -18,7 +18,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sysOnline => '系統：上線';
 
   @override
-  String get lifeForce => '生命力';
+  String get lifeForce => '跑道准备度';
 
   @override
   String get statusLabel => '狀態';
@@ -309,10 +309,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get subscriptionAmount => '金額';
 
   @override
+  String get subscriptionPaymentAmount => '付款金額';
+
+  @override
   String get subscriptionCycle => '計費週期';
 
   @override
+  String get subscriptionCoveragePeriod => '涵蓋期間';
+
+  @override
   String get subscriptionCategory => '類別';
+
+  @override
+  String get subscriptionPaymentDate => '付款日期';
 
   @override
   String get subscriptionNextBilling => '下次扣款';
@@ -406,9 +415,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deployableCapital => '可部署資金 — 獨立於生存緩衝金';
 
   @override
-  String get survivalCharge => '生存能量';
-
-  @override
   String get historyEntries => '歷史記錄';
 
   @override
@@ -473,6 +479,71 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get subscrDebtAuto => '訂閱 + 債務已自動加入';
+
+  @override
+  String get futureAssumptions => '未来假设';
+
+  @override
+  String get expectedInflow => '预期流入';
+
+  @override
+  String get expectedBurn => '预期支出';
+
+  @override
+  String get notSet => '未设置';
+
+  @override
+  String get usingCurrentBurn => '使用当前支出';
+
+  @override
+  String get assumptionsProjectionOnly => '假设只影响未来预测，不会新增交易记录。';
+
+  @override
+  String get setAssumptions => '设置假设';
+
+  @override
+  String get expectedMonthlyInflow => '预期每月流入';
+
+  @override
+  String get expectedMonthlyBurn => '预期每月支出';
+
+  @override
+  String get useCurrentBurn => '使用当前支出';
+
+  @override
+  String get futureInflowHint => '在这里输入中性的未来流入：自由接案、合约收入、创作者收入、股息，或任何预期流入。';
+
+  @override
+  String get runwayGoal => '跑道目标';
+
+  @override
+  String get goal => '目标';
+
+  @override
+  String get none => '无';
+
+  @override
+  String get target => '目标';
+
+  @override
+  String get optional => '选填';
+
+  @override
+  String monthsValue(int count) {
+    return '$count 个月';
+  }
+
+  @override
+  String get goalsContextHint => '目标只是为你的跑道加入情境，不是分数。';
+
+  @override
+  String get setGoal => '设置目标';
+
+  @override
+  String get goalName => '目标名称';
+
+  @override
+  String get targetMonths => '目标月数';
 
   @override
   String get display => '顯示';
@@ -505,30 +576,85 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ifIncomeStoppedToday => '如果你的收入今天停止';
 
   @override
+  String get ifIncomePausedToday => '如果收入今天暂停';
+
+  @override
+  String get monthSingular => '个月';
+
+  @override
+  String get monthPlural => '个月';
+
+  @override
+  String get noProjectedRunOut => '目前没有预测耗尽日';
+
+  @override
+  String aboutDaysOfFreedom(int days) {
+    return '约 $days 天自由时间';
+  }
+
+  @override
+  String get sustainableWithExpectedInflow => '在预期流入下可持续';
+
+  @override
+  String shortByPerMonth(String amount) {
+    return '每月短缺 $amount';
+  }
+
+  @override
+  String goalTargetProgress(int months) {
+    return '$months 个月目标。这是目标进度，不是分数。';
+  }
+
+  @override
+  String get monthlyBurn => '每月支出';
+
+  @override
+  String get flexibility => '弹性';
+
+  @override
+  String get availableCash => '可用现金';
+
+  @override
+  String get historicalBurn => '历史支出';
+
+  @override
+  String get notEnoughHistory => '历史资料不足';
+
+  @override
+  String get projectionSource => '预测来源';
+
+  @override
+  String get usingAssumptions => '使用假设';
+
+  @override
+  String get fixedPressure => '固定压力';
+
+  @override
+  String get actualBurn => '实际支出';
+
+  @override
+  String get actualBurnHigh => '实际支出 ▲';
+
+  @override
+  String get plannedEssentials => '计划必要支出';
+
+  @override
+  String get recurringCosts => '周期成本';
+
+  @override
+  String get debtCommitments => '债务承诺';
+
+  @override
+  String get pressureFlexibility => '压力与弹性';
+
+  @override
+  String get runwayProjection => '跑道预测';
+
+  @override
   String get daysUpper => '天';
 
   @override
   String get yourRunway => '你的生存跑道';
-
-  @override
-  String get emotionExposed => '你暴露在风险中';
-
-  @override
-  String get emotionCloser => '比你感觉的更近';
-
-  @override
-  String get emotionBreathingRoom => '你还有一点喘息空间';
-
-  @override
-  String get emotionSaferMost => '你比大多数人更安全';
-
-  @override
-  String get emotionAheadMost => '你领先大多数人';
-
-  @override
-  String youOutlastPeople(int percentile) {
-    return '你比 $percentile% 的人撑得更久';
-  }
 
   @override
   String get loseIncome => '失去收入';
@@ -558,37 +684,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get shareAsText => '以文字分享';
-
-  @override
-  String get canYouBeatThis => '你能超过吗？';
-
-  @override
-  String shareImageText(int days, String identity) {
-    return '如果我的收入今天停止，我能撑 $days 天。$identity。你能超过吗？RUNWAY';
-  }
-
-  @override
-  String shareTextMessage(int days, String identity, int percentile) {
-    return '如果我的收入今天停止，我能撑 $days 天。$identity。你比 $percentile% 的人撑得更久。你能超过吗？RUNWAY';
-  }
-
-  @override
-  String get badgeSurvivalMode => '生存模式';
-
-  @override
-  String get badgeFinancialRookie => '财务新手';
-
-  @override
-  String get badgeGettingBy => '勉强撑住';
-
-  @override
-  String get badgeFinanciallyStable => '财务稳定';
-
-  @override
-  String get badgeFinancialFortress => '财务堡垒';
-
-  @override
-  String get badgeEscapeVelocity => '逃逸速度';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -602,19 +697,19 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get hudTitle => 'Runway';
 
   @override
-  String get sysOnline => '系統：上線';
+  String get sysOnline => '已就緒';
 
   @override
-  String get lifeForce => '生命力';
+  String get lifeForce => '跑道狀態';
 
   @override
-  String get statusLabel => '狀態';
+  String get statusLabel => '目前狀況';
 
   @override
   String get pressureLabel => '壓力';
 
   @override
-  String get metrics => '數據';
+  String get metrics => '重點';
 
   @override
   String get cash => '現金';
@@ -626,10 +721,10 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get loanPerMonth => '月債務';
 
   @override
-  String get runway => '存活期';
+  String get runway => '可撐多久';
 
   @override
-  String get runOut => '耗盡日';
+  String get runOut => '用完時間';
 
   @override
   String get investable => '可投資';
@@ -641,7 +736,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get config => '設定';
 
   @override
-  String get monthlyLoanPayment => '每月貸款還款';
+  String get monthlyLoanPayment => '每月貸款';
 
   @override
   String get tapToSet => '點擊設定';
@@ -656,7 +751,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get clear => '清除';
 
   @override
-  String get loanAffectsInfo => '> 月還款影響壓力比例和可投資金額';
+  String get loanAffectsInfo => '每月還款會影響你的現金壓力和跑道長度。';
 
   @override
   String get transactionLog => '交易記錄';
@@ -665,13 +760,13 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get newEntry => '+ 新增';
 
   @override
-  String get noEntries => 'No entries yet\nTap + ADD to log your first entry';
+  String get noEntries => '還沒有任何紀錄\n點 + 新增你的第一筆資料';
 
   @override
-  String get newLogEntry => '> 新增記錄';
+  String get newLogEntry => '> 新增一筆';
 
   @override
-  String get modifyEntry => '> 修改記錄';
+  String get modifyEntry => '> 編輯紀錄';
 
   @override
   String get type => '類型';
@@ -695,37 +790,37 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get abort => '取消';
 
   @override
-  String get purgeEntry => '> 刪除此記錄？';
+  String get purgeEntry => '> 要刪除這筆嗎？';
 
   @override
-  String get scenarioSimulator => '情境模擬器';
+  String get scenarioSimulator => '情境規劃';
 
   @override
-  String get overrideInputs => '覆蓋輸入';
+  String get overrideInputs => '規劃用數字';
 
   @override
-  String get burnRateOverride => '支出覆蓋';
+  String get burnRateOverride => '每月支出';
 
   @override
-  String get simulatedIncome => '模擬月收入';
+  String get simulatedIncome => '每月收入變化';
 
   @override
-  String get simResults => '模擬結果';
+  String get simResults => '預估結果';
 
   @override
-  String get simRunway => '模擬存活期';
+  String get simRunway => '預估跑道';
 
   @override
-  String get simRunOut => '模擬耗盡日';
+  String get simRunOut => '預估用完時間';
 
   @override
-  String get simInvestable => '模擬可投資';
+  String get simInvestable => '預估可運用資金';
 
   @override
-  String get deltaVsActual => '與實際差異';
+  String get deltaVsActual => '和現在相比';
 
   @override
-  String get deltaRunway => '存活期差異';
+  String get deltaRunway => '跑道變化';
 
   @override
   String get deltaInvestable => '可投資差異';
@@ -752,7 +847,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get moderate => '中等';
 
   @override
-  String get highLoad => '高負荷';
+  String get highLoad => '壓力偏高';
 
   @override
   String get language => '語言';
@@ -767,13 +862,13 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get loading => '載入中...';
 
   @override
-  String get navHud => 'HUD';
+  String get navHud => '首頁';
 
   @override
   String get navLog => 'LOG';
 
   @override
-  String get navSim => 'SIM';
+  String get navSim => '規劃';
 
   @override
   String get typeExpense => '支出';
@@ -797,19 +892,19 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get liabilities => '負債';
 
   @override
-  String get noActiveLoans => '> 無有效貸款';
+  String get noActiveLoans => '> 目前沒有貸款';
 
   @override
   String get settled => '已結清';
 
   @override
-  String get totalDebtPerMonth => '月債務合計';
+  String get totalDebtPerMonth => '每月債務';
 
   @override
   String get remaining => '剩餘';
 
   @override
-  String get installment => '每期還款';
+  String get installment => '每月還款';
 
   @override
   String get paidThisMo => '本月已還';
@@ -833,10 +928,10 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get configButton => '設定';
 
   @override
-  String get loanWizardTitle => '貸款精靈';
+  String get loanWizardTitle => '新增貸款';
 
   @override
-  String get whoAndHowMuch => '對象與金額';
+  String get whoAndHowMuch => '借款對象與金額';
 
   @override
   String get loanTerms => '貸款條件';
@@ -845,10 +940,10 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get confirmPayment => '確認還款';
 
   @override
-  String get source => '來源';
+  String get source => '類型';
 
   @override
-  String get nameLender => '名稱 / 借款方';
+  String get nameLender => '名稱 / 貸款方';
 
   @override
   String get loanAmount => '貸款金額';
@@ -860,13 +955,13 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get repaymentMonths => '還款月數';
 
   @override
-  String get computedInstallment => '計算每期還款';
+  String get computedInstallment => '試算每月還款';
 
   @override
   String get overrideInstallment => '自訂每月還款';
 
   @override
-  String get monthlyInstallment => '每月還款';
+  String get monthlyInstallment => '每月要還';
 
   @override
   String get next => '下一步';
@@ -875,7 +970,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get back => '返回';
 
   @override
-  String get lender => '借款方';
+  String get lender => '貸款方';
 
   @override
   String get rate => '利率';
@@ -887,7 +982,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get subscriptions => '訂閱';
 
   @override
-  String get noSubscriptions => '> 無有效訂閱';
+  String get noSubscriptions => '> 目前沒有訂閱';
 
   @override
   String get subscriptionName => '名稱';
@@ -896,13 +991,22 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get subscriptionAmount => '金額';
 
   @override
-  String get subscriptionCycle => '計費週期';
+  String get subscriptionPaymentAmount => '付款金額';
+
+  @override
+  String get subscriptionCycle => '扣款週期';
+
+  @override
+  String get subscriptionCoveragePeriod => '這筆費用涵蓋多久';
 
   @override
   String get subscriptionCategory => '類別';
 
   @override
-  String get subscriptionNextBilling => '下次扣款';
+  String get subscriptionPaymentDate => '付款日期';
+
+  @override
+  String get subscriptionNextBilling => '下次付款';
 
   @override
   String get subscriptionDaysLeft => '天';
@@ -974,7 +1078,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String monthsProjected(int count) {
-    return '$count 個月預測';
+    return '往後 $count 個月';
   }
 
   @override
@@ -990,10 +1094,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get safety => '安全';
 
   @override
-  String get deployableCapital => '可部署資金 — 獨立於生存緩衝金';
-
-  @override
-  String get survivalCharge => '生存能量';
+  String get deployableCapital => '保留安全緩衝後，還能運用的資金';
 
   @override
   String get historyEntries => '歷史記錄';
@@ -1002,37 +1103,37 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get addEntry => '+ 新增';
 
   @override
-  String get willRemoveLoan => '同時將從負債中移除';
+  String get willRemoveLoan => '也會一起從貸款清單移除';
 
   @override
   String get delete => '刪除';
 
   @override
-  String get planned => '計劃中';
+  String get planned => '規劃中';
 
   @override
-  String get whatIfAnalysis => '情境分析';
+  String get whatIfAnalysis => '如果情況改變';
 
   @override
-  String get current => '當前';
+  String get current => '現在';
 
   @override
-  String get simulate => '模擬';
+  String get simulate => '規劃';
 
   @override
-  String get simHint => '覆蓋支出或新增收入，查看對存活期的影響';
+  String get simHint => '調整每月支出或收入，看看跑道會怎麼變';
 
   @override
-  String get simulation => '模擬結果';
+  String get simulation => '情境結果';
 
   @override
-  String get enterValuesToSim => '輸入數值以開始模擬';
+  String get enterValuesToSim => '輸入數字後，就能看到影響';
 
   @override
   String get perMonth => '/ 月';
 
   @override
-  String get prefsBudget => '偏好設定 & 預算';
+  String get prefsBudget => '偏好與預算';
 
   @override
   String get close => '關閉';
@@ -1041,7 +1142,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get monthlyBudget => '每月預算';
 
   @override
-  String get rentFixed => '租金 / 固定';
+  String get rentFixed => '房租 / 固定支出';
 
   @override
   String get livingExpenses => '生活費';
@@ -1050,16 +1151,81 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get subtotal => '小計';
 
   @override
-  String get totalBudgetPerMonth => '總預算/月';
+  String get totalBudgetPerMonth => '每月總預算';
 
   @override
   String get setBudget => '設定預算';
 
   @override
-  String get rentFixedCosts => '租金 / 固定費用';
+  String get rentFixedCosts => '房租 / 固定支出';
 
   @override
-  String get subscrDebtAuto => '訂閱 + 債務已自動加入';
+  String get subscrDebtAuto => '訂閱和債務會自動加進來';
+
+  @override
+  String get futureAssumptions => '未來規劃';
+
+  @override
+  String get expectedInflow => '預計每月收入';
+
+  @override
+  String get expectedBurn => '預計每月支出';
+
+  @override
+  String get notSet => '未設定';
+
+  @override
+  String get usingCurrentBurn => '先用目前支出估算';
+
+  @override
+  String get assumptionsProjectionOnly => '這些數字只用來預估未來，不會變成交易紀錄。';
+
+  @override
+  String get setAssumptions => '設定規劃數字';
+
+  @override
+  String get expectedMonthlyInflow => '預計每月收入';
+
+  @override
+  String get expectedMonthlyBurn => '預計每月支出';
+
+  @override
+  String get useCurrentBurn => '使用目前支出';
+
+  @override
+  String get futureInflowHint => '可以填接案、合約收入、創作者收入、股息，或任何你預期會進來的錢。';
+
+  @override
+  String get runwayGoal => '跑道目標';
+
+  @override
+  String get goal => '目標';
+
+  @override
+  String get none => '無';
+
+  @override
+  String get target => '目標';
+
+  @override
+  String get optional => '選填';
+
+  @override
+  String monthsValue(int count) {
+    return '$count 個月';
+  }
+
+  @override
+  String get goalsContextHint => '目標只是拿來對照你的跑道，不是在替你打分數。';
+
+  @override
+  String get setGoal => '設定目標';
+
+  @override
+  String get goalName => '目標名稱';
+
+  @override
+  String get targetMonths => '目標月數';
 
   @override
   String get display => '顯示';
@@ -1068,54 +1234,109 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get glassEffect => '玻璃效果';
 
   @override
-  String get glassEffectHint => 'GPU 密集 — 舊裝置建議關閉';
+  String get glassEffectHint => '比較吃效能，舊裝置可以關掉';
 
   @override
   String get runwayBrand => 'RUNWAY';
 
   @override
-  String get bootRunwayCheck => '> RUNWAY 檢查...';
+  String get bootRunwayCheck => '正在檢查你的跑道...';
 
   @override
-  String get bootIncomeStopped => '> 如果你的收入今天停止...';
+  String get bootIncomeStopped => '看看如果收入暫停會怎樣...';
 
   @override
-  String get bootCountingCashDays => '> 正在計算現金天數...';
+  String get bootCountingCashDays => '正在估算你還有多少緩衝...';
 
   @override
-  String get bootRemovingComfortFilter => '> 正在移除舒適濾鏡...';
+  String get bootRemovingComfortFilter => '把必要支出和雜訊分開...';
 
   @override
-  String get bootRealityCheckReady => '> 現實檢查就緒。';
+  String get bootRealityCheckReady => '你的財務狀況整理好了。';
 
   @override
-  String get ifIncomeStoppedToday => '如果你的收入今天停止';
+  String get ifIncomeStoppedToday => '如果今天沒有收入';
+
+  @override
+  String get ifIncomePausedToday => '如果今天收入暫停';
+
+  @override
+  String get monthSingular => '個月';
+
+  @override
+  String get monthPlural => '個月';
+
+  @override
+  String get noProjectedRunOut => '目前看不到用完的時間';
+
+  @override
+  String aboutDaysOfFreedom(int days) {
+    return '大約還能撐 $days 天';
+  }
+
+  @override
+  String get sustainableWithExpectedInflow => '照你的預期收入來看，可以持續下去';
+
+  @override
+  String shortByPerMonth(String amount) {
+    return '每月還差 $amount';
+  }
+
+  @override
+  String goalTargetProgress(int months) {
+    return '$months 個月目標。這是離目標的距離，不是分數。';
+  }
+
+  @override
+  String get monthlyBurn => '每月支出';
+
+  @override
+  String get flexibility => '彈性';
+
+  @override
+  String get availableCash => '目前現金';
+
+  @override
+  String get historicalBurn => '過去平均支出';
+
+  @override
+  String get notEnoughHistory => '資料還不夠';
+
+  @override
+  String get projectionSource => '估算方式';
+
+  @override
+  String get usingAssumptions => '使用你的規劃數字';
+
+  @override
+  String get fixedPressure => '固定支出壓力';
+
+  @override
+  String get actualBurn => '實際支出';
+
+  @override
+  String get actualBurnHigh => '實際支出 ▲';
+
+  @override
+  String get plannedEssentials => '預計必要支出';
+
+  @override
+  String get recurringCosts => '固定扣款';
+
+  @override
+  String get debtCommitments => '每月債務';
+
+  @override
+  String get pressureFlexibility => '壓力與彈性';
+
+  @override
+  String get runwayProjection => '跑道預估';
 
   @override
   String get daysUpper => '天';
 
   @override
-  String get yourRunway => '你的生存跑道';
-
-  @override
-  String get emotionExposed => '你暴露在風險中';
-
-  @override
-  String get emotionCloser => '比你感覺的更近';
-
-  @override
-  String get emotionBreathingRoom => '你還有一點喘息空間';
-
-  @override
-  String get emotionSaferMost => '你比大多數人更安全';
-
-  @override
-  String get emotionAheadMost => '你領先大多數人';
-
-  @override
-  String youOutlastPeople(int percentile) {
-    return '你比 $percentile% 的人撐得更久';
-  }
+  String get yourRunway => '你的跑道';
 
   @override
   String get loseIncome => '失去收入';
@@ -1135,7 +1356,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get shareSafe => '安全分享';
 
   @override
-  String get shareSafeHint => '不顯示存款。不顯示支出。只顯示你的生存跑道。';
+  String get shareSafeHint => '不顯示存款和支出，只分享你的跑道。';
 
   @override
   String get preparing => '準備中...';
@@ -1145,35 +1366,4 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get shareAsText => '以文字分享';
-
-  @override
-  String get canYouBeatThis => '你能超過嗎？';
-
-  @override
-  String shareImageText(int days, String identity) {
-    return '如果我的收入今天停止，我能撐 $days 天。$identity。你能超過嗎？RUNWAY';
-  }
-
-  @override
-  String shareTextMessage(int days, String identity, int percentile) {
-    return '如果我的收入今天停止，我能撐 $days 天。$identity。你比 $percentile% 的人撐得更久。你能超過嗎？RUNWAY';
-  }
-
-  @override
-  String get badgeSurvivalMode => '生存模式';
-
-  @override
-  String get badgeFinancialRookie => '財務新手';
-
-  @override
-  String get badgeGettingBy => '勉強撐住';
-
-  @override
-  String get badgeFinanciallyStable => '財務穩定';
-
-  @override
-  String get badgeFinancialFortress => '財務堡壘';
-
-  @override
-  String get badgeEscapeVelocity => '逃逸速度';
 }

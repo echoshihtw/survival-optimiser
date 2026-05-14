@@ -58,7 +58,13 @@ class _ScaffoldWithNav extends StatelessWidget {
       body: shell,
       bottomNavigationBar: _NavBar(
         currentIndex: shell.currentIndex,
-        onTap: (i) => shell.goBranch(i),
+        onTap: (i) {
+          final navigator = Navigator.of(context);
+          if (navigator.canPop()) {
+            navigator.pop();
+          }
+          shell.goBranch(i);
+        },
       ),
     );
   }

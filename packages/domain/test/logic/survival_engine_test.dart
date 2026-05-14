@@ -209,5 +209,50 @@ void main() {
       );
       expect(withSub.runwayMonths, lessThan(noSub.runwayMonths));
     });
+
+    test(
+      'expected inflow creates sustainable runway without changing history',
+      () {
+        final months = makeMonths(
+          startBalance: 100000,
+          netFlowPerMonth: -50000,
+          count: 3,
+        );
+        final m = computeModel(
+          months: months,
+          monthlyPayment: 0,
+          subscriptionMonthlyCost: 0,
+          expectedMonthlyInflow: 60000,
+        );
+
+        expect(m.historicalMonthlyBurn, 50000);
+        expect(m.emergencyMonthlyBurn, 50000);
+        expect(m.sustainableNetMonthlyFlow, 10000);
+        expect(m.isSustainableIndefinitely, isTrue);
+      },
+    );
+
+    test('expected burn override is a future assumption, not history', () {
+      final months = makeMonths(
+        startBalance: 300000,
+        netFlowPerMonth: -50000,
+        count: 3,
+      );
+      final historical = computeModel(
+        months: months,
+        monthlyPayment: 0,
+        subscriptionMonthlyCost: 0,
+      );
+      final m = computeModel(
+        months: months,
+        monthlyPayment: 0,
+        subscriptionMonthlyCost: 0,
+        expectedMonthlyBurnOverride: 25000,
+      );
+
+      expect(m.historicalMonthlyBurn, 50000);
+      expect(m.emergencyMonthlyBurn, 25000);
+      expect(m.runwayMonths, greaterThan(historical.runwayMonths));
+    });
   });
 }

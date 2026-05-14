@@ -10,6 +10,9 @@ extension TransactionRowMapper on Transaction {
     amount: domain.Money(amount),
     note: note,
     loanId: loanId,
+    category: category == null
+        ? null
+        : domain.ExpenseCategory.values.byName(category!),
     createdAt: createdAt,
     updatedAt: updatedAt,
   );
@@ -23,6 +26,7 @@ extension TransactionDomainMapper on domain.Transaction {
     amount: Value(amount.value),
     note: Value(note),
     loanId: Value(loanId),
+    category: Value(category?.name),
     createdAt: Value(createdAt),
     updatedAt: Value(updatedAt),
   );

@@ -28,10 +28,10 @@ void main() async {
     debugPrint('Firebase init failed: $e');
   }
 
-  final db       = AppDatabase();
-  final txRepo   = DriftTransactionRepository(db);
+  final db = AppDatabase();
+  final txRepo = DriftTransactionRepository(db);
   final loanRepo = DriftLoanRepository(db);
-  final subRepo  = DriftSubscriptionRepository(db);
+  final subRepo = DriftSubscriptionRepository(db);
 
   runApp(
     ProviderScope(
@@ -51,7 +51,18 @@ class SurvivalApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final locale = ref.watch(localeProvider).value;
+    final localeAsync = ref.watch(localeProvider);
+
+    if (!localeAsync.hasValue) {
+      return MaterialApp(
+        title: 'Runway',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.dark,
+        home: const Scaffold(backgroundColor: AppColors.background),
+      );
+    }
+
+    final locale = localeAsync.value;
     return MaterialApp.router(
       title: 'Runway',
       debugShowCheckedModeBanner: false,
@@ -67,10 +78,17 @@ class SurvivalApp extends ConsumerWidget {
       ],
       localeResolutionCallback: (deviceLocale, supportedLocales) {
         if (locale != null) return locale;
-        if (deviceLocale == null) return const Locale('en');
-        for (final supported in supportedLocales) {
-          if (supported.languageCode == deviceLocale.languageCode) {
-            return supported;
+        if (deviceLocale != null) {
+          for (final supported in supportedLocales) {
+            if (supported.languageCode == deviceLocale.languageCode &&
+                supported.countryCode == deviceLocale.countryCode) {
+              return supported;
+            }
+          }
+          for (final supported in supportedLocales) {
+            if (supported.languageCode == deviceLocale.languageCode) {
+              return supported;
+            }
           }
         }
         return const Locale('en');

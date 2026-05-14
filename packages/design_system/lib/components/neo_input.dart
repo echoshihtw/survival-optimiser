@@ -42,7 +42,7 @@ class NeoInput extends StatelessWidget {
         ];
       case NeoInputType.name:
         return [
-          FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9\s\-_']")),
+          FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9\s\-_'\+/]")),
           LengthLimitingTextInputFormatter(maxLength ?? 50),
         ];
       case NeoInputType.note:

@@ -1,6 +1,5 @@
 import '../entities/monthly_state.dart';
 import '../entities/model_state.dart';
-import '../entities/identity_badge.dart';
 import '../value_objects/survival_month.dart';
 
 const _maxProjection = 120;
@@ -10,11 +9,16 @@ ModelState computeModel({
   required double monthlyPayment,
   required double subscriptionMonthlyCost,
   double? budgetBurnRate,
+  double? expectedMonthlyInflow,
+  double? expectedMonthlyBurnOverride,
 }) {
   final currentCash = months.isEmpty ? 0.0 : months.last.balance;
   final txBurnRate = _computeBurnRate(months) ?? 0.0;
 
-  final effectiveBurn = budgetBurnRate != null && budgetBurnRate > 0
+  final effectiveBurn =
+      expectedMonthlyBurnOverride != null && expectedMonthlyBurnOverride > 0
+      ? expectedMonthlyBurnOverride
+      : budgetBurnRate != null && budgetBurnRate > 0
       ? budgetBurnRate
       : txBurnRate + subscriptionMonthlyCost + monthlyPayment;
 
@@ -62,9 +66,10 @@ ModelState computeModel({
     effectiveBurnRate: burnForModel,
     monthlyPayment: monthlyPayment,
     subscriptionMonthlyCost: subscriptionMonthlyCost,
+    expectedMonthlyInflow: expectedMonthlyInflow,
+    expectedMonthlyBurnOverride: expectedMonthlyBurnOverride,
     runwayMonths: runwayMonths,
     runwayDays: runwayDays,
-    badge: IdentityBadgeX.fromDays(runwayDays),
     runOutDate: runOutDate,
     pressureRatio: pressureRatio,
   );

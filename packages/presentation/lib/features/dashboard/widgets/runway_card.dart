@@ -8,17 +8,16 @@ import 'package:application/application.dart';
 import '../../share/share_screen.dart';
 import 'package:intl/intl.dart';
 
-class LifeForceCard extends ConsumerWidget {
+class RunwayCard extends ConsumerWidget {
   final ModelState model;
-  const LifeForceCard({super.key, required this.model});
-
-  static const _studyPeriodMonths = 24;
+  const RunwayCard({super.key, required this.model});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
     final nf = NumberFormat('#,##0', 'en_US');
+    final goal = ref.watch(runwayGoalProvider).value;
     final status = model.survivalStatus;
 
     final color = switch (status) {
@@ -32,21 +31,42 @@ class LifeForceCard extends ConsumerWidget {
       SurvivalStatus.critical => l10n.critical,
     };
 
-    final charge = model.runwayMonths >= 9999
-        ? 1.0
-        : (model.runwayMonths / _studyPeriodMonths).clamp(0.0, 1.0);
-    final chargePercent = (charge * 100).round();
+    final goalProgress = goal == null
+        ? null
+        : calculateRunwayGoalProgress(
+            runwayMonths: model.runwayMonths.toDouble(),
+            targetMonths: goal.targetMonths,
+          );
+    final goalProgressPercent = goal == null
+        ? null
+        : calculateRunwayGoalProgressPercent(
+            runwayMonths: model.runwayMonths.toDouble(),
+            targetMonths: goal.targetMonths,
+          );
 
-    String fmtRunway(int m) {
+    String fmtRunwayMonths(int m) {
       if (m >= 9999) return '∞';
-      if (m >= 24) return '${(m / 12).toStringAsFixed(1)}';
       return '$m';
     }
 
-    String fmtRunwayUnit(int m) {
+    String fmtRunwayMonthUnit(int m) {
       if (m >= 9999) return '';
-      if (m >= 24) return 'YRS';
-      return 'MO';
+      return m == 1 ? l10n.monthSingular : l10n.monthPlural;
+    }
+
+    String fmtRunwayDays(int days) {
+      if (days >= 9999) return l10n.noProjectedRunOut;
+      return l10n.aboutDaysOfFreedom(days);
+    }
+
+    String fmtSustainability() {
+      if (!model.hasSustainableProjection) return '';
+      if (model.isSustainableIndefinitely) {
+        return l10n.sustainableWithExpectedInflow;
+      }
+      return l10n.shortByPerMonth(
+        '$symbol ${nf.format(model.sustainableMonthlyShortfall)}',
+      );
     }
 
     String fmtDate(DateTime? d) =>
@@ -88,42 +108,79 @@ class LifeForceCard extends ConsumerWidget {
                 textBaseline: TextBaseline.alphabetic,
                 children: [
                   Text(
-                    fmtRunway(model.runwayMonths),
+                    fmtRunwayMonths(model.runwayMonths),
                     style: AppTextStyles.heroLarge.copyWith(
                       color: color,
                       fontSize: 72,
                       fontWeight: FontWeight.w700,
-                      fontFamily: 'Courier New',
                     ),
                   ),
                   Text(
-                    ' ${fmtRunwayUnit(model.runwayMonths)}',
+                    ' ${fmtRunwayMonthUnit(model.runwayMonths)}',
                     style: AppTextStyles.metric.copyWith(
                       color: color.withAlpha(180),
-                      fontFamily: 'Courier New',
                     ),
                   ),
                 ],
               ),
-              Text(
-                l10n.runway,
-                style: AppTextStyles.sectionTitle.copyWith(letterSpacing: 3),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              PixelBadge(label: statusLabel, color: color),
-              const SizedBox(height: AppSpacing.xl),
-              PixelBar(value: charge, color: color, segments: 24, height: 6),
+              Text(l10n.ifIncomePausedToday, style: AppTextStyles.bodySmall),
               const SizedBox(height: AppSpacing.xs),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(l10n.survivalCharge, style: AppTextStyles.caption),
-                  Text(
-                    '$chargePercent%',
-                    style: AppTextStyles.caption.copyWith(color: color),
-                  ),
-                ],
+              Text(
+                fmtRunwayDays(model.runwayDays),
+                style: AppTextStyles.caption,
               ),
+              const SizedBox(height: AppSpacing.md),
+              PixelBadge(label: statusLabel, color: color),
+              if (model.hasSustainableProjection) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  fmtSustainability(),
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.caption.copyWith(
+                    color: model.isSustainableIndefinitely
+                        ? AppColors.green
+                        : AppColors.gold,
+                  ),
+                ),
+              ],
+              if (goal != null &&
+                  goalProgress != null &&
+                  goalProgressPercent != null) ...[
+                const SizedBox(height: AppSpacing.xl),
+                PixelBar(
+                  value: goalProgress,
+                  color: color,
+                  segments: goal.targetMonths.clamp(1, 36),
+                  height: 6,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        goal.name,
+                        style: AppTextStyles.caption,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      '$goalProgressPercent%',
+                      style: AppTextStyles.caption.copyWith(color: color),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.xxs),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    l10n.goalTargetProgress(goal.targetMonths),
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: AppSpacing.md),
               Divider(color: Colors.white.withAlpha(15), height: 1),
               const SizedBox(height: AppSpacing.md),

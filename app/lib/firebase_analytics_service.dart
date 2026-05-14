@@ -5,8 +5,7 @@ class FirebaseAnalyticsService implements AnalyticsService {
   final _fa = FirebaseAnalytics.instance;
 
   @override
-  Future<void> logScreen(String name) =>
-      _fa.logScreenView(screenName: name);
+  Future<void> logScreen(String name) => _fa.logScreenView(screenName: name);
 
   @override
   Future<void> logAddTransaction(String type) =>
@@ -21,8 +20,7 @@ class FirebaseAnalyticsService implements AnalyticsService {
       _fa.logEvent(name: 'add_loan', parameters: {'source': source});
 
   @override
-  Future<void> logRepayLoan() =>
-      _fa.logEvent(name: 'repay_loan');
+  Future<void> logRepayLoan() => _fa.logEvent(name: 'repay_loan');
 
   @override
   Future<void> logAddSubscription(String cycle) =>
@@ -33,22 +31,20 @@ class FirebaseAnalyticsService implements AnalyticsService {
       _fa.logEvent(name: 'delete_subscription');
 
   @override
-  Future<void> logSetBudget() =>
-      _fa.logEvent(name: 'set_budget');
+  Future<void> logSetBudget() => _fa.logEvent(name: 'set_budget');
 
   @override
   Future<void> logRunSimulation({
     bool hasBurnOverride = false,
     bool hasIncome = false,
-  }) =>
-      _fa.logEvent(name: 'run_simulation', parameters: {
-        'has_burn_override': hasBurnOverride,
-        'has_income': hasIncome,
-      });
+  }) => _fa.logEvent(
+    name: 'run_simulation',
+    parameters: {'has_burn_override': hasBurnOverride, 'has_income': hasIncome},
+  );
 
   @override
-  Future<void> logShare(String badge) =>
-      _fa.logEvent(name: 'share', parameters: {'badge': badge});
+  Future<void> logShare(String surface) =>
+      _fa.logEvent(name: 'share', parameters: {'surface': surface});
 
   @override
   Future<void> logChangeLanguage(String locale) =>

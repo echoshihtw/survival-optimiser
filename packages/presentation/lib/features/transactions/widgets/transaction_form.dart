@@ -6,15 +6,24 @@ import 'package:intl/intl.dart';
 class TransactionForm extends StatefulWidget {
   final Transaction? existing;
   final TransactionType? preselectedType;
+  final List<Loan> loans;
   final void Function(
     TransactionType type,
     double amount,
     DateTime date,
     String? note,
+    ExpenseCategory? category,
+    String? loanId,
   )
   onSubmit;
 
-  const TransactionForm({super.key, this.existing, this.preselectedType, required this.onSubmit});
+  const TransactionForm({
+    super.key,
+    this.existing,
+    this.preselectedType,
+    this.loans = const [],
+    required this.onSubmit,
+  });
 
   @override
   State<TransactionForm> createState() => _TransactionFormState();
@@ -26,6 +35,9 @@ class _TransactionFormState extends State<TransactionForm> {
 
   late TransactionType _type;
   late DateTime _date;
+  String? _categoryGroup;
+  ExpenseCategory? _category;
+  String? _selectedLoanId;
 
   static const _types = [
     TransactionType.expense,
@@ -38,10 +50,22 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   void initState() {
     super.initState();
-    _type = widget.existing?.type ?? widget.preselectedType ?? TransactionType.expense;
+    _type =
+        widget.existing?.type ??
+        widget.preselectedType ??
+        TransactionType.expense;
     _date = widget.existing?.date ?? DateTime.now();
     _amountCtrl.text = widget.existing?.amount.value.toStringAsFixed(0) ?? '';
     _noteCtrl.text = widget.existing?.note ?? '';
+    _selectedLoanId = widget.existing?.loanId;
+    if (_type == TransactionType.repayment && _selectedLoanId == null) {
+      _selectedLoanId = _defaultLoanId();
+    }
+    final existingCategory = widget.existing?.category;
+    if (existingCategory != null) {
+      _category = existingCategory;
+      _categoryGroup = existingCategory.group;
+    }
   }
 
   @override
@@ -88,14 +112,47 @@ class _TransactionFormState extends State<TransactionForm> {
     if (picked != null) setState(() => _date = picked);
   }
 
+  void _onGroupTap(String group) {
+    setState(() {
+      _categoryGroup = group;
+      _category = ExpenseCategory.groupHasSubcategories(group)
+          ? null
+          : ExpenseCategory.subcategoriesFor(group).first;
+    });
+  }
+
+  String? _defaultLoanId() {
+    if (widget.loans.isEmpty) return null;
+    final activeLoans = widget.loans.where((loan) => loan.isActive);
+    return (activeLoans.isNotEmpty ? activeLoans : widget.loans).first.id;
+  }
+
+  void _onTypeTap(TransactionType type) {
+    setState(() {
+      _type = type;
+      if (type != TransactionType.repayment) {
+        _selectedLoanId = null;
+      } else if (_selectedLoanId == null && widget.loans.isNotEmpty) {
+        _selectedLoanId = _defaultLoanId();
+      }
+    });
+  }
+
   void _submit() {
     final amount = double.tryParse(_amountCtrl.text.trim());
     if (amount == null || amount <= 0) return;
+    final loanId = _type == TransactionType.repayment ? _selectedLoanId : null;
+    if (_type == TransactionType.repayment) {
+      final validLoanIds = widget.loans.map((loan) => loan.id).toSet();
+      if (loanId == null || !validLoanIds.contains(loanId)) return;
+    }
     widget.onSubmit(
       _type,
       amount,
       _date,
       _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim(),
+      _type == TransactionType.expense ? _category : null,
+      loanId,
     );
     Navigator.of(context).pop();
   }
@@ -104,7 +161,10 @@ class _TransactionFormState extends State<TransactionForm> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
-    final dateStr = DateFormat('dd MMM yyyy', locale).format(_date).toUpperCase();
+    final dateStr = DateFormat(
+      'dd MMM yyyy',
+      locale,
+    ).format(_date).toUpperCase();
 
     return Container(
       decoration: const BoxDecoration(
@@ -153,7 +213,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 final active = t == _type;
                 final color = _typeColor(t);
                 return GestureDetector(
-                  onTap: () => setState(() => _type = t),
+                  onTap: () => _onTypeTap(t),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.md,
@@ -181,6 +241,150 @@ class _TransactionFormState extends State<TransactionForm> {
               }).toList(),
             ),
             const SizedBox(height: AppSpacing.lg),
+
+            if (_type == TransactionType.expense) ...[
+              Text('CATEGORY', style: AppTextStyles.label),
+              const SizedBox(height: AppSpacing.xs),
+              Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                children: ExpenseCategory.groups.map((group) {
+                  final active = _categoryGroup == group;
+                  return GestureDetector(
+                    onTap: () => _onGroupTap(group),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.xs + 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: active
+                            ? AppColors.blue.withAlpha(20)
+                            : AppColors.surfaceHigh,
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(
+                          color: active ? AppColors.blue : AppColors.cardBorder,
+                          width: active ? 1.5 : 1,
+                        ),
+                      ),
+                      child: Text(
+                        group,
+                        style: AppTextStyles.caption.copyWith(
+                          color: active
+                              ? AppColors.blue
+                              : AppColors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              if (_categoryGroup != null &&
+                  ExpenseCategory.groupHasSubcategories(_categoryGroup!)) ...[
+                const SizedBox(height: AppSpacing.xs),
+                Wrap(
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
+                  children: ExpenseCategory.subcategoriesFor(_categoryGroup!)
+                      .map((cat) {
+                        final active = _category == cat;
+                        return GestureDetector(
+                          onTap: () => setState(() => _category = cat),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.md,
+                              vertical: AppSpacing.xs + 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: active
+                                  ? AppColors.red.withAlpha(20)
+                                  : AppColors.surfaceHigh,
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: active
+                                    ? AppColors.red
+                                    : AppColors.cardBorder,
+                                width: active ? 1.5 : 1,
+                              ),
+                            ),
+                            child: Text(
+                              cat.label,
+                              style: AppTextStyles.caption.copyWith(
+                                color: active
+                                    ? AppColors.red
+                                    : AppColors.textSecondary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        );
+                      })
+                      .toList(),
+                ),
+              ],
+              const SizedBox(height: AppSpacing.lg),
+            ],
+
+            if (_type == TransactionType.repayment) ...[
+              Text('LOAN', style: AppTextStyles.label),
+              const SizedBox(height: AppSpacing.xs),
+              if (widget.loans.isEmpty)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceHigh,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.cardBorder),
+                  ),
+                  child: Text(
+                    'Add a loan before recording a repayment.',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                )
+              else
+                Wrap(
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
+                  children: widget.loans.map((loan) {
+                    final active = _selectedLoanId == loan.id;
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedLoanId = loan.id),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.xs + 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: active
+                              ? AppColors.gold.withAlpha(20)
+                              : AppColors.surfaceHigh,
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(
+                            color: active
+                                ? AppColors.gold
+                                : AppColors.cardBorder,
+                            width: active ? 1.5 : 1,
+                          ),
+                        ),
+                        child: Text(
+                          loan.name.toUpperCase(),
+                          style: AppTextStyles.caption.copyWith(
+                            color: active
+                                ? AppColors.gold
+                                : AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              const SizedBox(height: AppSpacing.lg),
+            ],
 
             NeoInput(
               label: l10n.amount,

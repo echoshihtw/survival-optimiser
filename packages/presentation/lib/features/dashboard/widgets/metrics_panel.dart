@@ -21,13 +21,18 @@ class MetricsPanel extends ConsumerWidget {
     final hasActual = model.burnRate > 0;
     final hasBudget = budget != null && budget.isSet;
 
+    final fixedPressure = (model.fixedPressureRatio * 100).round();
+    final flexibility = (model.flexibilityRatio * 100).round();
+    final hasAssumptions =
+        model.hasSustainableProjection ||
+        model.expectedMonthlyBurnOverride != null;
     final summary = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.totalPerMonth, style: AppTextStyles.label),
+            Text(l10n.monthlyBurn, style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xxs),
             Text(
               '-${fmt(model.totalMonthlyOutflow)}',
@@ -38,11 +43,11 @@ class MetricsPanel extends ConsumerWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(l10n.cash, style: AppTextStyles.label),
+            Text(l10n.flexibility, style: AppTextStyles.label),
             const SizedBox(height: AppSpacing.xxs),
             Text(
-              fmt(model.currentCash),
-              style: AppTextStyles.metric.copyWith(color: SC.numberPrimary),
+              '$flexibility%',
+              style: AppTextStyles.metric.copyWith(color: AppColors.green),
             ),
           ],
         ),
@@ -51,23 +56,52 @@ class MetricsPanel extends ConsumerWidget {
 
     final details = Column(
       children: [
+        _row(l10n.availableCash, fmt(model.currentCash), AppColors.green),
+        _row(
+          l10n.historicalBurn,
+          model.historicalMonthlyBurn > 0
+              ? '-${fmt(model.historicalMonthlyBurn)}'
+              : l10n.notEnoughHistory,
+          AppColors.textSecondary,
+        ),
+        if (hasAssumptions)
+          _row(l10n.projectionSource, l10n.usingAssumptions, AppColors.blue),
+        if (model.expectedMonthlyInflow != null)
+          _row(
+            l10n.expectedInflow,
+            fmt(model.expectedMonthlyInflow!),
+            AppColors.green,
+          ),
+        _row(
+          l10n.fixedPressure,
+          '$fixedPressure%',
+          fixedPressure >= 60
+              ? AppColors.red
+              : fixedPressure >= 35
+              ? AppColors.gold
+              : AppColors.green,
+        ),
         if (hasActual)
           _row(
-            model.isOverBudget ? '${l10n.burnPerMonth} ▲' : l10n.burnPerMonth,
+            model.isOverBudget ? l10n.actualBurnHigh : l10n.actualBurn,
             '-${fmt(model.burnRate)}',
             AppColors.red,
           ),
         if (hasBudget && !hasActual)
-          _row(l10n.budgetPerMonth, '-${fmt(budget.subtotal)}', AppColors.gold),
+          _row(
+            l10n.plannedEssentials,
+            '-${fmt(budget.subtotal)}',
+            AppColors.gold,
+          ),
         if (model.subscriptionMonthlyCost > 0)
           _row(
-            l10n.subscrPerMonth,
+            l10n.recurringCosts,
             '-${fmt(model.subscriptionMonthlyCost)}',
             SC.metricSubscr,
           ),
         if (model.monthlyPayment > 0)
           _row(
-            l10n.loanPerMonth,
+            l10n.debtCommitments,
             '-${fmt(model.monthlyPayment)}',
             AppColors.gold,
           ),
@@ -98,7 +132,7 @@ class MetricsPanel extends ConsumerWidget {
     );
 
     return NeoExpandableCard(
-      title: l10n.breakdown,
+      title: l10n.pressureFlexibility,
       accentColor: SC.accentLife,
       initiallyExpanded: false,
       summary: summary,

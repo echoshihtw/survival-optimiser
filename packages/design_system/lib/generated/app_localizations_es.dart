@@ -18,7 +18,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sysOnline => 'SIS: EN LÍNEA';
 
   @override
-  String get lifeForce => 'FUERZA VITAL';
+  String get lifeForce => 'PREPARACIÓN DE AUTONOMÍA';
 
   @override
   String get statusLabel => 'ESTADO';
@@ -310,10 +310,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get subscriptionAmount => 'MONTO';
 
   @override
+  String get subscriptionPaymentAmount => 'MONTO PAGADO';
+
+  @override
   String get subscriptionCycle => 'CICLO DE FACTURACIÓN';
 
   @override
+  String get subscriptionCoveragePeriod => 'PERIODO CUBIERTO';
+
+  @override
   String get subscriptionCategory => 'CATEGORÍA';
+
+  @override
+  String get subscriptionPaymentDate => 'FECHA DE PAGO';
 
   @override
   String get subscriptionNextBilling => 'PRÓXIMA FACTURACIÓN';
@@ -408,9 +417,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'CAPITAL DESPLEGABLE — SEPARADO DEL BUFFER DE SUPERVIVENCIA';
 
   @override
-  String get survivalCharge => 'CARGA DE SUPERVIVENCIA';
-
-  @override
   String get historyEntries => 'HISTORIAL & ENTRADAS';
 
   @override
@@ -479,6 +485,74 @@ class AppLocalizationsEs extends AppLocalizations {
       'SUSCRIPCIONES + DEUDAS AÑADIDAS AUTOMÁTICAMENTE';
 
   @override
+  String get futureAssumptions => 'Supuestos futuros';
+
+  @override
+  String get expectedInflow => 'Entrada esperada';
+
+  @override
+  String get expectedBurn => 'Gasto esperado';
+
+  @override
+  String get notSet => 'Sin definir';
+
+  @override
+  String get usingCurrentBurn => 'Usando gasto actual';
+
+  @override
+  String get assumptionsProjectionOnly =>
+      'Los supuestos solo afectan las proyecciones futuras. No crean transacciones.';
+
+  @override
+  String get setAssumptions => 'Definir supuestos';
+
+  @override
+  String get expectedMonthlyInflow => 'Entrada mensual esperada';
+
+  @override
+  String get expectedMonthlyBurn => 'Gasto mensual esperado';
+
+  @override
+  String get useCurrentBurn => 'Usar gasto actual';
+
+  @override
+  String get futureInflowHint =>
+      'Usa aquí entradas futuras neutrales: freelance, contratos, ingresos de creador, dividendos o cualquier entrada esperada.';
+
+  @override
+  String get runwayGoal => 'Objetivo de runway';
+
+  @override
+  String get goal => 'Objetivo';
+
+  @override
+  String get none => 'Ninguno';
+
+  @override
+  String get target => 'Meta';
+
+  @override
+  String get optional => 'Opcional';
+
+  @override
+  String monthsValue(int count) {
+    return '$count meses';
+  }
+
+  @override
+  String get goalsContextHint =>
+      'Los objetivos agregan contexto a tu runway. No son una puntuación.';
+
+  @override
+  String get setGoal => 'Definir objetivo';
+
+  @override
+  String get goalName => 'Nombre del objetivo';
+
+  @override
+  String get targetMonths => 'Meses objetivo';
+
+  @override
   String get display => 'PANTALLA';
 
   @override
@@ -511,30 +585,86 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ifIncomeStoppedToday => 'Si tu ingreso se detuviera hoy';
 
   @override
+  String get ifIncomePausedToday => 'Si tu ingreso se detuviera hoy';
+
+  @override
+  String get monthSingular => 'mes';
+
+  @override
+  String get monthPlural => 'meses';
+
+  @override
+  String get noProjectedRunOut => 'Sin agotamiento proyectado';
+
+  @override
+  String aboutDaysOfFreedom(int days) {
+    return 'Aproximadamente $days días de libertad';
+  }
+
+  @override
+  String get sustainableWithExpectedInflow =>
+      'Sostenible con tu entrada esperada';
+
+  @override
+  String shortByPerMonth(String amount) {
+    return 'Faltan $amount / mes';
+  }
+
+  @override
+  String goalTargetProgress(int months) {
+    return 'Objetivo de $months meses. Progreso hacia tu objetivo, no una puntuación.';
+  }
+
+  @override
+  String get monthlyBurn => 'Gasto mensual';
+
+  @override
+  String get flexibility => 'Flexibilidad';
+
+  @override
+  String get availableCash => 'Efectivo disponible';
+
+  @override
+  String get historicalBurn => 'Gasto histórico';
+
+  @override
+  String get notEnoughHistory => 'Historial insuficiente';
+
+  @override
+  String get projectionSource => 'Fuente de proyección';
+
+  @override
+  String get usingAssumptions => 'Usando supuestos';
+
+  @override
+  String get fixedPressure => 'Presión fija';
+
+  @override
+  String get actualBurn => 'Gasto real';
+
+  @override
+  String get actualBurnHigh => 'Gasto real ▲';
+
+  @override
+  String get plannedEssentials => 'Esenciales previstos';
+
+  @override
+  String get recurringCosts => 'Costos recurrentes';
+
+  @override
+  String get debtCommitments => 'Compromisos de deuda';
+
+  @override
+  String get pressureFlexibility => 'Presión y flexibilidad';
+
+  @override
+  String get runwayProjection => 'Proyección de runway';
+
+  @override
   String get daysUpper => 'DÍAS';
 
   @override
   String get yourRunway => 'Tu autonomía';
-
-  @override
-  String get emotionExposed => 'Estás expuesto';
-
-  @override
-  String get emotionCloser => 'Estás más cerca de lo que parece';
-
-  @override
-  String get emotionBreathingRoom => 'Tienes algo de margen';
-
-  @override
-  String get emotionSaferMost => 'Estás más seguro que la mayoría';
-
-  @override
-  String get emotionAheadMost => 'Vas por delante de la mayoría';
-
-  @override
-  String youOutlastPeople(int percentile) {
-    return 'Sobrevives más que el $percentile% de las personas';
-  }
 
   @override
   String get loseIncome => 'Perder ingresos';
@@ -564,35 +694,4 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get shareAsText => 'COMPARTIR TEXTO';
-
-  @override
-  String get canYouBeatThis => '¿Puedes superar esto?';
-
-  @override
-  String shareImageText(int days, String identity) {
-    return 'Si mi ingreso se detuviera hoy, sobrevivo $days días. $identity. ¿Puedes superar esto? RUNWAY';
-  }
-
-  @override
-  String shareTextMessage(int days, String identity, int percentile) {
-    return 'Si mi ingreso se detuviera hoy, sobrevivo $days días. $identity. Sobrevives más que el $percentile% de las personas. ¿Puedes superar esto? RUNWAY';
-  }
-
-  @override
-  String get badgeSurvivalMode => 'Modo supervivencia';
-
-  @override
-  String get badgeFinancialRookie => 'Novato financiero';
-
-  @override
-  String get badgeGettingBy => 'Saliendo adelante';
-
-  @override
-  String get badgeFinanciallyStable => 'Financieramente estable';
-
-  @override
-  String get badgeFinancialFortress => 'Fortaleza financiera';
-
-  @override
-  String get badgeEscapeVelocity => 'Velocidad de escape';
 }

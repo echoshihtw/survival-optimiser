@@ -18,7 +18,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sysOnline => 'システム：オンライン';
 
   @override
-  String get lifeForce => '生命力';
+  String get lifeForce => 'ランウェイ準備度';
 
   @override
   String get statusLabel => 'ステータス';
@@ -309,10 +309,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get subscriptionAmount => '金額';
 
   @override
+  String get subscriptionPaymentAmount => '支払金額';
+
+  @override
   String get subscriptionCycle => '請求サイクル';
 
   @override
+  String get subscriptionCoveragePeriod => '対象期間';
+
+  @override
   String get subscriptionCategory => 'カテゴリ';
+
+  @override
+  String get subscriptionPaymentDate => '支払日';
 
   @override
   String get subscriptionNextBilling => '次回請求日';
@@ -406,9 +415,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deployableCapital => '運用可能資金 — 生存バッファとは別';
 
   @override
-  String get survivalCharge => 'サバイバルチャージ';
-
-  @override
   String get historyEntries => '履歴 & 入力';
 
   @override
@@ -475,6 +481,71 @@ class AppLocalizationsJa extends AppLocalizations {
   String get subscrDebtAuto => 'サブスク + 負債は自動加算';
 
   @override
+  String get futureAssumptions => '将来の前提';
+
+  @override
+  String get expectedInflow => '想定流入';
+
+  @override
+  String get expectedBurn => '想定支出';
+
+  @override
+  String get notSet => '未設定';
+
+  @override
+  String get usingCurrentBurn => '現在の支出を使用';
+
+  @override
+  String get assumptionsProjectionOnly => '前提は将来予測だけに影響します。取引記録は作成されません。';
+
+  @override
+  String get setAssumptions => '前提を設定';
+
+  @override
+  String get expectedMonthlyInflow => '想定月間流入';
+
+  @override
+  String get expectedMonthlyBurn => '想定月間支出';
+
+  @override
+  String get useCurrentBurn => '現在の支出を使用';
+
+  @override
+  String get futureInflowHint => 'フリーランス、契約収入、クリエイター収入、配当など、想定される将来の流入を入力します。';
+
+  @override
+  String get runwayGoal => 'ランウェイ目標';
+
+  @override
+  String get goal => '目標';
+
+  @override
+  String get none => 'なし';
+
+  @override
+  String get target => 'ターゲット';
+
+  @override
+  String get optional => '任意';
+
+  @override
+  String monthsValue(int count) {
+    return '$countか月';
+  }
+
+  @override
+  String get goalsContextHint => '目標はランウェイに文脈を加えるものです。スコアではありません。';
+
+  @override
+  String get setGoal => '目標を設定';
+
+  @override
+  String get goalName => '目標名';
+
+  @override
+  String get targetMonths => '目標月数';
+
+  @override
   String get display => '表示';
 
   @override
@@ -505,30 +576,85 @@ class AppLocalizationsJa extends AppLocalizations {
   String get ifIncomeStoppedToday => '今日、収入が止まったら';
 
   @override
+  String get ifIncomePausedToday => '今日、収入が止まったら';
+
+  @override
+  String get monthSingular => 'か月';
+
+  @override
+  String get monthPlural => 'か月';
+
+  @override
+  String get noProjectedRunOut => '予測される資金切れはありません';
+
+  @override
+  String aboutDaysOfFreedom(int days) {
+    return '約$days日分の余裕';
+  }
+
+  @override
+  String get sustainableWithExpectedInflow => '想定流入で持続可能';
+
+  @override
+  String shortByPerMonth(String amount) {
+    return '月あたり $amount 不足';
+  }
+
+  @override
+  String goalTargetProgress(int months) {
+    return '$monthsか月目標。これは目標への進捗であり、スコアではありません。';
+  }
+
+  @override
+  String get monthlyBurn => '月間支出';
+
+  @override
+  String get flexibility => '柔軟性';
+
+  @override
+  String get availableCash => '利用可能な現金';
+
+  @override
+  String get historicalBurn => '過去の支出';
+
+  @override
+  String get notEnoughHistory => '履歴が不足しています';
+
+  @override
+  String get projectionSource => '予測ソース';
+
+  @override
+  String get usingAssumptions => '前提を使用';
+
+  @override
+  String get fixedPressure => '固定圧力';
+
+  @override
+  String get actualBurn => '実際の支出';
+
+  @override
+  String get actualBurnHigh => '実際の支出 ▲';
+
+  @override
+  String get plannedEssentials => '計画上の必需支出';
+
+  @override
+  String get recurringCosts => '定期コスト';
+
+  @override
+  String get debtCommitments => '債務コミットメント';
+
+  @override
+  String get pressureFlexibility => '圧力と柔軟性';
+
+  @override
+  String get runwayProjection => 'ランウェイ予測';
+
+  @override
   String get daysUpper => '日';
 
   @override
   String get yourRunway => 'あなたのランウェイ';
-
-  @override
-  String get emotionExposed => 'かなり危険です';
-
-  @override
-  String get emotionCloser => '思ったより近いです';
-
-  @override
-  String get emotionBreathingRoom => '少し余裕があります';
-
-  @override
-  String get emotionSaferMost => '多くの人より安全です';
-
-  @override
-  String get emotionAheadMost => '多くの人より先にいます';
-
-  @override
-  String youOutlastPeople(int percentile) {
-    return 'あなたは$percentile%の人より長く持ちます';
-  }
 
   @override
   String get loseIncome => '収入ゼロ';
@@ -558,35 +684,4 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get shareAsText => 'テキストで共有';
-
-  @override
-  String get canYouBeatThis => 'これを超えられますか？';
-
-  @override
-  String shareImageText(int days, String identity) {
-    return '今日収入が止まったら、私は$days日生きられます。$identity。これを超えられますか？ RUNWAY';
-  }
-
-  @override
-  String shareTextMessage(int days, String identity, int percentile) {
-    return '今日収入が止まったら、私は$days日生きられます。$identity。あなたは$percentile%の人より長く持ちます。これを超えられますか？ RUNWAY';
-  }
-
-  @override
-  String get badgeSurvivalMode => 'サバイバルモード';
-
-  @override
-  String get badgeFinancialRookie => '金融ルーキー';
-
-  @override
-  String get badgeGettingBy => 'なんとか持ちこたえ中';
-
-  @override
-  String get badgeFinanciallyStable => '経済的に安定';
-
-  @override
-  String get badgeFinancialFortress => '金融要塞';
-
-  @override
-  String get badgeEscapeVelocity => '脱出速度';
 }
