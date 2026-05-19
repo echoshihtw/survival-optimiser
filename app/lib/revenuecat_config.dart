@@ -2,7 +2,7 @@
 // iOS key:     RevenueCat dashboard → Apps → iOS → Public SDK key
 // Android key: RevenueCat dashboard → Apps → Android → Public SDK key
 // Entitlement: RevenueCat dashboard → Entitlements → identifier
-const kRevenueCatAppleKey = 'REVENUECAT_APPLE_KEY_PLACEHOLDER';
+const kRevenueCatAppleKey = 'test_AQXnYsV0PKUuWzhnZAAcbRYcwLk';
 const kRevenueCatGoogleKey = 'REVENUECAT_GOOGLE_KEY_PLACEHOLDER';
 const kProEntitlementId = 'pro';
 

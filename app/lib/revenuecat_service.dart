@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:application/application.dart';
 import 'revenuecat_config.dart';
@@ -12,7 +13,7 @@ class RevenueCatService implements PurchaseService {
     }
     try {
       final key = Platform.isIOS ? kRevenueCatAppleKey : kRevenueCatGoogleKey;
-      await Purchases.setLogLevel(LogLevel.warning);
+      await Purchases.setLogLevel(LogLevel.warn);
       final config = PurchasesConfiguration(key);
       await Purchases.configure(config);
       debugPrint('[RevenueCat] Configured');
@@ -46,13 +47,15 @@ class RevenueCatService implements PurchaseService {
     if (!isRevenueCatConfigured) return false;
     try {
       final nativePkg = package.nativePackage as Package;
-      final info = await Purchases.purchasePackage(nativePkg);
-      return info.entitlements.active.containsKey(kProEntitlementId);
-    } on PurchasesErrorCode catch (e) {
-      if (e == PurchasesErrorCode.purchaseCancelledError) {
+      final result = await Purchases.purchase(PurchaseParams.package(nativePkg));
+      return result.customerInfo.entitlements.active
+          .containsKey(kProEntitlementId);
+    } on PlatformException catch (e) {
+      final code = PurchasesErrorHelper.getErrorCode(e);
+      if (code == PurchasesErrorCode.purchaseCancelledError) {
         throw const PurchaseException('Cancelled', userCancelled: true);
       }
-      throw PurchaseException(e.toString());
+      throw PurchaseException(e.message ?? e.toString());
     } catch (e) {
       throw PurchaseException(e.toString());
     }
