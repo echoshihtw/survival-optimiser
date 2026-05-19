@@ -10,8 +10,24 @@ command:
 
 scripts:
   test:
-    run: melos exec -- flutter test
-    description: Run all tests
+    run: melos exec -- flutter test test/
+    description: Run unit tests across all packages
+
+  test:integration:data:
+    run: flutter test test/integration/
+    packageFilters:
+      scope: data
+    description: Run data-layer integration tests (in-memory SQLite, no device)
+
+  test:integration:e2e:
+    run: flutter test integration_test/ -d {DEVICE_ID}
+    packageFilters:
+      scope: app
+    description: Run E2E integration tests on a connected device (set DEVICE_ID)
+
+  test:all:
+    run: melos run test && melos run test:integration:data
+    description: Run unit + data integration tests (no device required)
 
   analyze:
     run: melos exec -- flutter analyze
