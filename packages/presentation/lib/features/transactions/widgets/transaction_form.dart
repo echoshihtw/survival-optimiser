@@ -14,8 +14,7 @@ class TransactionForm extends StatefulWidget {
     String? note,
     ExpenseCategory? category,
     String? loanId,
-  )
-  onSubmit;
+  ) onSubmit;
 
   const TransactionForm({
     super.key,
@@ -32,39 +31,44 @@ class TransactionForm extends StatefulWidget {
 class _TransactionFormState extends State<TransactionForm> {
   final _amountCtrl = TextEditingController();
   final _noteCtrl = TextEditingController();
+  final _amountFocus = FocusNode();
 
-  late TransactionType _type;
+  late bool _isInflow;
   late DateTime _date;
-  String? _categoryGroup;
-  ExpenseCategory? _category;
+  bool _linkToLoan = false;
   String? _selectedLoanId;
 
-  static const _types = [
-    TransactionType.expense,
-    TransactionType.income,
-    TransactionType.investment,
-    TransactionType.repayment,
-    TransactionType.openingBalance,
-  ];
+  bool get _isOpeningBalance =>
+      widget.existing?.type == TransactionType.openingBalance ||
+      widget.preselectedType == TransactionType.openingBalance;
+
+  // Loan/openingBalance types preserve their type — only amount/date/note editable
+  bool get _isLockedType =>
+      widget.existing?.type == TransactionType.loan ||
+      widget.existing?.type == TransactionType.openingBalance;
 
   @override
   void initState() {
     super.initState();
-    _type =
+    final type =
         widget.existing?.type ??
         widget.preselectedType ??
         TransactionType.expense;
+    _isInflow = type.isInflow;
     _date = widget.existing?.date ?? DateTime.now();
-    _amountCtrl.text = widget.existing?.amount.value.toStringAsFixed(0) ?? '';
+    _amountCtrl.text =
+        widget.existing?.amount.value.toStringAsFixed(0) ?? '';
     _noteCtrl.text = widget.existing?.note ?? '';
     _selectedLoanId = widget.existing?.loanId;
-    if (_type == TransactionType.repayment && _selectedLoanId == null) {
+    _linkToLoan = widget.existing?.type == TransactionType.repayment;
+    if (_linkToLoan && _selectedLoanId == null) {
       _selectedLoanId = _defaultLoanId();
     }
-    final existingCategory = widget.existing?.category;
-    if (existingCategory != null) {
-      _category = existingCategory;
-      _categoryGroup = existingCategory.group;
+
+    if (widget.existing == null) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _amountFocus.requestFocus(),
+      );
     }
   }
 
@@ -72,26 +76,23 @@ class _TransactionFormState extends State<TransactionForm> {
   void dispose() {
     _amountCtrl.dispose();
     _noteCtrl.dispose();
+    _amountFocus.dispose();
     super.dispose();
   }
 
-  Color _typeColor(TransactionType t) => switch (t) {
-    TransactionType.income => AppColors.green,
-    TransactionType.openingBalance => AppColors.blue,
-    TransactionType.loan => AppColors.blue,
-    TransactionType.expense => AppColors.red,
-    TransactionType.repayment => AppColors.gold,
-    TransactionType.investment => AppColors.purple,
-  };
+  TransactionType get _resolvedType {
+    if (_isOpeningBalance) return TransactionType.openingBalance;
+    if (_isLockedType) return widget.existing!.type;
+    if (_isInflow) return TransactionType.income;
+    if (_linkToLoan) return TransactionType.repayment;
+    return TransactionType.expense;
+  }
 
-  String _typeLabel(TransactionType t, AppLocalizations l10n) => switch (t) {
-    TransactionType.expense => l10n.typeExpense,
-    TransactionType.income => l10n.typeIncome,
-    TransactionType.loan => l10n.typeLoan,
-    TransactionType.investment => l10n.typeInvest,
-    TransactionType.repayment => l10n.typeRepay,
-    TransactionType.openingBalance => l10n.typeOpening,
-  };
+  String? _defaultLoanId() {
+    if (widget.loans.isEmpty) return null;
+    final active = widget.loans.where((l) => l.isActive);
+    return (active.isNotEmpty ? active : widget.loans).first.id;
+  }
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
@@ -112,47 +113,22 @@ class _TransactionFormState extends State<TransactionForm> {
     if (picked != null) setState(() => _date = picked);
   }
 
-  void _onGroupTap(String group) {
-    setState(() {
-      _categoryGroup = group;
-      _category = ExpenseCategory.groupHasSubcategories(group)
-          ? null
-          : ExpenseCategory.subcategoriesFor(group).first;
-    });
-  }
-
-  String? _defaultLoanId() {
-    if (widget.loans.isEmpty) return null;
-    final activeLoans = widget.loans.where((loan) => loan.isActive);
-    return (activeLoans.isNotEmpty ? activeLoans : widget.loans).first.id;
-  }
-
-  void _onTypeTap(TransactionType type) {
-    setState(() {
-      _type = type;
-      if (type != TransactionType.repayment) {
-        _selectedLoanId = null;
-      } else if (_selectedLoanId == null && widget.loans.isNotEmpty) {
-        _selectedLoanId = _defaultLoanId();
-      }
-    });
-  }
-
   void _submit() {
     final amount = double.tryParse(_amountCtrl.text.trim());
     if (amount == null || amount <= 0) return;
-    final loanId = _type == TransactionType.repayment ? _selectedLoanId : null;
-    if (_type == TransactionType.repayment) {
-      final validLoanIds = widget.loans.map((loan) => loan.id).toSet();
-      if (loanId == null || !validLoanIds.contains(loanId)) return;
+    if (_linkToLoan) {
+      final validIds = widget.loans.map((l) => l.id).toSet();
+      if (_selectedLoanId == null || !validIds.contains(_selectedLoanId)) {
+        return;
+      }
     }
     widget.onSubmit(
-      _type,
+      _resolvedType,
       amount,
       _date,
       _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim(),
-      _type == TransactionType.expense ? _category : null,
-      loanId,
+      null,
+      _linkToLoan ? _selectedLoanId : null,
     );
     Navigator.of(context).pop();
   }
@@ -161,10 +137,13 @@ class _TransactionFormState extends State<TransactionForm> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
-    final dateStr = DateFormat(
-      'dd MMM yyyy',
-      locale,
-    ).format(_date).toUpperCase();
+    final dateStr =
+        DateFormat('dd MMM yyyy', locale).format(_date).toUpperCase();
+    final showLoanLink =
+        !_isInflow &&
+        !_isOpeningBalance &&
+        !_isLockedType &&
+        widget.loans.isNotEmpty;
 
     return Container(
       decoration: const BoxDecoration(
@@ -184,6 +163,7 @@ class _TransactionFormState extends State<TransactionForm> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Drag handle
             Center(
               child: Container(
                 width: 36,
@@ -196,6 +176,7 @@ class _TransactionFormState extends State<TransactionForm> {
             ),
             const SizedBox(height: AppSpacing.md),
 
+            // Title
             Text(
               widget.existing == null
                   ? l10n.newLogEntry.toUpperCase()
@@ -204,255 +185,339 @@ class _TransactionFormState extends State<TransactionForm> {
             ),
             const SizedBox(height: AppSpacing.lg),
 
-            Text(l10n.type, style: AppTextStyles.label),
-            const SizedBox(height: AppSpacing.xs),
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: _types.map((t) {
-                final active = t == _type;
-                final color = _typeColor(t);
-                return GestureDetector(
-                  onTap: () => _onTypeTap(t),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: AppSpacing.xs + 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: active
-                          ? color.withAlpha(20)
-                          : AppColors.surfaceHigh,
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        color: active ? color : AppColors.cardBorder,
-                        width: active ? 1.5 : 1,
-                      ),
-                    ),
-                    child: Text(
-                      _typeLabel(t, l10n).toUpperCase(),
-                      style: AppTextStyles.caption.copyWith(
-                        color: active ? color : AppColors.textSecondary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: AppSpacing.lg),
+            // Type indicator for locked types
+            if (_isLockedType) ...[
+              _TypeBadge(type: widget.existing!.type),
+              const SizedBox(height: AppSpacing.lg),
+            ],
 
-            if (_type == TransactionType.expense) ...[
-              Text('CATEGORY', style: AppTextStyles.label),
-              const SizedBox(height: AppSpacing.xs),
-              Wrap(
-                spacing: AppSpacing.xs,
-                runSpacing: AppSpacing.xs,
-                children: ExpenseCategory.groups.map((group) {
-                  final active = _categoryGroup == group;
-                  return GestureDetector(
-                    onTap: () => _onGroupTap(group),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.xs + 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: active
-                            ? AppColors.blue.withAlpha(20)
-                            : AppColors.surfaceHigh,
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(
-                          color: active ? AppColors.blue : AppColors.cardBorder,
-                          width: active ? 1.5 : 1,
-                        ),
-                      ),
-                      child: Text(
-                        group,
-                        style: AppTextStyles.caption.copyWith(
-                          color: active
-                              ? AppColors.blue
-                              : AppColors.textSecondary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
+            // IN / OUT toggle
+            if (!_isLockedType) ...[
+              _InOutToggle(
+                isInflow: _isInflow,
+                isOpeningBalance: _isOpeningBalance,
+                onChanged: (v) => setState(() {
+                  _isInflow = v;
+                  if (v) _linkToLoan = false;
+                }),
               ),
-              if (_categoryGroup != null &&
-                  ExpenseCategory.groupHasSubcategories(_categoryGroup!)) ...[
-                const SizedBox(height: AppSpacing.xs),
-                Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: ExpenseCategory.subcategoriesFor(_categoryGroup!)
-                      .map((cat) {
-                        final active = _category == cat;
-                        return GestureDetector(
-                          onTap: () => setState(() => _category = cat),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.md,
-                              vertical: AppSpacing.xs + 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: active
-                                  ? AppColors.red.withAlpha(20)
-                                  : AppColors.surfaceHigh,
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(
-                                color: active
-                                    ? AppColors.red
-                                    : AppColors.cardBorder,
-                                width: active ? 1.5 : 1,
-                              ),
-                            ),
-                            child: Text(
-                              cat.label,
-                              style: AppTextStyles.caption.copyWith(
-                                color: active
-                                    ? AppColors.red
-                                    : AppColors.textSecondary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        );
-                      })
-                      .toList(),
-                ),
-              ],
               const SizedBox(height: AppSpacing.lg),
             ],
 
-            if (_type == TransactionType.repayment) ...[
-              Text('LOAN', style: AppTextStyles.label),
-              const SizedBox(height: AppSpacing.xs),
-              if (widget.loans.isEmpty)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceHigh,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.cardBorder),
-                  ),
-                  child: Text(
-                    'Add a loan before recording a repayment.',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                )
-              else
-                Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: widget.loans.map((loan) {
-                    final active = _selectedLoanId == loan.id;
-                    return GestureDetector(
-                      onTap: () => setState(() => _selectedLoanId = loan.id),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: AppSpacing.xs + 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: active
-                              ? AppColors.gold.withAlpha(20)
-                              : AppColors.surfaceHigh,
-                          borderRadius: BorderRadius.circular(50),
-                          border: Border.all(
-                            color: active
-                                ? AppColors.gold
-                                : AppColors.cardBorder,
-                            width: active ? 1.5 : 1,
-                          ),
-                        ),
-                        child: Text(
-                          loan.name.toUpperCase(),
-                          style: AppTextStyles.caption.copyWith(
-                            color: active
-                                ? AppColors.gold
-                                : AppColors.textSecondary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              const SizedBox(height: AppSpacing.lg),
-            ],
-
+            // Amount
             NeoInput(
               label: l10n.amount,
               controller: _amountCtrl,
-              keyboardType: TextInputType.number,
+              focusNode: _amountFocus,
+              inputType: NeoInputType.numeric,
               hint: '50,000',
             ),
             const SizedBox(height: AppSpacing.md),
 
-            Text(l10n.date, style: AppTextStyles.label),
-            const SizedBox(height: AppSpacing.xs),
-            GestureDetector(
-              onTap: _pickDate,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm + 2,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceHigh,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.cardBorder),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(dateStr, style: AppTextStyles.body),
-                    const Icon(
-                      Icons.calendar_today_rounded,
-                      color: AppColors.textSecondary,
-                      size: 16,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-
+            // Note
             NeoInput(
               label: l10n.noteOptional,
               controller: _noteCtrl,
-              hint: 'groceries, rent...',
+              inputType: NeoInputType.note,
+              hint: 'rent, groceries...',
             ),
+            const SizedBox(height: AppSpacing.md),
+
+            // Loan repayment link (progressive disclosure)
+            if (showLoanLink) ...[
+              _LoanLinkRow(
+                expanded: _linkToLoan,
+                loans: widget.loans,
+                selectedLoanId: _selectedLoanId,
+                onToggle: () => setState(() {
+                  _linkToLoan = !_linkToLoan;
+                  if (_linkToLoan && _selectedLoanId == null) {
+                    _selectedLoanId = _defaultLoanId();
+                  }
+                }),
+                onLoanSelected: (id) => setState(() => _selectedLoanId = id),
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
+
+            // Date (secondary, tappable)
+            _DateChip(dateStr: dateStr, onTap: _pickDate),
             const SizedBox(height: AppSpacing.lg),
 
-            Row(
-              children: [
-                Expanded(
-                  child: NeoButton(
-                    label: l10n.confirm,
-                    variant: NeoButtonVariant.primary,
-                    fullWidth: true,
-                    onPressed: _submit,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: NeoButton(
-                    label: l10n.abort,
-                    variant: NeoButtonVariant.ghost,
-                    fullWidth: true,
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ),
-              ],
+            // Submit
+            NeoButton(
+              label: l10n.confirm,
+              variant: NeoButtonVariant.primary,
+              fullWidth: true,
+              onPressed: _submit,
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ── IN / OUT toggle ──────────────────────────────────────────────────────────
+
+class _InOutToggle extends StatelessWidget {
+  final bool isInflow;
+  final bool isOpeningBalance;
+  final ValueChanged<bool> onChanged;
+
+  const _InOutToggle({
+    required this.isInflow,
+    required this.isOpeningBalance,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (isOpeningBalance) {
+      return _TypeBadge.opening();
+    }
+    return Row(
+      children: [
+        Expanded(
+          child: _ToggleTile(
+            label: 'IN',
+            icon: Icons.arrow_downward_rounded,
+            color: SC.txIncome,
+            active: isInflow,
+            onTap: () => onChanged(true),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: _ToggleTile(
+            label: 'OUT',
+            icon: Icons.arrow_upward_rounded,
+            color: SC.txExpense,
+            active: !isInflow,
+            onTap: () => onChanged(false),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ToggleTile extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final bool active;
+  final VoidCallback onTap;
+
+  const _ToggleTile({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.active,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md + 4),
+        decoration: BoxDecoration(
+          color: active ? color.withAlpha(25) : AppColors.surfaceHigh,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: active ? color : AppColors.cardBorder,
+            width: active ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: active ? color : AppColors.textDim,
+              size: 16,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: AppTextStyles.body.copyWith(
+                color: active ? color : AppColors.textSecondary,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Type badge (locked / opening balance) ────────────────────────────────────
+
+class _TypeBadge extends StatelessWidget {
+  final TransactionType? type;
+
+  const _TypeBadge({this.type});
+
+  const _TypeBadge.opening() : type = TransactionType.openingBalance;
+
+  Color get _color => switch (type) {
+    TransactionType.loan => SC.txLoan,
+    TransactionType.openingBalance => SC.txOpeningBalance,
+    _ => SC.chrome,
+  };
+
+  String get _label => switch (type) {
+    TransactionType.loan => 'LOAN',
+    TransactionType.openingBalance => 'OPENING BALANCE',
+    _ => type?.label ?? '',
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: _color.withAlpha(20),
+        borderRadius: BorderRadius.circular(50),
+        border: Border.all(color: _color.withAlpha(60)),
+      ),
+      child: Text(
+        _label,
+        style: AppTextStyles.caption.copyWith(color: _color),
+      ),
+    );
+  }
+}
+
+// ── Loan repayment link ──────────────────────────────────────────────────────
+
+class _LoanLinkRow extends StatelessWidget {
+  final bool expanded;
+  final List<Loan> loans;
+  final String? selectedLoanId;
+  final VoidCallback onToggle;
+  final ValueChanged<String> onLoanSelected;
+
+  const _LoanLinkRow({
+    required this.expanded,
+    required this.loans,
+    required this.selectedLoanId,
+    required this.onToggle,
+    required this.onLoanSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: onToggle,
+          behavior: HitTestBehavior.opaque,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.link_rounded,
+                  size: 14,
+                  color: expanded ? AppColors.gold : AppColors.textDim,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  'LOAN REPAYMENT',
+                  style: AppTextStyles.label.copyWith(
+                    color: expanded ? AppColors.gold : AppColors.textDim,
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  expanded ? Icons.expand_less : Icons.expand_more,
+                  color: AppColors.textDim,
+                  size: 16,
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (expanded) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: loans.map((loan) {
+              final active = selectedLoanId == loan.id;
+              return GestureDetector(
+                onTap: () => onLoanSelected(loan.id),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.xs + 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: active
+                        ? AppColors.gold.withAlpha(20)
+                        : AppColors.surfaceHigh,
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: active ? AppColors.gold : AppColors.cardBorder,
+                      width: active ? 1.5 : 1,
+                    ),
+                  ),
+                  child: Text(
+                    loan.name.toUpperCase(),
+                    style: AppTextStyles.caption.copyWith(
+                      color: active ? AppColors.gold : AppColors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+// ── Date chip ────────────────────────────────────────────────────────────────
+
+class _DateChip extends StatelessWidget {
+  final String dateStr;
+  final VoidCallback onTap;
+
+  const _DateChip({required this.dateStr, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.calendar_today_rounded,
+            size: 12,
+            color: AppColors.textDim,
+          ),
+          const SizedBox(width: 6),
+          Text(dateStr, style: AppTextStyles.caption),
+          const SizedBox(width: 4),
+          const Icon(
+            Icons.edit_rounded,
+            size: 10,
+            color: AppColors.textDim,
+          ),
+        ],
       ),
     );
   }

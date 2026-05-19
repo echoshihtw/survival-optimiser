@@ -10,8 +10,9 @@ import 'widgets/transaction_form.dart';
 import 'widgets/loan_wizard.dart';
 import '../subscriptions/subscription_form.dart';
 import '../paywall/paywall_screen.dart';
+import '../../shared/speed_dial_fab.dart';
 
-class TransactionsScreen extends ConsumerWidget {
+class TransactionsScreen extends ConsumerStatefulWidget {
   final bool openAddOnLoad;
   final String? firstTransactionType;
   const TransactionsScreen({
@@ -21,200 +22,163 @@ class TransactionsScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TransactionsScreen> createState() => _TransactionsScreenState();
+}
+
+class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
+  final _fabKey = GlobalKey<SpeedDialFabState>();
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = context.l10n;
     final asyncTxs = ref.watch(transactionsProvider);
+    final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.sm,
-              ),
-              child: _TransactionsHeader(
-                title: l10n.transactionLog,
-                subtitle: l10n.historyEntries,
-                addLabel: l10n.addEntry,
-                onAdd: () => _showAddMenu(context, ref),
-              ),
-            ),
-            const Divider(color: AppColors.cardBorder, height: 1),
-
-            Expanded(
-              child: asyncTxs.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(
-                    color: AppColors.green,
-                    strokeWidth: 1.5,
-                  ),
-                ),
-                error: (e, _) => Center(
-                  child: Text(
-                    'ERROR: $e',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.red,
+      floatingActionButton: SpeedDialFab(
+        key: _fabKey,
+        onEntry: () => _showForm(context, ref, null),
+        onLoan: () => _showLoanWizard(context, ref),
+        onSubscription: () => _showSubscriptionForm(context, ref),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      body: GestureDetector(
+        onTap: () => _fabKey.currentState?.close(),
+        behavior: HitTestBehavior.translucent,
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: asyncTxs.when(
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.green,
+                      strokeWidth: 1.5,
                     ),
                   ),
-                ),
-                data: (txs) {
-                  if (txs.isEmpty) {
-                    return Center(
-                      child: GestureDetector(
-                        onTap: () => _showFormWithType(
-                          context,
-                          ref,
-                          TransactionType.openingBalance,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.receipt_long_outlined,
-                              color: AppColors.textDim,
-                              size: 40,
-                            ),
-                            const SizedBox(height: AppSpacing.sm),
-                            Text(
-                              l10n.noEntries,
-                              textAlign: TextAlign.center,
-                              style: AppTextStyles.bodySmall,
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.lg,
-                                vertical: AppSpacing.sm,
+                  error: (e, _) => Center(
+                    child: Text(
+                      'ERROR: $e',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.red,
+                      ),
+                    ),
+                  ),
+                  data: (txs) {
+                    if (txs.isEmpty) {
+                      return Center(
+                        child: GestureDetector(
+                          onTap: () => _showFormWithType(
+                            context,
+                            ref,
+                            TransactionType.openingBalance,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.receipt_long_outlined,
+                                color: AppColors.textDim,
+                                size: 40,
                               ),
-                              decoration: BoxDecoration(
-                                color: AppColors.neonGreen,
-                                borderRadius: BorderRadius.circular(50),
+                              const SizedBox(height: AppSpacing.sm),
+                              Text(
+                                l10n.noEntries,
+                                textAlign: TextAlign.center,
+                                style: AppTextStyles.bodySmall,
                               ),
-                              child: Text(
-                                '+ ADD OPENING BALANCE',
-                                style: AppTextStyles.caption.copyWith(
-                                  color: AppColors.background,
-                                  fontWeight: FontWeight.w700,
+                              const SizedBox(height: AppSpacing.md),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.lg,
+                                  vertical: AppSpacing.sm,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.neonGreen,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Text(
+                                  '+ ADD OPENING BALANCE',
+                                  style: AppTextStyles.caption.copyWith(
+                                    color: AppColors.background,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-                  final sorted = [...txs]
-                    ..sort((a, b) => b.date.compareTo(a.date));
-                  return ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sm,
-                    ),
-                    itemCount: sorted.length,
-                    itemBuilder: (_, i) => Dismissible(
-                      key: Key(sorted[i].id),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: AppSpacing.lg),
-                        decoration: BoxDecoration(
-                          color: AppColors.hotPink.withAlpha(30),
-                          borderRadius: BorderRadius.circular(
-                            AppSpacing.cardRadius,
+                            ],
                           ),
                         ),
-                        child: const Icon(
-                          Icons.delete_rounded,
-                          color: AppColors.hotPink,
-                          size: 22,
-                        ),
-                      ),
-                      confirmDismiss: (_) async {
-                        _confirmDelete(context, ref, sorted[i]);
-                        return false; // let _confirmDelete handle deletion
+                      );
+                    }
+
+                    final sorted = [...txs]
+                      ..sort((a, b) => b.date.compareTo(a.date));
+
+                    final grouped = <String, List<Transaction>>{};
+                    for (final tx in sorted) {
+                      grouped
+                          .putIfAbsent(_monthKey(tx.date), () => [])
+                          .add(tx);
+                    }
+                    final monthKeys = grouped.keys.toList()
+                      ..sort((a, b) => b.compareTo(a));
+
+                    final items = <_ListItem>[];
+                    for (final key in monthKeys) {
+                      items.add(_MonthItem(key, grouped[key]!));
+                      for (final tx in grouped[key]!) {
+                        items.add(_TxItem(tx));
+                      }
+                    }
+
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(bottom: 80),
+                      itemCount: items.length,
+                      itemBuilder: (_, i) {
+                        final item = items[i];
+                        if (item is _MonthItem) {
+                          return _MonthSectionHeader(
+                            monthKey: item.key,
+                            transactions: item.txs,
+                            symbol: symbol,
+                          );
+                        }
+                        final tx = (item as _TxItem).tx;
+                        return Dismissible(
+                          key: Key(tx.id),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.only(
+                              right: AppSpacing.lg,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.hotPink.withAlpha(30),
+                              borderRadius: BorderRadius.circular(
+                                AppSpacing.cardRadius,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.delete_rounded,
+                              color: AppColors.hotPink,
+                              size: 22,
+                            ),
+                          ),
+                          confirmDismiss: (_) async {
+                            _confirmDelete(context, ref, tx);
+                            return false;
+                          },
+                          child: TransactionRow(
+                            transaction: tx,
+                            onEdit: () => _showForm(context, ref, tx),
+                            onDelete: () => _confirmDelete(context, ref, tx),
+                          ),
+                        );
                       },
-                      child: TransactionRow(
-                        transaction: sorted[i],
-                        onEdit: () => _showForm(context, ref, sorted[i]),
-                        onDelete: () => _confirmDelete(context, ref, sorted[i]),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showAddMenu(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-
-    void openAfterClose(VoidCallback open) {
-      Navigator.of(context).pop();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (context.mounted) open();
-      });
-    }
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppSpacing.cardRadius),
-        ),
-      ),
-      builder: (_) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.cardBorder,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+                    );
+                  },
                 ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Text('ADD TO LOG', style: AppTextStyles.title),
-              const SizedBox(height: AppSpacing.md),
-              NeoButton(
-                label: 'ENTRY',
-                variant: NeoButtonVariant.primary,
-                fullWidth: true,
-                onPressed: () =>
-                    openAfterClose(() => _showForm(context, ref, null)),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              NeoButton(
-                label: l10n.typeLoan,
-                variant: NeoButtonVariant.secondary,
-                color: AppColors.gold,
-                fullWidth: true,
-                onPressed: () =>
-                    openAfterClose(() => _showLoanWizard(context, ref)),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              NeoButton(
-                label: l10n.subscriptions,
-                variant: NeoButtonVariant.secondary,
-                color: AppColors.purple,
-                fullWidth: true,
-                onPressed: () =>
-                    openAfterClose(() => _showSubscriptionForm(context, ref)),
               ),
             ],
           ),
@@ -223,8 +187,10 @@ class TransactionsScreen extends ConsumerWidget {
     );
   }
 
+  String _monthKey(DateTime date) =>
+      '${date.year}-${date.month.toString().padLeft(2, '0')}';
+
   Future<void> _showLoanWizard(BuildContext context, WidgetRef ref) async {
-    // Free users can only have 1 loan
     final isPro =
         FeatureFlags.devProEntitlement ||
         (ref.read(entitlementProvider).value?.isPro ?? false);
@@ -479,9 +445,13 @@ class TransactionsScreen extends ConsumerWidget {
           TextButton(
             onPressed: () async {
               Navigator.of(ctx).pop();
-              await ref.read(deleteTransactionUseCaseProvider).execute(tx.id);
+              await ref
+                  .read(deleteTransactionUseCaseProvider)
+                  .execute(tx.id);
               if (tx.type == TransactionType.loan && tx.loanId != null) {
-                await ref.read(deleteLoanUseCaseProvider).execute(tx.loanId!);
+                await ref
+                    .read(deleteLoanUseCaseProvider)
+                    .execute(tx.loanId!);
               }
             },
             child: Text(
@@ -495,114 +465,70 @@ class TransactionsScreen extends ConsumerWidget {
   }
 }
 
-class _TransactionsHeader extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String addLabel;
-  final VoidCallback onAdd;
+// ── List item model ──────────────────────────────────────────────────────────
 
-  const _TransactionsHeader({
-    required this.title,
-    required this.subtitle,
-    required this.addLabel,
-    required this.onAdd,
+sealed class _ListItem {
+  const _ListItem();
+}
+
+class _MonthItem extends _ListItem {
+  final String key;
+  final List<Transaction> txs;
+  const _MonthItem(this.key, this.txs);
+}
+
+class _TxItem extends _ListItem {
+  final Transaction tx;
+  const _TxItem(this.tx);
+}
+
+// ── Month section header ─────────────────────────────────────────────────────
+
+class _MonthSectionHeader extends StatelessWidget {
+  final String monthKey; // 'YYYY-MM'
+  final List<Transaction> transactions;
+  final String symbol;
+
+  const _MonthSectionHeader({
+    required this.monthKey,
+    required this.transactions,
+    required this.symbol,
   });
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final compact = constraints.maxWidth < 380;
-        final titleBlock = Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: AppTextStyles.title,
-              maxLines: compact ? 2 : 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              subtitle,
-              style: AppTextStyles.caption,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        );
+    final parts = monthKey.split('-');
+    final dt = DateTime(int.parse(parts[0]), int.parse(parts[1]));
+    final label = DateFormat('MMM yyyy').format(dt).toUpperCase();
 
-        if (compact) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              titleBlock,
-              const SizedBox(height: AppSpacing.sm),
-              Align(
-                alignment: Alignment.centerRight,
-                child: _HeaderAddButton(label: addLabel, onTap: onAdd),
-              ),
-            ],
-          );
-        }
+    final net = transactions.fold(0.0, (sum, t) => sum + t.signedAmount);
+    final isPositive = net >= 0;
+    final color = isPositive ? SC.txIncome : SC.txExpense;
+    final sign = isPositive ? '+' : '-';
+    final amount = NumberFormat('#,##0').format(net.abs());
 
-        return Row(
-          children: [
-            Expanded(child: titleBlock),
-            const SizedBox(width: AppSpacing.md),
-            _HeaderAddButton(label: addLabel, onTap: onAdd),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _HeaderAddButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-
-  const _HeaderAddButton({required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 190),
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm + 2,
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.neonGreen,
-            borderRadius: BorderRadius.circular(50),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.add_rounded,
-                color: AppColors.background,
-                size: 18,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Flexible(
-                child: Text(
-                  label.replaceFirst('+', '').trim(),
-                  style: AppTextStyles.button.copyWith(
-                    color: AppColors.background,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.sm + 2,
+      ),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(
+          bottom: BorderSide(color: AppColors.cardBorder, width: 1),
         ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: AppTextStyles.sectionTitle),
+          Text(
+            '$sign$symbol $amount',
+            style: AppTextStyles.metricSmall.copyWith(color: color),
+          ),
+        ],
       ),
     );
   }
 }
+
