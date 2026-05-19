@@ -40,7 +40,7 @@ List<MonthlyState> aggregateMonths(List<Transaction> transactions) {
     final monthTxs = byMonth[key]!;
     final netFlow = monthTxs.fold(0.0, (sum, t) => sum + t.signedAmount);
     final grossOutflow = monthTxs
-        .where((t) => !t.type.isInflow && t.type != TransactionType.investment)
+        .where((t) => !t.type.isInflow)
         .fold(0.0, (sum, t) => sum + t.amount.value);
     balance += netFlow;
     result.add(

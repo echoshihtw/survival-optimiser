@@ -2,7 +2,7 @@ enum TransactionType {
   expense,
   income,
   loan,
-  investment,
+  investment, // kept for backward-compatibility with stored data
   repayment,
   openingBalance;
 
