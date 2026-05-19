@@ -10,6 +10,7 @@ import 'package:application/application.dart';
 import 'package:data/data.dart';
 import 'firebase_options.dart';
 import 'firebase_analytics_service.dart';
+import 'revenuecat_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ void main() async {
   final txRepo = DriftTransactionRepository(db);
   final loanRepo = DriftLoanRepository(db);
   final subRepo = DriftSubscriptionRepository(db);
+  final rcService = await RevenueCatService.init();
 
   runApp(
     ProviderScope(
@@ -40,6 +42,7 @@ void main() async {
         transactionRepositoryProvider.overrideWithValue(txRepo),
         loanRepositoryProvider.overrideWithValue(loanRepo),
         subscriptionRepositoryProvider.overrideWithValue(subRepo),
+        purchaseServiceProvider.overrideWithValue(rcService),
       ],
       child: const SurvivalApp(),
     ),

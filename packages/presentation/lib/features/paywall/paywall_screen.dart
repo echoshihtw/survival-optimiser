@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_system/design_system.dart';
+import 'package:application/application.dart';
 
-class PaywallScreen extends ConsumerWidget {
+class PaywallScreen extends ConsumerStatefulWidget {
   final String trigger;
   const PaywallScreen({super.key, required this.trigger});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PaywallScreen> createState() => _PaywallScreenState();
+}
+
+class _PaywallScreenState extends ConsumerState<PaywallScreen> {
+  bool _loading = false;
+  String? _errorMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    final offeringAsync = ref.watch(proOfferingProvider);
+
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppSpacing.cardRadius)),
+          top: Radius.circular(AppSpacing.cardRadius),
+        ),
       ),
       padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
@@ -20,7 +32,8 @@ class PaywallScreen extends ConsumerWidget {
         children: [
           Center(
             child: Container(
-              width: 36, height: 4,
+              width: 36,
+              height: 4,
               decoration: BoxDecoration(
                 color: AppColors.cardBorder,
                 borderRadius: BorderRadius.circular(2),
@@ -30,57 +43,94 @@ class PaywallScreen extends ConsumerWidget {
           const SizedBox(height: AppSpacing.xl),
 
           Container(
-            width: 64, height: 64,
+            width: 64,
+            height: 64,
             decoration: BoxDecoration(
               color: AppColors.neonGreen.withAlpha(15),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                  color: AppColors.neonGreen.withAlpha(50)),
+              border: Border.all(color: AppColors.neonGreen.withAlpha(50)),
             ),
-            child: const Icon(Icons.rocket_launch_rounded,
-                color: AppColors.neonGreen, size: 28),
+            child: const Icon(
+              Icons.rocket_launch_rounded,
+              color: AppColors.neonGreen,
+              size: 28,
+            ),
           ),
           const SizedBox(height: AppSpacing.lg),
 
           Text(
-            _titleFor(trigger),
+            _titleFor(widget.trigger),
             style: AppTextStyles.title,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.md),
 
-
-
-          ..._proFeatures.map((f) => Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: Row(children: [
-              const Icon(Icons.check_circle_rounded,
-                  color: AppColors.neonGreen, size: 18),
-              const SizedBox(width: AppSpacing.sm),
-              Text(f, style: AppTextStyles.body),
-            ]),
-          )),
+          ..._proFeatures.map(
+            (f) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    color: AppColors.neonGreen,
+                    size: 18,
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Text(f, style: AppTextStyles.body),
+                ],
+              ),
+            ),
+          ),
 
           const SizedBox(height: AppSpacing.xl),
 
-          NeoButton(
-            label: 'START 7-DAY FREE TRIAL',
-            variant: NeoButtonVariant.primary,
-            fullWidth: true,
-            onPressed: () {
-              // TODO: wire RevenueCat
-              Navigator.of(context).pop();
+          if (_errorMessage != null) ...[
+            Text(
+              _errorMessage!,
+              style: AppTextStyles.caption.copyWith(color: AppColors.red),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+
+          offeringAsync.when(
+            loading: () => const _PriceButton(
+              label: 'UNLOCK RUNWAY PRO',
+              priceLabel: 'Loading price...',
+              loading: true,
+              onPressed: null,
+            ),
+            error: (_, __) => _PriceButton(
+              label: 'UNLOCK RUNWAY PRO',
+              priceLabel: 'Price unavailable',
+              loading: false,
+              onPressed: null,
+            ),
+            data: (offering) {
+              final pkg = _lifetimePackage(offering);
+              final priceLabel = pkg != null
+                  ? '${pkg.priceString} · One-time purchase'
+                  : 'One-time purchase · Unlock forever';
+              return _PriceButton(
+                label: 'UNLOCK RUNWAY PRO',
+                priceLabel: priceLabel,
+                loading: _loading,
+                onPressed: pkg != null && !_loading
+                    ? () => _purchase(pkg)
+                    : null,
+              );
             },
           ),
+
           const SizedBox(height: AppSpacing.sm),
 
-          Text(
-            'Then \$4.99/month · Cancel anytime',
-            style: AppTextStyles.caption,
-            textAlign: TextAlign.center,
+          NeoButton(
+            label: 'Restore purchase',
+            variant: NeoButtonVariant.ghost,
+            fullWidth: true,
+            onPressed: _loading ? null : _restore,
           ),
-          const SizedBox(height: AppSpacing.sm),
-
+          const SizedBox(height: AppSpacing.xs),
           NeoButton(
             label: 'Maybe later',
             variant: NeoButtonVariant.ghost,
@@ -93,12 +143,67 @@ class PaywallScreen extends ConsumerWidget {
     );
   }
 
+  ProPackage? _lifetimePackage(ProOffering? offering) {
+    if (offering == null) return null;
+    final lifetime = offering.packages
+        .where((p) => p.type == ProPackageType.lifetime)
+        .firstOrNull;
+    return lifetime ?? offering.packages.firstOrNull;
+  }
+
+  Future<void> _purchase(ProPackage pkg) async {
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
+    try {
+      final success = await ref
+          .read(purchaseNotifierProvider.notifier)
+          .purchase(pkg);
+      if (!mounted) return;
+      if (success) {
+        await ref.read(entitlementProvider.notifier).unlockPro();
+        if (mounted) Navigator.of(context).pop(true);
+      }
+    } on PurchaseException catch (e) {
+      if (!e.userCancelled) {
+        setState(() => _errorMessage = 'Purchase failed. Please try again.');
+      }
+    } catch (_) {
+      setState(() => _errorMessage = 'Something went wrong. Please try again.');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _restore() async {
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
+    try {
+      final success = await ref
+          .read(purchaseNotifierProvider.notifier)
+          .restore();
+      if (!mounted) return;
+      if (success) {
+        await ref.read(entitlementProvider.notifier).unlockPro();
+        if (mounted) Navigator.of(context).pop(true);
+      } else {
+        setState(() => _errorMessage = 'No previous purchase found.');
+      }
+    } catch (_) {
+      setState(() => _errorMessage = 'Restore failed. Please try again.');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   String _titleFor(String trigger) => switch (trigger) {
-    'daily_limit'   => 'You\'ve used your\n3 free entries today.',
     'subscriptions' => 'Subscriptions is\na Pro feature.',
-    'loan_limit'    => 'Multiple loans is\na Pro feature.',
-    'simulation'    => 'Unlimited simulations\nis a Pro feature.',
-    _               => 'Unlock Runway Pro.',
+    'loan_limit' => 'Multiple loans is\na Pro feature.',
+    'simulation' => 'Unlimited simulations\nis a Pro feature.',
+    _ => 'Unlock Runway Pro.',
   };
 
   static const _proFeatures = [
@@ -110,6 +215,40 @@ class PaywallScreen extends ConsumerWidget {
   ];
 }
 
+class _PriceButton extends StatelessWidget {
+  final String label;
+  final String priceLabel;
+  final bool loading;
+  final VoidCallback? onPressed;
+
+  const _PriceButton({
+    required this.label,
+    required this.priceLabel,
+    required this.loading,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        NeoButton(
+          label: loading ? '...' : label,
+          variant: NeoButtonVariant.primary,
+          fullWidth: true,
+          onPressed: onPressed,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          priceLabel,
+          style: AppTextStyles.caption,
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+}
+
 void showPaywall(BuildContext context, {required String trigger}) {
   showModalBottomSheet(
     context: context,
@@ -117,7 +256,8 @@ void showPaywall(BuildContext context, {required String trigger}) {
     backgroundColor: AppColors.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppSpacing.cardRadius)),
+        top: Radius.circular(AppSpacing.cardRadius),
+      ),
     ),
     builder: (_) => PaywallScreen(trigger: trigger),
   );

@@ -1,15 +1,29 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../feature_flags.dart';
+import 'purchase_provider.dart';
 
 const _kIsPro = 'is_pro';
 
 class EntitlementNotifier extends AsyncNotifier<EntitlementState> {
   @override
   Future<EntitlementState> build() async {
+    // Offline fallback — use locally cached value first
     final prefs = await SharedPreferences.getInstance();
-    final isPro = prefs.getBool(_kIsPro) ?? false;
-    return EntitlementState(isPro: _effectiveIsPro(isPro));
+    final cached = prefs.getBool(_kIsPro) ?? false;
+    if (_effectiveIsPro(cached)) {
+      return EntitlementState(isPro: true);
+    }
+
+    // Try to verify with RevenueCat if configured
+    try {
+      final service = ref.read(purchaseServiceProvider);
+      final serverPro = await service.checkProEntitlement();
+      if (serverPro) await prefs.setBool(_kIsPro, true);
+      return EntitlementState(isPro: _effectiveIsPro(serverPro));
+    } catch (_) {
+      return EntitlementState(isPro: _effectiveIsPro(cached));
+    }
   }
 
   Future<void> unlockPro() async {
