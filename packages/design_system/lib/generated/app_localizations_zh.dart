@@ -692,6 +692,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shareAsText => '以文字分享';
 
   @override
+  String get goalReached => '目标达成！';
+
+  @override
+  String monthsToGoal(int count) {
+    return '还差$count个月';
+  }
+
+  @override
   String get thisMonth => '本月';
 
   @override
@@ -1393,6 +1401,14 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get shareAsText => '以文字分享';
+
+  @override
+  String get goalReached => '目標達成！';
+
+  @override
+  String monthsToGoal(int count) {
+    return '還差$count個月';
+  }
 
   @override
   String get thisMonth => '本月';

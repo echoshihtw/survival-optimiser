@@ -692,6 +692,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String get shareAsText => 'テキストで共有';
 
   @override
+  String get goalReached => '目標達成！';
+
+  @override
+  String monthsToGoal(int count) {
+    return 'あと$countヶ月';
+  }
+
+  @override
   String get thisMonth => '今月';
 
   @override

@@ -700,6 +700,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareAsText => 'SHARE AS TEXT';
 
   @override
+  String get goalReached => 'Goal reached!';
+
+  @override
+  String monthsToGoal(int count) {
+    return '$count months to go';
+  }
+
+  @override
   String get thisMonth => 'THIS MONTH';
 
   @override

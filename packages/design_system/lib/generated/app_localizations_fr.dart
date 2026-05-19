@@ -703,6 +703,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get shareAsText => 'PARTAGER EN TEXTE';
 
   @override
+  String get goalReached => 'Objectif atteint !';
+
+  @override
+  String monthsToGoal(int count) {
+    return '$count mois restants';
+  }
+
+  @override
   String get thisMonth => 'CE MOIS';
 
   @override

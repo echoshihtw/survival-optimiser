@@ -1445,6 +1445,18 @@ abstract class AppLocalizations {
   /// **'SHARE AS TEXT'**
   String get shareAsText;
 
+  /// No description provided for @goalReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal reached!'**
+  String get goalReached;
+
+  /// No description provided for @monthsToGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} months to go'**
+  String monthsToGoal(int count);
+
   /// No description provided for @thisMonth.
   ///
   /// In en, this message translates to:

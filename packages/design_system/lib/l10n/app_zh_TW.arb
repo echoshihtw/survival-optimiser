@@ -229,6 +229,8 @@
   "preparing": "準備中...",
   "shareImage": "分享圖片",
   "shareAsText": "以文字分享",
+  "goalReached": "目標達成！",
+  "monthsToGoal": "還差{count}個月",
   "thisMonth": "本月",
   "cashIn": "收入",
   "cashOut": "支出",

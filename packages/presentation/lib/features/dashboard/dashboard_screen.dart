@@ -4,6 +4,7 @@ import 'package:design_system/design_system.dart';
 import 'package:application/application.dart';
 import 'package:domain/domain.dart';
 import 'widgets/this_month_card.dart';
+import 'widgets/goal_card.dart';
 import 'widgets/runway_card.dart';
 import 'widgets/getting_started_card.dart';
 import '../config/config_screen.dart';
@@ -60,6 +61,8 @@ class DashboardScreen extends ConsumerWidget {
                 children: [
                   const GettingStartedCard(),
                   RunwayCard(model: model),
+                  const SizedBox(height: AppSpacing.cardGap),
+                  GoalCard(model: model),
                   const SizedBox(height: AppSpacing.cardGap),
                   const ThisMonthCard(),
                   const SizedBox(height: AppSpacing.cardGap),

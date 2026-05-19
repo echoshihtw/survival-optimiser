@@ -229,6 +229,8 @@
   "preparing": "PRÉPARATION...",
   "shareImage": "PARTAGER L'IMAGE",
   "shareAsText": "PARTAGER EN TEXTE",
+  "goalReached": "Objectif atteint !",
+  "monthsToGoal": "{count} mois restants",
   "thisMonth": "CE MOIS",
   "cashIn": "ENTRÉE",
   "cashOut": "SORTIE",

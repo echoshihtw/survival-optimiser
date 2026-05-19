@@ -703,6 +703,14 @@ class AppLocalizationsIt extends AppLocalizations {
   String get shareAsText => 'CONDIVIDI TESTO';
 
   @override
+  String get goalReached => 'Obiettivo raggiunto!';
+
+  @override
+  String monthsToGoal(int count) {
+    return '$count mesi al traguardo';
+  }
+
+  @override
   String get thisMonth => 'QUESTO MESE';
 
   @override

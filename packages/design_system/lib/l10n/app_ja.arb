@@ -229,6 +229,8 @@
   "preparing": "準備中...",
   "shareImage": "画像を共有",
   "shareAsText": "テキストで共有",
+  "goalReached": "目標達成！",
+  "monthsToGoal": "あと{count}ヶ月",
   "thisMonth": "今月",
   "cashIn": "収入",
   "cashOut": "支出",

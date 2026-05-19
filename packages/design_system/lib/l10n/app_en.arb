@@ -271,6 +271,13 @@
   "preparing": "PREPARING...",
   "shareImage": "SHARE IMAGE",
   "shareAsText": "SHARE AS TEXT",
+  "goalReached": "Goal reached!",
+  "monthsToGoal": "{count} months to go",
+  "@monthsToGoal": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "thisMonth": "THIS MONTH",
   "cashIn": "IN",
   "cashOut": "OUT",
