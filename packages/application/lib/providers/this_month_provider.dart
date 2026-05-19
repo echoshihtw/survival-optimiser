@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:domain/domain.dart';
 import 'transaction_provider.dart';
+import 'subscription_provider.dart';
 
 class ThisMonthFlow {
   final double income;
@@ -21,12 +22,17 @@ final thisMonthFlowProvider = Provider<ThisMonthFlow>((ref) {
   final income = thisMonth
       .where((t) => t.type == TransactionType.income)
       .fold(0.0, (sum, t) => sum + t.amount.value);
-  final expenses = thisMonth
+  final txExpenses = thisMonth
       .where(
         (t) =>
             t.type == TransactionType.expense ||
             t.type == TransactionType.repayment,
       )
       .fold(0.0, (sum, t) => sum + t.amount.value);
-  return ThisMonthFlow(income: income, expenses: expenses);
+  final activeSubs =
+      (ref.watch(subscriptionsProvider).value ?? [])
+          .where((s) => s.isActive)
+          .toList();
+  final subCost = totalSubscriptionMonthlyCost(activeSubs);
+  return ThisMonthFlow(income: income, expenses: txExpenses + subCost);
 });
