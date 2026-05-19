@@ -122,8 +122,16 @@ class _GettingStartedCardState extends ConsumerState<GettingStartedCard> {
               AppSpacing.sm,
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Container(
+                  width: 3,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: SC.life,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -134,6 +142,7 @@ class _GettingStartedCardState extends ConsumerState<GettingStartedCard> {
                     ),
                   ],
                 ),
+                const Spacer(),
                 GestureDetector(
                   onTap: () async {
                     setState(() => _dismissed = true);
@@ -168,39 +177,6 @@ class _GettingStartedCardState extends ConsumerState<GettingStartedCard> {
 
           ...steps.map((s) => _StepRow(step: s)),
           const SizedBox(height: AppSpacing.sm),
-
-          // Tips
-          Container(
-            margin: const EdgeInsets.fromLTRB(
-              AppSpacing.cardPadding,
-              0,
-              AppSpacing.cardPadding,
-              AppSpacing.sm,
-            ),
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceHigh,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.lightbulb_outline_rounded,
-                  color: AppColors.gold,
-                  size: 14,
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                Expanded(
-                  child: Text(
-                    'Tap to edit · Long press or swipe left to delete',
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -296,7 +272,7 @@ class _StepRow extends StatelessWidget {
                             borderRadius: BorderRadius.circular(3),
                           ),
                           child: Text(
-                            'BONUS',
+                            'OPTIONAL',
                             style: AppTextStyles.caption.copyWith(
                               color: AppColors.turkishBlue,
                               fontSize: 9,

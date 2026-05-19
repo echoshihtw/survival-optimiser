@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_system/design_system.dart';
 import 'package:domain/domain.dart';
 import 'package:application/application.dart';
-import '../../share/share_screen.dart';
 import 'package:intl/intl.dart';
 
 class RunwayCard extends ConsumerWidget {
@@ -54,11 +53,6 @@ class RunwayCard extends ConsumerWidget {
       return m == 1 ? l10n.monthSingular : l10n.monthPlural;
     }
 
-    String fmtRunwayDays(int days) {
-      if (days >= 9999) return l10n.noProjectedRunOut;
-      return l10n.aboutDaysOfFreedom(days);
-    }
-
     String fmtSustainability() {
       if (!model.hasSustainableProjection) return '';
       if (model.isSustainableIndefinitely) {
@@ -72,34 +66,11 @@ class RunwayCard extends ConsumerWidget {
     String fmtDate(DateTime? d) =>
         d == null ? '—' : DateFormat('MMM yyyy').format(d).toUpperCase();
 
-    final shareButton = GestureDetector(
-      onTap: () => Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (_) => const ShareScreen())),
-      child: Container(
-        width: 32,
-        height: 32,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: AppColors.neonGreen.withAlpha(12),
-          borderRadius: BorderRadius.circular(50),
-          border: Border.all(color: AppColors.neonGreen.withAlpha(40)),
-        ),
-        child: Icon(
-          Icons.ios_share_rounded,
-          color: AppColors.neonGreen,
-          size: 15,
-        ),
-      ),
-    );
-
     final glassEnabled = ref.watch(displayProvider).value ?? false;
     return LiquidGlassContainer(
       glassEnabled: glassEnabled,
       accentColor: color,
-      child: Stack(
-        children: [
-          Column(
+      child: Column(
             children: [
               const SizedBox(height: AppSpacing.sm),
               Row(
@@ -124,11 +95,6 @@ class RunwayCard extends ConsumerWidget {
                 ],
               ),
               Text(l10n.ifIncomePausedToday, style: AppTextStyles.bodySmall),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                fmtRunwayDays(model.runwayDays),
-                style: AppTextStyles.caption,
-              ),
               const SizedBox(height: AppSpacing.md),
               PixelBadge(label: statusLabel, color: color),
               if (model.hasSustainableProjection) ...[
@@ -200,20 +166,10 @@ class RunwayCard extends ConsumerWidget {
                       AppColors.textSecondary,
                     ),
                   ),
-                  Expanded(
-                    child: _stat(
-                      l10n.totalPerMonth,
-                      '-$symbol ${nf.format(model.totalMonthlyOutflow)}',
-                      AppColors.red,
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(height: AppSpacing.xs),
             ],
-          ),
-          Positioned(top: 0, right: 0, child: shareButton),
-        ],
       ),
     );
   }
@@ -226,7 +182,7 @@ class RunwayCard extends ConsumerWidget {
         const SizedBox(height: AppSpacing.xxs),
         Text(
           value,
-          style: AppTextStyles.caption.copyWith(color: color, fontSize: 12),
+          style: AppTextStyles.metricSmall.copyWith(color: color),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
