@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_system/design_system.dart';
 import 'package:application/application.dart';
-import 'widgets/metrics_panel.dart';
-import 'widgets/investable_bar.dart';
-import 'widgets/cash_chart.dart';
+import 'package:domain/domain.dart';
+import 'widgets/this_month_card.dart';
 import 'widgets/runway_card.dart';
 import 'widgets/getting_started_card.dart';
 import '../config/config_screen.dart';
@@ -45,7 +44,6 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final model = ref.watch(modelProvider);
-    final months = ref.watch(projectedMonthsProvider);
 
     return GradientScaffold(
       body: SingleChildScrollView(
@@ -63,25 +61,11 @@ class DashboardScreen extends ConsumerWidget {
                   const GettingStartedCard(),
                   RunwayCard(model: model),
                   const SizedBox(height: AppSpacing.cardGap),
-                  MetricsPanel(model: model),
+                  const ThisMonthCard(),
                   const SizedBox(height: AppSpacing.cardGap),
                   const LiabilitiesPanel(),
                   const SizedBox(height: AppSpacing.cardGap),
                   const SubscriptionsPanel(),
-                  const SizedBox(height: AppSpacing.cardGap),
-                  if (FeatureFlags.investments) const InvestableBar(),
-                  if (FeatureFlags.investments)
-                    const SizedBox(height: AppSpacing.cardGap),
-                  NeoExpandableCard(
-                    title: context.l10n.runwayProjection,
-                    accentColor: SC.accentNeutral,
-                    initiallyExpanded: false,
-                    summary: Text(
-                      context.l10n.monthsProjected(months.length),
-                      style: AppTextStyles.bodySmall,
-                    ),
-                    details: CashChart(months: months),
-                  ),
                 ],
               ),
             ),
@@ -98,32 +82,6 @@ class _DashboardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final weekday = [
-      'SUN',
-      'MON',
-      'TUE',
-      'WED',
-      'THU',
-      'FRI',
-      'SAT',
-    ][now.weekday % 7];
-    final months = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MAY',
-      'JUN',
-      'JUL',
-      'AUG',
-      'SEP',
-      'OCT',
-      'NOV',
-      'DEC',
-    ];
-    final dateStr = '${now.day} ${months[now.month - 1]} ${now.year}, $weekday';
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
@@ -136,54 +94,13 @@ class _DashboardHeader extends StatelessWidget {
         children: [
           const _RunwayBadge(),
           const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.l10n.appTitle,
-                  style: AppTextStyles.body.copyWith(
-                    color: AppColors.neonGreen,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0,
-                    fontSize: 14,
-                  ),
-                ),
-                Text(
-                  dateStr,
-                  style: AppTextStyles.caption.copyWith(letterSpacing: 0.5),
-                ),
-              ],
-            ),
-          ),
+          const Spacer(),
           GestureDetector(
             onTap: onConfig,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.xs + 2,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceHigh,
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: AppColors.cardBorder),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.tune_rounded,
-                    color: AppColors.textSecondary,
-                    size: 13,
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Text(
-                    context.l10n.config,
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
+            child: const Icon(
+              Icons.tune_rounded,
+              color: AppColors.textSecondary,
+              size: 22,
             ),
           ),
         ],
@@ -192,38 +109,40 @@ class _DashboardHeader extends StatelessWidget {
   }
 }
 
-class _RunwayBadge extends StatefulWidget {
+class _RunwayBadge extends ConsumerStatefulWidget {
   const _RunwayBadge();
 
   @override
-  State<_RunwayBadge> createState() => _RunwayBadgeState();
+  ConsumerState<_RunwayBadge> createState() => _RunwayBadgeState();
 }
 
-class _RunwayBadgeState extends State<_RunwayBadge>
+class _RunwayBadgeState extends ConsumerState<_RunwayBadge>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<double> _lift;
-  late final Animation<double> _turn;
   late final Animation<double> _glow;
+
+  static Duration _durationFor(SurvivalStatus s) => switch (s) {
+    SurvivalStatus.stable   => const Duration(milliseconds: 2800),
+    SurvivalStatus.caution  => const Duration(milliseconds: 1400),
+    SurvivalStatus.critical => const Duration(milliseconds: 650),
+  };
+
+  static Color _colorFor(SurvivalStatus s) => switch (s) {
+    SurvivalStatus.stable   => AppColors.neonGreen,
+    SurvivalStatus.caution  => AppColors.gold,
+    SurvivalStatus.critical => AppColors.red,
+  };
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2200),
+      duration: const Duration(milliseconds: 2800),
     )..repeat(reverse: true);
-    _lift = Tween<double>(
-      begin: 0,
-      end: -2,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-    _turn = Tween<double>(begin: -0.025, end: 0.025).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
+    _glow = Tween<double>(begin: 0.10, end: 0.45).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
-    _glow = Tween<double>(
-      begin: 0.12,
-      end: 0.38,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -234,43 +153,39 @@ class _RunwayBadgeState extends State<_RunwayBadge>
 
   @override
   Widget build(BuildContext context) {
+    final status = ref.watch(modelProvider).survivalStatus;
+    final targetDuration = _durationFor(status);
+    if (_controller.duration != targetDuration) {
+      _controller.duration = targetDuration;
+    }
+    final color = _colorFor(status);
     final disableAnimations = MediaQuery.disableAnimationsOf(context);
-    final child = _BadgeFrame(glow: disableAnimations ? 0.18 : null);
-
-    if (disableAnimations) return child;
-
+    if (disableAnimations) return _BadgeFrame(glow: 0.18, color: color);
     return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, _) {
-        return Transform.translate(
-          offset: Offset(0, _lift.value),
-          child: Transform.rotate(
-            angle: _turn.value,
-            child: _BadgeFrame(glow: _glow.value),
-          ),
-        );
-      },
+      animation: _glow,
+      builder: (_, __) => _BadgeFrame(glow: _glow.value, color: color),
     );
   }
 }
 
 class _BadgeFrame extends StatelessWidget {
-  final double? glow;
-  const _BadgeFrame({this.glow});
+  final double glow;
+  final Color color;
+  const _BadgeFrame({required this.glow, required this.color});
 
   @override
   Widget build(BuildContext context) {
-    final glowAlpha = ((glow ?? 0.18) * 255).round();
+    final glowAlpha = (glow * 255).round();
     return Container(
       width: 36,
       height: 36,
       decoration: BoxDecoration(
-        color: AppColors.neonGreen.withAlpha(15),
+        color: color.withAlpha(15),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.neonGreen.withAlpha(80), width: 1),
+        border: Border.all(color: color.withAlpha(80), width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppColors.neonGreen.withAlpha(glowAlpha),
+            color: color.withAlpha(glowAlpha),
             blurRadius: 14,
             spreadRadius: 1,
           ),

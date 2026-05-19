@@ -24,7 +24,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get statusLabel => 'ESTADO';
 
   @override
-  String get pressureLabel => 'PRESIÓN';
+  String get pressureLabel => 'Costos mensuales';
 
   @override
   String get metrics => 'MÉTRICAS';
@@ -43,9 +43,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get runOut => 'AGOTAMIENTO';
-
-  @override
-  String get investable => 'INVERTIBLE';
 
   @override
   String get cashTimeline => 'CRONOLOGÍA';
@@ -133,16 +130,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get simRunOut => 'AGOTAMIENTO SIM';
 
   @override
-  String get simInvestable => 'INVERTIBLE SIM';
-
-  @override
   String get deltaVsActual => 'DELTA vs REAL';
 
   @override
   String get deltaRunway => 'DELTA AUTONOMÍA';
-
-  @override
-  String get deltaInvestable => 'DELTA INVERTIBLE';
 
   @override
   String get resetSim => 'REINICIAR SIM';
@@ -175,7 +166,43 @@ class AppLocalizationsEs extends AppLocalizations {
   String get currency => 'MONEDA';
 
   @override
-  String get addNoData => '> AGREGA TRANSACCIONES PARA VER CRONOLOGÍA';
+  String get currencySymbolOnly =>
+      'Cambia solo el símbolo de visualización — tus importes no se convierten.';
+
+  @override
+  String get daysShort => 'd';
+
+  @override
+  String get gettingStarted => 'PRIMEROS PASOS';
+
+  @override
+  String stepsComplete(int completed, int total) {
+    return '$completed de $total completados';
+  }
+
+  @override
+  String get stepBalanceLabel => 'Agrega tu saldo en efectivo';
+
+  @override
+  String get stepBalanceHint => '¿Cuánto tienes ahora mismo?';
+
+  @override
+  String get stepBudgetLabel => 'Define tu presupuesto mensual';
+
+  @override
+  String get stepBudgetHint => 'Alquiler + gastos de vida';
+
+  @override
+  String get stepExpenseLabel => 'Registra tu primer gasto';
+
+  @override
+  String get stepExpenseHint => 'Lleva el control de tu dinero';
+
+  @override
+  String get stepSimLabel => 'Prueba el simulador';
+
+  @override
+  String get stepSimHint => '¿Y si recortas gastos?';
 
   @override
   String get loading => 'CARGANDO...';
@@ -197,9 +224,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get typeLoan => 'PRÉSTAMO';
-
-  @override
-  String get typeInvest => 'INVERTIR';
 
   @override
   String get typeRepay => 'PAGAR';
@@ -364,7 +388,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get yearly => 'ANUAL';
 
   @override
-  String get subscrPerMonth => 'SUSCR/MES';
+  String get subscrPerMonth => '/ month';
 
   @override
   String get loans => 'PRÉSTAMOS';
@@ -387,7 +411,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get paid => '✓ PAGADO';
 
   @override
-  String get subscrPerYear => 'SUSCR/AÑO';
+  String get subscrPerYear => '/ year';
 
   @override
   String get removeConfirm => '¿ELIMINAR?';
@@ -485,7 +509,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'SUSCRIPCIONES + DEUDAS AÑADIDAS AUTOMÁTICAMENTE';
 
   @override
-  String get futureAssumptions => 'Supuestos futuros';
+  String get futureAssumptions => 'Previsión';
 
   @override
   String get expectedInflow => 'Entrada esperada';
@@ -504,7 +528,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Los supuestos solo afectan las proyecciones futuras. No crean transacciones.';
 
   @override
-  String get setAssumptions => 'Definir supuestos';
+  String get setAssumptions => 'DEFINIR PREVISIÓN';
 
   @override
   String get expectedMonthlyInflow => 'Entrada mensual esperada';
@@ -544,7 +568,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Los objetivos agregan contexto a tu runway. No son una puntuación.';
 
   @override
-  String get setGoal => 'Definir objetivo';
+  String get setGoal => 'DEFINIR OBJETIVO';
 
   @override
   String get goalName => 'Nombre del objetivo';
@@ -582,7 +606,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get bootRealityCheckReady => '> REALIDAD LISTA.';
 
   @override
-  String get ifIncomeStoppedToday => 'Si tu ingreso se detuviera hoy';
+  String get ifIncomeStoppedToday => 'If inflow stopped today';
 
   @override
   String get ifIncomePausedToday => 'Si tu ingreso se detuviera hoy';
@@ -592,14 +616,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get monthPlural => 'meses';
-
-  @override
-  String get noProjectedRunOut => 'Sin agotamiento proyectado';
-
-  @override
-  String aboutDaysOfFreedom(int days) {
-    return 'Aproximadamente $days días de libertad';
-  }
 
   @override
   String get sustainableWithExpectedInflow =>
@@ -619,13 +635,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get monthlyBurn => 'Gasto mensual';
 
   @override
-  String get flexibility => 'Flexibilidad';
-
-  @override
   String get availableCash => 'Efectivo disponible';
 
   @override
-  String get historicalBurn => 'Gasto histórico';
+  String get historicalBurn => 'Gasto prom.';
 
   @override
   String get notEnoughHistory => 'Historial insuficiente';
@@ -637,7 +650,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get usingAssumptions => 'Usando supuestos';
 
   @override
-  String get fixedPressure => 'Presión fija';
+  String get fixedPressure => 'Costos fijos';
 
   @override
   String get actualBurn => 'Gasto real';
@@ -652,13 +665,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get recurringCosts => 'Costos recurrentes';
 
   @override
-  String get debtCommitments => 'Compromisos de deuda';
-
-  @override
-  String get pressureFlexibility => 'Presión y flexibilidad';
-
-  @override
-  String get runwayProjection => 'Proyección de runway';
+  String get debtCommitments => 'Pagos de préstamos';
 
   @override
   String get daysUpper => 'DÍAS';
@@ -667,13 +674,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get yourRunway => 'Tu autonomía';
 
   @override
-  String get loseIncome => 'Perder ingresos';
+  String get loseIncome => 'Inflow stops';
 
   @override
   String get higherExpenses => 'Más gastos';
 
   @override
-  String get incomeSetToZero => 'Ingreso en 0';
+  String get incomeSetToZero => 'Inflow set to 0';
 
   @override
   String deltaDays(int days) {
@@ -694,4 +701,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get shareAsText => 'COMPARTIR TEXTO';
+
+  @override
+  String get thisMonth => 'ESTE MES';
+
+  @override
+  String get cashIn => 'ENTRADA';
+
+  @override
+  String get cashOut => 'SALIDA';
+
+  @override
+  String get netLabel => 'NETO';
+
+  @override
+  String get noActivityThisMonth => 'Sin actividad este mes';
 }

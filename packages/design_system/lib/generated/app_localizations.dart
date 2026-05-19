@@ -140,7 +140,7 @@ abstract class AppLocalizations {
   /// No description provided for @pressureLabel.
   ///
   /// In en, this message translates to:
-  /// **'Pressure'**
+  /// **'Monthly costs'**
   String get pressureLabel;
 
   /// No description provided for @metrics.
@@ -178,12 +178,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'RUN OUT'**
   String get runOut;
-
-  /// No description provided for @investable.
-  ///
-  /// In en, this message translates to:
-  /// **'INVESTABLE'**
-  String get investable;
 
   /// No description provided for @cashTimeline.
   ///
@@ -230,7 +224,7 @@ abstract class AppLocalizations {
   /// No description provided for @loanAffectsInfo.
   ///
   /// In en, this message translates to:
-  /// **'Loan payments reduce flexibility and shorten runway.'**
+  /// **'Loan payments add to your fixed costs and reduce runway.'**
   String get loanAffectsInfo;
 
   /// No description provided for @transactionLog.
@@ -353,12 +347,6 @@ abstract class AppLocalizations {
   /// **'Projected run-out'**
   String get simRunOut;
 
-  /// No description provided for @simInvestable.
-  ///
-  /// In en, this message translates to:
-  /// **'Projected optionality'**
-  String get simInvestable;
-
   /// No description provided for @deltaVsActual.
   ///
   /// In en, this message translates to:
@@ -370,12 +358,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Runway change'**
   String get deltaRunway;
-
-  /// No description provided for @deltaInvestable.
-  ///
-  /// In en, this message translates to:
-  /// **'Optionality change'**
-  String get deltaInvestable;
 
   /// No description provided for @resetSim.
   ///
@@ -437,11 +419,77 @@ abstract class AppLocalizations {
   /// **'CURRENCY'**
   String get currency;
 
-  /// No description provided for @addNoData.
+  /// No description provided for @currencySymbolOnly.
   ///
   /// In en, this message translates to:
-  /// **'> ADD TRANSACTIONS TO SEE TIMELINE'**
-  String get addNoData;
+  /// **'Changes the display symbol only — your amounts are not converted.'**
+  String get currencySymbolOnly;
+
+  /// No description provided for @daysShort.
+  ///
+  /// In en, this message translates to:
+  /// **'d'**
+  String get daysShort;
+
+  /// No description provided for @gettingStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'GETTING STARTED'**
+  String get gettingStarted;
+
+  /// No description provided for @stepsComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {total} complete'**
+  String stepsComplete(int completed, int total);
+
+  /// No description provided for @stepBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your cash balance'**
+  String get stepBalanceLabel;
+
+  /// No description provided for @stepBalanceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'How much do you have right now?'**
+  String get stepBalanceHint;
+
+  /// No description provided for @stepBudgetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your monthly budget'**
+  String get stepBudgetLabel;
+
+  /// No description provided for @stepBudgetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent + living expenses'**
+  String get stepBudgetHint;
+
+  /// No description provided for @stepExpenseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Log your first expense'**
+  String get stepExpenseLabel;
+
+  /// No description provided for @stepExpenseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Track where your money goes'**
+  String get stepExpenseHint;
+
+  /// No description provided for @stepSimLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Try the simulator'**
+  String get stepSimLabel;
+
+  /// No description provided for @stepSimHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What if you cut expenses?'**
+  String get stepSimHint;
 
   /// No description provided for @loading.
   ///
@@ -484,12 +532,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'LOAN'**
   String get typeLoan;
-
-  /// No description provided for @typeInvest.
-  ///
-  /// In en, this message translates to:
-  /// **'INVEST'**
-  String get typeInvest;
 
   /// No description provided for @typeRepay.
   ///
@@ -818,7 +860,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscrPerMonth.
   ///
   /// In en, this message translates to:
-  /// **'SUBSCR/MO'**
+  /// **'/ month'**
   String get subscrPerMonth;
 
   /// No description provided for @loans.
@@ -860,7 +902,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscrPerYear.
   ///
   /// In en, this message translates to:
-  /// **'SUBSCR/YR'**
+  /// **'/ year'**
   String get subscrPerYear;
 
   /// No description provided for @removeConfirm.
@@ -1046,7 +1088,7 @@ abstract class AppLocalizations {
   /// No description provided for @futureAssumptions.
   ///
   /// In en, this message translates to:
-  /// **'Future assumptions'**
+  /// **'Forecast'**
   String get futureAssumptions;
 
   /// No description provided for @expectedInflow.
@@ -1082,7 +1124,7 @@ abstract class AppLocalizations {
   /// No description provided for @setAssumptions.
   ///
   /// In en, this message translates to:
-  /// **'Set assumptions'**
+  /// **'SET FORECAST'**
   String get setAssumptions;
 
   /// No description provided for @expectedMonthlyInflow.
@@ -1106,7 +1148,7 @@ abstract class AppLocalizations {
   /// No description provided for @futureInflowHint.
   ///
   /// In en, this message translates to:
-  /// **'Use neutral future inflow here: freelance retainers, contract work, creator income, dividends, or any expected inflow.'**
+  /// **'Any recurring or expected inflow — retainers, contracts, creator income, dividends.'**
   String get futureInflowHint;
 
   /// No description provided for @runwayGoal.
@@ -1154,7 +1196,7 @@ abstract class AppLocalizations {
   /// No description provided for @setGoal.
   ///
   /// In en, this message translates to:
-  /// **'Set goal'**
+  /// **'SET GOAL'**
   String get setGoal;
 
   /// No description provided for @goalName.
@@ -1226,7 +1268,7 @@ abstract class AppLocalizations {
   /// No description provided for @ifIncomeStoppedToday.
   ///
   /// In en, this message translates to:
-  /// **'If your income stopped today'**
+  /// **'If inflow stopped today'**
   String get ifIncomeStoppedToday;
 
   /// No description provided for @ifIncomePausedToday.
@@ -1246,18 +1288,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'months'**
   String get monthPlural;
-
-  /// No description provided for @noProjectedRunOut.
-  ///
-  /// In en, this message translates to:
-  /// **'No projected run-out'**
-  String get noProjectedRunOut;
-
-  /// No description provided for @aboutDaysOfFreedom.
-  ///
-  /// In en, this message translates to:
-  /// **'About {days} days of freedom'**
-  String aboutDaysOfFreedom(int days);
 
   /// No description provided for @sustainableWithExpectedInflow.
   ///
@@ -1283,12 +1313,6 @@ abstract class AppLocalizations {
   /// **'Monthly burn'**
   String get monthlyBurn;
 
-  /// No description provided for @flexibility.
-  ///
-  /// In en, this message translates to:
-  /// **'Flexibility'**
-  String get flexibility;
-
   /// No description provided for @availableCash.
   ///
   /// In en, this message translates to:
@@ -1298,7 +1322,7 @@ abstract class AppLocalizations {
   /// No description provided for @historicalBurn.
   ///
   /// In en, this message translates to:
-  /// **'Historical burn'**
+  /// **'Avg burn'**
   String get historicalBurn;
 
   /// No description provided for @notEnoughHistory.
@@ -1322,7 +1346,7 @@ abstract class AppLocalizations {
   /// No description provided for @fixedPressure.
   ///
   /// In en, this message translates to:
-  /// **'Fixed pressure'**
+  /// **'Fixed costs'**
   String get fixedPressure;
 
   /// No description provided for @actualBurn.
@@ -1352,20 +1376,8 @@ abstract class AppLocalizations {
   /// No description provided for @debtCommitments.
   ///
   /// In en, this message translates to:
-  /// **'Debt commitments'**
+  /// **'Loan payments'**
   String get debtCommitments;
-
-  /// No description provided for @pressureFlexibility.
-  ///
-  /// In en, this message translates to:
-  /// **'Pressure & flexibility'**
-  String get pressureFlexibility;
-
-  /// No description provided for @runwayProjection.
-  ///
-  /// In en, this message translates to:
-  /// **'Runway projection'**
-  String get runwayProjection;
 
   /// No description provided for @daysUpper.
   ///
@@ -1382,7 +1394,7 @@ abstract class AppLocalizations {
   /// No description provided for @loseIncome.
   ///
   /// In en, this message translates to:
-  /// **'Lose income'**
+  /// **'Inflow stops'**
   String get loseIncome;
 
   /// No description provided for @higherExpenses.
@@ -1394,7 +1406,7 @@ abstract class AppLocalizations {
   /// No description provided for @incomeSetToZero.
   ///
   /// In en, this message translates to:
-  /// **'Income set to 0'**
+  /// **'Inflow set to 0'**
   String get incomeSetToZero;
 
   /// No description provided for @deltaDays.
@@ -1432,6 +1444,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SHARE AS TEXT'**
   String get shareAsText;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'THIS MONTH'**
+  String get thisMonth;
+
+  /// No description provided for @cashIn.
+  ///
+  /// In en, this message translates to:
+  /// **'IN'**
+  String get cashIn;
+
+  /// No description provided for @cashOut.
+  ///
+  /// In en, this message translates to:
+  /// **'OUT'**
+  String get cashOut;
+
+  /// No description provided for @netLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'NET'**
+  String get netLabel;
+
+  /// No description provided for @noActivityThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity yet this month'**
+  String get noActivityThisMonth;
 }
 
 class _AppLocalizationsDelegate

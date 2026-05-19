@@ -24,7 +24,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusLabel => 'Position';
 
   @override
-  String get pressureLabel => 'Pressure';
+  String get pressureLabel => 'Monthly costs';
 
   @override
   String get metrics => 'Signals';
@@ -43,9 +43,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get runOut => 'RUN OUT';
-
-  @override
-  String get investable => 'INVESTABLE';
 
   @override
   String get cashTimeline => 'CASH TIMELINE';
@@ -70,7 +67,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loanAffectsInfo =>
-      'Loan payments reduce flexibility and shorten runway.';
+      'Loan payments add to your fixed costs and reduce runway.';
 
   @override
   String get transactionLog => 'TRANSACTION LOG';
@@ -133,16 +130,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get simRunOut => 'Projected run-out';
 
   @override
-  String get simInvestable => 'Projected optionality';
-
-  @override
   String get deltaVsActual => 'Change from today';
 
   @override
   String get deltaRunway => 'Runway change';
-
-  @override
-  String get deltaInvestable => 'Optionality change';
 
   @override
   String get resetSim => 'Reset scenario';
@@ -175,7 +166,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currency => 'CURRENCY';
 
   @override
-  String get addNoData => '> ADD TRANSACTIONS TO SEE TIMELINE';
+  String get currencySymbolOnly =>
+      'Changes the display symbol only — your amounts are not converted.';
+
+  @override
+  String get daysShort => 'd';
+
+  @override
+  String get gettingStarted => 'GETTING STARTED';
+
+  @override
+  String stepsComplete(int completed, int total) {
+    return '$completed of $total complete';
+  }
+
+  @override
+  String get stepBalanceLabel => 'Add your cash balance';
+
+  @override
+  String get stepBalanceHint => 'How much do you have right now?';
+
+  @override
+  String get stepBudgetLabel => 'Set your monthly budget';
+
+  @override
+  String get stepBudgetHint => 'Rent + living expenses';
+
+  @override
+  String get stepExpenseLabel => 'Log your first expense';
+
+  @override
+  String get stepExpenseHint => 'Track where your money goes';
+
+  @override
+  String get stepSimLabel => 'Try the simulator';
+
+  @override
+  String get stepSimHint => 'What if you cut expenses?';
 
   @override
   String get loading => 'LOADING...';
@@ -197,9 +224,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get typeLoan => 'LOAN';
-
-  @override
-  String get typeInvest => 'INVEST';
 
   @override
   String get typeRepay => 'REPAY';
@@ -364,7 +388,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yearly => 'YEARLY';
 
   @override
-  String get subscrPerMonth => 'SUBSCR/MO';
+  String get subscrPerMonth => '/ month';
 
   @override
   String get loans => 'LOANS';
@@ -387,7 +411,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paid => '✓ PAID';
 
   @override
-  String get subscrPerYear => 'SUBSCR/YR';
+  String get subscrPerYear => '/ year';
 
   @override
   String get removeConfirm => 'REMOVE?';
@@ -484,7 +508,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscrDebtAuto => 'SUBSCRIPTIONS + DEBT ADDED AUTOMATICALLY';
 
   @override
-  String get futureAssumptions => 'Future assumptions';
+  String get futureAssumptions => 'Forecast';
 
   @override
   String get expectedInflow => 'Expected inflow';
@@ -503,7 +527,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Assumptions affect future projections only. They do not create transactions.';
 
   @override
-  String get setAssumptions => 'Set assumptions';
+  String get setAssumptions => 'SET FORECAST';
 
   @override
   String get expectedMonthlyInflow => 'Expected monthly inflow';
@@ -516,7 +540,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get futureInflowHint =>
-      'Use neutral future inflow here: freelance retainers, contract work, creator income, dividends, or any expected inflow.';
+      'Any recurring or expected inflow — retainers, contracts, creator income, dividends.';
 
   @override
   String get runwayGoal => 'Runway goal';
@@ -543,7 +567,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Goals add context to your runway. They are not a score.';
 
   @override
-  String get setGoal => 'Set goal';
+  String get setGoal => 'SET GOAL';
 
   @override
   String get goalName => 'Goal name';
@@ -579,7 +603,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bootRealityCheckReady => 'Your financial picture is ready.';
 
   @override
-  String get ifIncomeStoppedToday => 'If your income stopped today';
+  String get ifIncomeStoppedToday => 'If inflow stopped today';
 
   @override
   String get ifIncomePausedToday => 'If income paused today';
@@ -589,14 +613,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get monthPlural => 'months';
-
-  @override
-  String get noProjectedRunOut => 'No projected run-out';
-
-  @override
-  String aboutDaysOfFreedom(int days) {
-    return 'About $days days of freedom';
-  }
 
   @override
   String get sustainableWithExpectedInflow =>
@@ -616,13 +632,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get monthlyBurn => 'Monthly burn';
 
   @override
-  String get flexibility => 'Flexibility';
-
-  @override
   String get availableCash => 'Available cash';
 
   @override
-  String get historicalBurn => 'Historical burn';
+  String get historicalBurn => 'Avg burn';
 
   @override
   String get notEnoughHistory => 'Not enough history';
@@ -634,7 +647,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get usingAssumptions => 'Using assumptions';
 
   @override
-  String get fixedPressure => 'Fixed pressure';
+  String get fixedPressure => 'Fixed costs';
 
   @override
   String get actualBurn => 'Actual burn';
@@ -649,13 +662,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recurringCosts => 'Recurring costs';
 
   @override
-  String get debtCommitments => 'Debt commitments';
-
-  @override
-  String get pressureFlexibility => 'Pressure & flexibility';
-
-  @override
-  String get runwayProjection => 'Runway projection';
+  String get debtCommitments => 'Loan payments';
 
   @override
   String get daysUpper => 'DAYS';
@@ -664,13 +671,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yourRunway => 'Your runway';
 
   @override
-  String get loseIncome => 'Lose income';
+  String get loseIncome => 'Inflow stops';
 
   @override
   String get higherExpenses => 'Higher expenses';
 
   @override
-  String get incomeSetToZero => 'Income set to 0';
+  String get incomeSetToZero => 'Inflow set to 0';
 
   @override
   String deltaDays(int days) {
@@ -691,4 +698,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shareAsText => 'SHARE AS TEXT';
+
+  @override
+  String get thisMonth => 'THIS MONTH';
+
+  @override
+  String get cashIn => 'IN';
+
+  @override
+  String get cashOut => 'OUT';
+
+  @override
+  String get netLabel => 'NET';
+
+  @override
+  String get noActivityThisMonth => 'No activity yet this month';
 }
