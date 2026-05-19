@@ -38,15 +38,15 @@ class SubscriptionsPanel extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: _MetricCell(
-                      label: l10n.subscrPerMonth,
+                      unit: l10n.subscrPerMonth,
                       value: '$symbol ${nf.format(monthly)}',
-                      color: AppColors.purple,
+                      color: SC.subscr,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: _MetricCell(
-                      label: l10n.subscrPerYear,
+                      unit: l10n.subscrPerYear,
                       value: '$symbol ${nf.format(yearly)}',
                       color: AppColors.textSecondary,
                     ),
@@ -82,7 +82,7 @@ class SubscriptionsPanel extends ConsumerWidget {
 
     return NeoExpandableCard(
       title: l10n.subscriptions,
-      accentColor: AppColors.purple,
+      accentColor: SC.subscr,
       initiallyExpanded: false,
       summary: summary,
       details: details,
@@ -90,7 +90,7 @@ class SubscriptionsPanel extends ConsumerWidget {
           ? null
           : Text(
               '${active.length}',
-              style: AppTextStyles.caption.copyWith(color: AppColors.purple),
+              style: AppTextStyles.caption.copyWith(color: SC.subscr),
             ),
     );
   }
@@ -146,13 +146,13 @@ class _EmptySummary extends StatelessWidget {
           width: 34,
           height: 34,
           decoration: BoxDecoration(
-            color: AppColors.purple.withAlpha(16),
+            color: SC.subscr.withAlpha(16),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.purple.withAlpha(45)),
+            border: Border.all(color: SC.subscr.withAlpha(45)),
           ),
           child: const Icon(
             Icons.subscriptions_rounded,
-            color: AppColors.purple,
+            color: SC.subscr,
             size: 18,
           ),
         ),
@@ -166,12 +166,12 @@ class _EmptySummary extends StatelessWidget {
 }
 
 class _MetricCell extends StatelessWidget {
-  final String label;
+  final String unit;
   final String value;
   final Color color;
 
   const _MetricCell({
-    required this.label,
+    required this.unit,
     required this.value,
     required this.color,
   });
@@ -181,7 +181,7 @@ class _MetricCell extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTextStyles.label),
+        Text(unit, style: AppTextStyles.label),
         const SizedBox(height: AppSpacing.xxs),
         Text(
           value,
@@ -206,7 +206,7 @@ class _NextBillingStrip extends StatelessWidget {
         ? AppColors.hotPink
         : days <= 14
         ? AppColors.gold
-        : AppColors.purple;
+        : SC.subscr;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -249,13 +249,13 @@ class _CountBadge extends StatelessWidget {
         vertical: AppSpacing.xs + 2,
       ),
       decoration: BoxDecoration(
-        color: AppColors.purple.withAlpha(16),
+        color: SC.subscr.withAlpha(16),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.purple.withAlpha(55)),
+        border: Border.all(color: SC.subscr.withAlpha(55)),
       ),
       child: Text(
         '$count ACTIVE',
-        style: AppTextStyles.caption.copyWith(color: AppColors.purple),
+        style: AppTextStyles.caption.copyWith(color: SC.subscr),
       ),
     );
   }
@@ -333,10 +333,10 @@ class _SubRow extends StatelessWidget {
                             vertical: 1,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.purple.withAlpha(20),
+                            color: SC.subscr.withAlpha(20),
                             borderRadius: BorderRadius.circular(3),
                             border: Border.all(
-                              color: AppColors.purple.withAlpha(60),
+                              color: SC.subscr.withAlpha(60),
                             ),
                           ),
                           child: Text(
@@ -344,7 +344,7 @@ class _SubRow extends StatelessWidget {
                                 ? l10n.personal
                                 : l10n.business,
                             style: AppTextStyles.caption.copyWith(
-                              color: AppColors.purple,
+                              color: SC.subscr,
                               fontSize: 9,
                             ),
                           ),

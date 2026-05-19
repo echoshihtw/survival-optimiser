@@ -47,22 +47,22 @@ class MetricsPanel extends ConsumerWidget {
           _row(
             l10n.expectedInflow,
             fmt(model.expectedMonthlyInflow!),
-            AppColors.green,
+            SC.life,
           ),
         _row(
           l10n.fixedPressure,
           '$fixedPressure%',
           fixedPressure >= 60
-              ? AppColors.red
+              ? SC.statusCritical
               : fixedPressure >= 35
               ? AppColors.gold
-              : AppColors.green,
+              : SC.statusStable,
         ),
         if (hasActual)
           _row(
             model.isOverBudget ? l10n.actualBurnHigh : l10n.actualBurn,
             '-${fmt(model.burnRate)}',
-            AppColors.red,
+            SC.cost,
           ),
         if (hasBudget && !hasActual)
           _row(

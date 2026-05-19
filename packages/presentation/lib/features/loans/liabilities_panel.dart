@@ -19,7 +19,28 @@ class LiabilitiesPanel extends ConsumerWidget {
     final active = ref.watch(activeLoanSummariesProvider);
 
     final summary = active.isEmpty
-        ? Text(l10n.noActiveLoans, style: AppTextStyles.bodySmall)
+        ? Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: AppColors.gold.withAlpha(16),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.gold.withAlpha(45)),
+                ),
+                child: const Icon(
+                  Icons.account_balance_rounded,
+                  color: AppColors.gold,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(l10n.noActiveLoans, style: AppTextStyles.bodySmall),
+              ),
+            ],
+          )
         : Row(
             children: [
               Expanded(
