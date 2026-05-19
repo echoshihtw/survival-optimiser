@@ -69,6 +69,7 @@ class _NeoExpandableCardState extends State<NeoExpandableCard>
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
           GestureDetector(
