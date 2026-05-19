@@ -17,34 +17,23 @@ class ThisMonthCard extends ConsumerWidget {
     String fmt(double v) => '$symbol ${nf.format(v.abs())}';
 
     final netColor = flow.net >= 0 ? SC.life : SC.cost;
+    final netPrefix = flow.net >= 0 ? '+' : '-';
 
     final summary = flow.isEmpty
         ? _EmptyState(l10n: l10n)
-        : Row(
+        : Column(
             children: [
-              Expanded(
-                child: _MetricCell(
-                  label: l10n.cashIn,
-                  value: fmt(flow.income),
-                  color: SC.life,
-                ),
+              _Row(label: l10n.cashIn, value: fmt(flow.income), color: SC.life),
+              _Row(
+                label: l10n.cashOut,
+                value: fmt(flow.expenses),
+                color: SC.cost,
               ),
-              _Divider(),
-              Expanded(
-                child: _MetricCell(
-                  label: l10n.netLabel,
-                  value: fmt(flow.net),
-                  color: netColor,
-                  prefix: flow.net >= 0 ? '+' : '-',
-                ),
-              ),
-              _Divider(),
-              Expanded(
-                child: _MetricCell(
-                  label: l10n.cashOut,
-                  value: fmt(flow.expenses),
-                  color: SC.cost,
-                ),
+              _Row(
+                label: l10n.netLabel,
+                value: '$netPrefix${fmt(flow.net)}',
+                color: netColor,
+                isLast: true,
               ),
             ],
           );
@@ -57,45 +46,33 @@ class ThisMonthCard extends ConsumerWidget {
   }
 }
 
-class _MetricCell extends StatelessWidget {
+class _Row extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  final String? prefix;
+  final bool isLast;
 
-  const _MetricCell({
+  const _Row({
     required this.label,
     required this.value,
     required this.color,
-    this.prefix,
+    this.isLast = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: AppTextStyles.label),
-        const SizedBox(height: AppSpacing.xxs),
-        Text(
-          value,
-          style: AppTextStyles.metricSmall.copyWith(color: color),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    );
-  }
-}
-
-class _Divider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 32,
-      color: AppColors.cardBorder,
-      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+    return Padding(
+      padding: EdgeInsets.only(bottom: isLast ? 0 : AppSpacing.xs),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: AppTextStyles.label),
+          Text(
+            value,
+            style: AppTextStyles.metricSmall.copyWith(color: color),
+          ),
+        ],
+      ),
     );
   }
 }
