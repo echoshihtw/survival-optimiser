@@ -25,7 +25,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
 
   static const _languages = [
     (label: 'ENGLISH', locale: Locale('en')),
-    (label: '中文', locale: Locale('zh', 'TW')),
+    (label: '繁中', locale: Locale('zh', 'TW')),
     (label: 'FRANÇAIS', locale: Locale('fr')),
     (label: '日本語', locale: Locale('ja')),
     (label: 'ESPAÑOL', locale: Locale('es')),
@@ -159,45 +159,20 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.config,
-                        style: AppTextStyles.title.copyWith(
-                          color: AppColors.textPrimary,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Text(
-                        l10n.prefsBudget,
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    l10n.config,
+                    style: AppTextStyles.title.copyWith(
+                      color: AppColors.textPrimary,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.xs + 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceHigh,
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(color: AppColors.cardBorder),
-                      ),
-                      child: Text(
-                        l10n.close,
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textPrimary,
-                          letterSpacing: 1.0,
-                        ),
-                      ),
+                    child: const Icon(
+                      Icons.close_rounded,
+                      color: AppColors.textSecondary,
+                      size: 22,
                     ),
                   ),
                 ],
@@ -211,116 +186,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── MONTHLY BUDGET ────────────────
-                    NeoCard(
-                      title: l10n.monthlyBudget,
-                      accentColor: AppColors.green,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (!_editingBudget) ...[
-                            _budgetRow(
-                              l10n.rentFixed,
-                              budget.rent > 0
-                                  ? '$symbol ${nf.format(budget.rent)}'
-                                  : '—',
-                              AppColors.textPrimary,
-                            ),
-                            _budgetRow(
-                              l10n.livingExpenses,
-                              budget.living > 0
-                                  ? '$symbol ${nf.format(budget.living)}'
-                                  : '—',
-                              AppColors.textPrimary,
-                            ),
-                            const Divider(
-                              color: AppColors.cardBorder,
-                              height: AppSpacing.lg,
-                            ),
-                            _budgetRow(
-                              l10n.subtotal,
-                              '$symbol ${nf.format(budget.subtotal)}',
-                              AppColors.green,
-                            ),
-                            _budgetRow(
-                              '+ ${l10n.subscrPerMonth}',
-                              '$symbol ${nf.format(subCost)}',
-                              AppColors.purple,
-                            ),
-                            _budgetRow(
-                              '+ ${l10n.loanPerMonth}',
-                              '$symbol ${nf.format(debtCost)}',
-                              AppColors.gold,
-                            ),
-                            const Divider(
-                              color: AppColors.cardBorder,
-                              height: AppSpacing.lg,
-                            ),
-                            _budgetRow(
-                              l10n.totalBudgetPerMonth,
-                              '$symbol ${nf.format(budget.subtotal + subCost + debtCost)}',
-                              AppColors.red,
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                NeoButton(
-                                  label: budget.isSet
-                                      ? l10n.edit
-                                      : l10n.setBudget,
-                                  variant: NeoButtonVariant.secondary,
-                                  onPressed: () => _startEditing(budget),
-                                ),
-                              ],
-                            ),
-                          ] else ...[
-                            NeoInput(
-                              label: l10n.rentFixedCosts,
-                              controller: _rentCtrl,
-                              keyboardType: TextInputType.number,
-                              hint: '45000',
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            NeoInput(
-                              label: l10n.livingExpenses,
-                              controller: _livingCtrl,
-                              keyboardType: TextInputType.number,
-                              hint: '35000',
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            Text(
-                              l10n.subscrDebtAuto,
-                              style: AppTextStyles.caption,
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: NeoButton(
-                                    label: l10n.save,
-                                    variant: NeoButtonVariant.primary,
-                                    fullWidth: true,
-                                    onPressed: _saveBudget,
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.sm),
-                                Expanded(
-                                  child: NeoButton(
-                                    label: l10n.clear,
-                                    variant: NeoButtonVariant.danger,
-                                    fullWidth: true,
-                                    onPressed: _clearBudget,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.cardGap),
-
+                    // ── FORECAST ──────────────────────
                     NeoCard(
                       title: l10n.futureAssumptions,
                       accentColor: AppColors.blue,
@@ -342,11 +208,6 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                                   : '$symbol ${nf.format(assumptions.expectedMonthlyBurnOverride)}',
                               AppColors.red,
                             ),
-                            const SizedBox(height: AppSpacing.xs),
-                            Text(
-                              l10n.assumptionsProjectionOnly,
-                              style: AppTextStyles.caption,
-                            ),
                             const SizedBox(height: AppSpacing.md),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -356,7 +217,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                                         .hasExpectedMonthlyBurnOverride) ...[
                                   NeoButton(
                                     label: l10n.clear,
-                                    variant: NeoButtonVariant.ghost,
+                                    variant: NeoButtonVariant.danger,
                                     onPressed: _clearAssumptions,
                                   ),
                                   const SizedBox(width: AppSpacing.sm),
@@ -407,12 +268,121 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                                 const SizedBox(width: AppSpacing.sm),
                                 Expanded(
                                   child: NeoButton(
-                                    label: l10n.abort,
+                                    label: l10n.cancel,
                                     variant: NeoButtonVariant.ghost,
                                     fullWidth: true,
                                     onPressed: () => setState(
                                       () => _editingAssumptions = false,
                                     ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.cardGap),
+
+                    // ── MONTHLY BUDGET ────────────────
+                    NeoCard(
+                      title: l10n.monthlyBudget,
+                      accentColor: AppColors.green,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (!_editingBudget) ...[
+                            if (budget.isSet) ...[
+                              _budgetRow(
+                                l10n.rentFixed,
+                                '$symbol ${nf.format(budget.rent)}',
+                                AppColors.textPrimary,
+                              ),
+                              _budgetRow(
+                                l10n.livingExpenses,
+                                '$symbol ${nf.format(budget.living)}',
+                                AppColors.textPrimary,
+                              ),
+                              const Divider(
+                                color: AppColors.cardBorder,
+                                height: AppSpacing.lg,
+                              ),
+                              _budgetRow(
+                                l10n.subtotal,
+                                '$symbol ${nf.format(budget.subtotal)}',
+                                AppColors.green,
+                              ),
+                            ] else ...[
+                              Text(l10n.notSet, style: AppTextStyles.caption),
+                              const SizedBox(height: AppSpacing.xs),
+                            ],
+                            _budgetRow(
+                              '+ ${l10n.subscriptions}',
+                              '$symbol ${nf.format(subCost)}',
+                              AppColors.purple,
+                            ),
+                            _budgetRow(
+                              '+ ${l10n.loanPerMonth}',
+                              '$symbol ${nf.format(debtCost)}',
+                              AppColors.gold,
+                            ),
+                            const Divider(
+                              color: AppColors.cardBorder,
+                              height: AppSpacing.lg,
+                            ),
+                            _budgetRow(
+                              l10n.totalBudgetPerMonth,
+                              '$symbol ${nf.format(budget.subtotal + subCost + debtCost)}',
+                              AppColors.red,
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                NeoButton(
+                                  label: budget.isSet
+                                      ? l10n.edit
+                                      : l10n.setBudget,
+                                  variant: NeoButtonVariant.secondary,
+                                  onPressed: () => _startEditing(budget),
+                                ),
+                              ],
+                            ),
+                          ] else ...[
+                            NeoInput(
+                              label: l10n.rentFixedCosts,
+                              controller: _rentCtrl,
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                            NeoInput(
+                              label: l10n.livingExpenses,
+                              controller: _livingCtrl,
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: AppSpacing.xs),
+                            Text(
+                              l10n.subscrDebtAuto,
+                              style: AppTextStyles.caption,
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: NeoButton(
+                                    label: l10n.save,
+                                    variant: NeoButtonVariant.primary,
+                                    fullWidth: true,
+                                    onPressed: _saveBudget,
+                                  ),
+                                ),
+                                const SizedBox(width: AppSpacing.sm),
+                                Expanded(
+                                  child: NeoButton(
+                                    label: l10n.clear,
+                                    variant: NeoButtonVariant.danger,
+                                    fullWidth: true,
+                                    onPressed: _clearBudget,
                                   ),
                                 ),
                               ],
@@ -430,18 +400,18 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (!_editingGoal) ...[
-                            _budgetRow(
-                              l10n.goal,
-                              runwayGoal?.name ?? l10n.none,
-                              AppColors.textPrimary,
-                            ),
-                            _budgetRow(
-                              l10n.target,
-                              runwayGoal == null
-                                  ? l10n.optional
-                                  : l10n.monthsValue(runwayGoal.targetMonths),
-                              AppColors.green,
-                            ),
+                            if (runwayGoal != null) ...[
+                              _budgetRow(
+                                l10n.goal,
+                                runwayGoal.name,
+                                AppColors.textPrimary,
+                              ),
+                              _budgetRow(
+                                l10n.target,
+                                l10n.monthsValue(runwayGoal.targetMonths),
+                                AppColors.green,
+                              ),
+                            ],
                             const SizedBox(height: AppSpacing.xs),
                             Text(
                               l10n.goalsContextHint,
@@ -454,7 +424,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                                 if (runwayGoal != null) ...[
                                   NeoButton(
                                     label: l10n.clear,
-                                    variant: NeoButtonVariant.ghost,
+                                    variant: NeoButtonVariant.danger,
                                     onPressed: _clearGoal,
                                   ),
                                   const SizedBox(width: AppSpacing.sm),
@@ -496,7 +466,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                                 const SizedBox(width: AppSpacing.sm),
                                 Expanded(
                                   child: NeoButton(
-                                    label: l10n.abort,
+                                    label: l10n.cancel,
                                     variant: NeoButtonVariant.ghost,
                                     fullWidth: true,
                                     onPressed: () =>
@@ -514,7 +484,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                     // ── LANGUAGE ──────────────────────
                     NeoCard(
                       title: l10n.language,
-                      accentColor: AppColors.blue,
+                      accentColor: AppColors.purple,
                       child: Wrap(
                         spacing: AppSpacing.xs,
                         runSpacing: AppSpacing.xs,
@@ -536,12 +506,12 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                               ),
                               decoration: BoxDecoration(
                                 color: active
-                                    ? AppColors.green.withAlpha(20)
+                                    ? AppColors.purple.withAlpha(20)
                                     : AppColors.surfaceHigh,
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
                                   color: active
-                                      ? AppColors.green
+                                      ? AppColors.purple
                                       : AppColors.cardBorder,
                                   width: active ? 1.5 : 1,
                                 ),
@@ -550,7 +520,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                                 lang.label,
                                 style: AppTextStyles.button.copyWith(
                                   color: active
-                                      ? AppColors.green
+                                      ? AppColors.purple
                                       : AppColors.textSecondary,
                                   fontSize: 13,
                                 ),
@@ -566,7 +536,10 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                     NeoCard(
                       title: l10n.currency,
                       accentColor: AppColors.gold,
-                      child: Wrap(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Wrap(
                         spacing: AppSpacing.xs,
                         runSpacing: AppSpacing.xs,
                         children: supportedCurrencies.map((curr) {
@@ -604,83 +577,13 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
                             ),
                           );
                         }).toList(),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.cardGap),
-
-                    // ── DISPLAY ───────────────────────
-                    NeoCard(
-                      title: l10n.display,
-                      accentColor: AppColors.turkishBlue,
-                      child: Consumer(
-                        builder: (context, ref, _) {
-                          final glass =
-                              ref.watch(displayProvider).value ?? false;
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      l10n.glassEffect,
-                                      style: AppTextStyles.body,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Text(
-                                      l10n.glassEffectHint,
-                                      style: AppTextStyles.caption,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: AppSpacing.md),
-                              GestureDetector(
-                                onTap: () =>
-                                    ref.read(displayProvider.notifier).toggle(),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  width: 44,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    color: glass
-                                        ? AppColors.neonGreen
-                                        : AppColors.surfaceHigh,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: glass
-                                          ? AppColors.neonGreen
-                                          : AppColors.cardBorder,
-                                    ),
-                                  ),
-                                  child: AnimatedAlign(
-                                    duration: const Duration(milliseconds: 200),
-                                    alignment: glass
-                                        ? Alignment.centerRight
-                                        : Alignment.centerLeft,
-                                    child: Container(
-                                      width: 20,
-                                      height: 20,
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 2,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: glass
-                                            ? AppColors.background
-                                            : AppColors.textSecondary,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          Text(
+                            l10n.currencySymbolOnly,
+                            style: AppTextStyles.caption,
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xxxl),
@@ -709,7 +612,7 @@ class _ConfigScreenState extends ConsumerState<ConfigScreen> {
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
-          Flexible(
+          Expanded(
             child: Text(
               value,
               textAlign: TextAlign.right,
