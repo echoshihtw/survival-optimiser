@@ -16,7 +16,6 @@ class RunwayCard extends ConsumerWidget {
     final l10n = context.l10n;
     final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
     final nf = NumberFormat('#,##0', 'en_US');
-    final goal = ref.watch(runwayGoalProvider).value;
     final status = model.survivalStatus;
 
     final color = switch (status) {
@@ -29,19 +28,6 @@ class RunwayCard extends ConsumerWidget {
       SurvivalStatus.caution => l10n.caution,
       SurvivalStatus.critical => l10n.critical,
     };
-
-    final goalProgress = goal == null
-        ? null
-        : calculateRunwayGoalProgress(
-            runwayMonths: model.runwayMonths.toDouble(),
-            targetMonths: goal.targetMonths,
-          );
-    final goalProgressPercent = goal == null
-        ? null
-        : calculateRunwayGoalProgressPercent(
-            runwayMonths: model.runwayMonths.toDouble(),
-            targetMonths: goal.targetMonths,
-          );
 
     String fmtRunwayMonths(int m) {
       if (m >= 9999) return '∞';
@@ -106,44 +92,6 @@ class RunwayCard extends ConsumerWidget {
                     color: model.isSustainableIndefinitely
                         ? AppColors.green
                         : AppColors.gold,
-                  ),
-                ),
-              ],
-              if (goal != null &&
-                  goalProgress != null &&
-                  goalProgressPercent != null) ...[
-                const SizedBox(height: AppSpacing.xl),
-                PixelBar(
-                  value: goalProgress,
-                  color: color,
-                  segments: goal.targetMonths.clamp(1, 36),
-                  height: 6,
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        goal.name,
-                        style: AppTextStyles.caption,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Text(
-                      '$goalProgressPercent%',
-                      style: AppTextStyles.caption.copyWith(color: color),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.xxs),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    l10n.goalTargetProgress(goal.targetMonths),
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
                   ),
                 ),
               ],
