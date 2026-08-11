@@ -64,3 +64,16 @@ lcov.info
 *.p8
 *.p12
 *.mobileprovision
+.bmad-loop/runs/
+.bmad-loop/cache/
+.bmad-loop/policy.toml
+_bmad/render/
+
+# Local agent tooling: installed per machine, not part of this project.
+/_bmad/
+/_bmad-output/
+/.agents/
+/.bmad-loop/
+/.codex/
+.claude/settings.local.json
+.claude/skills/

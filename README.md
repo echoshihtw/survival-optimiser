@@ -5,6 +5,17 @@
 
 Runway is a personal financial runway app built for people navigating a defined financial chapter — studying abroad, between jobs, bootstrapping a project, or living off savings. It answers one question at all times: **how long can your money last?**
 
+## Status
+
+**In development.** Runs on Android. iOS distribution is in progress — the
+TestFlight path is not working end to end yet.
+
+The release workflows in `.github/workflows/cd.yml` build signed iOS and Android
+artefacts on a `v*.*.*` tag, but no tag has been cut, so nothing has been
+published to TestFlight or Play. RevenueCat is scaffolded, not wired end to end.
+
+Not yet true, and not claimed anywhere: app-store availability, in-app purchases.
+
 ---
 
 ## Philosophy

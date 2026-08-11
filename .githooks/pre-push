@@ -1,0 +1,25 @@
+#!/bin/sh
+# Refuse direct pushes to main. GitHub branch protection needs a paid plan on
+# private repos, so this is the local stand-in: it stops the accident (a push
+# from the wrong branch), not a determined override.
+#
+# Enable in a clone:  git config core.hooksPath .githooks
+# Deliberate bypass:  git push --no-verify
+
+protected="main"
+
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  case "$remote_ref" in
+    "refs/heads/$protected")
+      echo "blocked: direct push to '$protected'." >&2
+      echo "Open a pull request instead:" >&2
+      echo "  git push -u origin \$(git branch --show-current)" >&2
+      echo "  gh pr create --base $protected" >&2
+      echo "" >&2
+      echo "If you really mean it: git push --no-verify" >&2
+      exit 1
+      ;;
+  esac
+done
+
+exit 0
