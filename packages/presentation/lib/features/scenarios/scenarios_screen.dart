@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_system/design_system.dart';
 import 'package:application/application.dart';
+import '../../shared/status_color.dart';
 import '../paywall/paywall_screen.dart';
 import 'package:domain/domain.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +14,7 @@ class ScenariosScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final scenario = ref.watch(scenarioProvider);
+    final simulationsRun = ref.watch(simulationCountProvider).value ?? 0;
     final realModel = ref.watch(modelProvider);
     final simModel = ref.watch(scenarioModelProvider);
     final symbol = ref.watch(currencyProvider).value?.symbol ?? '¥';
@@ -25,11 +27,7 @@ class ScenariosScreen extends ConsumerWidget {
       return '$m MO';
     }
 
-    Color runwayColor(SurvivalStatus s) => switch (s) {
-      SurvivalStatus.stable => AppColors.green,
-      SurvivalStatus.caution => AppColors.gold,
-      SurvivalStatus.critical => AppColors.red,
-    };
+    Color runwayColor(SurvivalStatus s) => statusColor(s);
 
     return GradientScaffold(
       body: SingleChildScrollView(
@@ -145,7 +143,7 @@ class ScenariosScreen extends ConsumerWidget {
                     fullWidth: true,
                     onPressed:
                         realModel.currentCash == 0 ||
-                            scenario.simulatedIncome == null ||
+                            !scenario.hasInput ||
                             scenario.isCalculating ||
                             scenario.isActive
                         ? null
@@ -154,7 +152,10 @@ class ScenariosScreen extends ConsumerWidget {
                                 FeatureFlags.devProEntitlement ||
                                 (ref.read(entitlementProvider).value?.isPro ??
                                     false);
-                            if (!isPro && scenario.hasRunSimulation) {
+                            if (needsProForSimulation(
+                              isPro: isPro,
+                              simulationsRun: simulationsRun,
+                            )) {
                               showPaywall(context, trigger: 'simulation');
                               return;
                             }

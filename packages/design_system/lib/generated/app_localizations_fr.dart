@@ -33,9 +33,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cash => 'LIQUIDITÉS';
 
   @override
-  String get burnPerMonth => 'DÉPENSE/MO';
-
-  @override
   String get loanPerMonth => 'DETTE/MO';
 
   @override
@@ -453,6 +450,26 @@ class AppLocalizationsFr extends AppLocalizations {
   String get delete => 'SUPPRIMER';
 
   @override
+  String get dataSection => 'Vos données';
+
+  @override
+  String get deleteAllDataBody =>
+      'Efface toutes les entrées, prêts, abonnements et réglages de cet appareil. Runway Pro reste débloqué.';
+
+  @override
+  String get deleteAllDataButton => 'EFFACER TOUTES LES DONNÉES';
+
+  @override
+  String get deleteAllDataConfirmTitle => 'Tout effacer ?';
+
+  @override
+  String get deleteAllDataConfirmBody =>
+      'Vos données sont effacées de cet appareil et ne peuvent pas être récupérées. Runway repart de zéro.';
+
+  @override
+  String get deleteAllDataConfirmAction => 'TOUT EFFACER';
+
+  @override
   String get planned => 'PLANIFIÉ';
 
   @override
@@ -494,6 +511,30 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get subtotal => 'SOUS-TOTAL';
+
+  @override
+  String budgetLeft(String amount) {
+    return 'reste $amount';
+  }
+
+  @override
+  String budgetOver(String amount) {
+    return '$amount au-dessus du budget';
+  }
+
+  @override
+  String dailyAllowance(String amount, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$amount par jour pendant $days jours',
+      one: '$amount pour aujourd’hui',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noLivingExpensesThisMonth => 'Aucune dépense de vie ce mois-ci';
 
   @override
   String get totalBudgetPerMonth => 'BUDGET TOTAL/MOIS';
@@ -605,9 +646,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get bootRealityCheckReady => '> RETOUR AU RÉEL PRÊT.';
 
   @override
-  String get ifIncomeStoppedToday => 'If inflow stopped today';
-
-  @override
   String get ifIncomePausedToday => 'Si vos revenus s\'arrêtaient aujourd\'hui';
 
   @override
@@ -631,13 +669,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get monthlyBurn => 'Dépense mensuelle';
-
-  @override
   String get availableCash => 'Cash disponible';
-
-  @override
-  String get historicalBurn => 'Dépense moy.';
 
   @override
   String get notEnoughHistory => 'Pas assez d’historique';
@@ -650,12 +682,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get fixedPressure => 'Coûts fixes';
-
-  @override
-  String get actualBurn => 'Dépense réelle';
-
-  @override
-  String get actualBurnHigh => 'Dépense réelle ▲';
 
   @override
   String get plannedEssentials => 'Essentiels prévus';
@@ -673,13 +699,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get yourRunway => 'Votre runway';
 
   @override
-  String get loseIncome => 'Inflow stops';
-
-  @override
   String get higherExpenses => 'Dépenses plus hautes';
-
-  @override
-  String get incomeSetToZero => 'Inflow set to 0';
 
   @override
   String deltaDays(int days) {
@@ -724,4 +744,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get noActivityThisMonth => 'Aucune activité ce mois-ci';
+
+  @override
+  String get paywallTermsOfUse => 'Conditions d’utilisation';
+
+  @override
+  String get paywallPrivacyPolicy => 'Politique de confidentialité';
 }

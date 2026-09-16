@@ -33,9 +33,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get cash => '現金';
 
   @override
-  String get burnPerMonth => '月間支出';
-
-  @override
   String get loanPerMonth => '月間債務';
 
   @override
@@ -450,6 +447,26 @@ class AppLocalizationsJa extends AppLocalizations {
   String get delete => '削除';
 
   @override
+  String get dataSection => 'データ';
+
+  @override
+  String get deleteAllDataBody =>
+      'この端末から、すべての記録、ローン、サブスクリプション、設定を消去します。Runway Pro のロック解除はそのままです。';
+
+  @override
+  String get deleteAllDataButton => 'すべてのデータを削除';
+
+  @override
+  String get deleteAllDataConfirmTitle => 'すべて削除しますか？';
+
+  @override
+  String get deleteAllDataConfirmBody =>
+      'データはこの端末から消去され、復元できません。Runway は最初から始まります。';
+
+  @override
+  String get deleteAllDataConfirmAction => 'すべて削除';
+
+  @override
   String get planned => '予定';
 
   @override
@@ -490,6 +507,30 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get subtotal => '小計';
+
+  @override
+  String budgetLeft(String amount) {
+    return '残り $amount';
+  }
+
+  @override
+  String budgetOver(String amount) {
+    return '予算超過 $amount';
+  }
+
+  @override
+  String dailyAllowance(String amount, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '1日 $amount、残り $days 日',
+      one: '今日は $amount',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noLivingExpensesThisMonth => '今月の生活費はまだありません';
 
   @override
   String get totalBudgetPerMonth => '予算合計/月';
@@ -587,16 +628,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get bootIncomeStopped => '> 今日、収入が止まったら...';
 
   @override
-  String get bootCountingCashDays => '> 現金で生きられる日数を計算中...';
+  String get bootCountingCashDays => '> お金で何か月まかなえるか計算中...';
 
   @override
   String get bootRemovingComfortFilter => '> 安心フィルターを解除中...';
 
   @override
   String get bootRealityCheckReady => '> 現実チェック準備完了。';
-
-  @override
-  String get ifIncomeStoppedToday => 'If inflow stopped today';
 
   @override
   String get ifIncomePausedToday => '今日、収入が止まったら';
@@ -621,13 +659,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get monthlyBurn => '月間支出';
-
-  @override
   String get availableCash => '利用可能な現金';
-
-  @override
-  String get historicalBurn => '平均支出';
 
   @override
   String get notEnoughHistory => '履歴が不足しています';
@@ -640,12 +672,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get fixedPressure => '固定費';
-
-  @override
-  String get actualBurn => '実際の支出';
-
-  @override
-  String get actualBurnHigh => '実際の支出 ▲';
 
   @override
   String get plannedEssentials => '計画上の必需支出';
@@ -663,13 +689,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get yourRunway => 'あなたのランウェイ';
 
   @override
-  String get loseIncome => 'Inflow stops';
-
-  @override
   String get higherExpenses => '支出増加';
-
-  @override
-  String get incomeSetToZero => 'Inflow set to 0';
 
   @override
   String deltaDays(int days) {
@@ -713,4 +733,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get noActivityThisMonth => '今月はまだ活動がありません';
+
+  @override
+  String get paywallTermsOfUse => '利用規約';
+
+  @override
+  String get paywallPrivacyPolicy => 'プライバシーポリシー';
 }

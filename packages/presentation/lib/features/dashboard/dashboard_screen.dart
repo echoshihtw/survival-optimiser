@@ -7,6 +7,8 @@ import 'widgets/this_month_card.dart';
 import 'widgets/goal_card.dart';
 import 'widgets/runway_card.dart';
 import 'widgets/getting_started_card.dart';
+import 'widgets/review_prompt_trigger.dart';
+import '../../shared/status_color.dart';
 import '../config/config_screen.dart';
 import '../loans/liabilities_panel.dart';
 import '../subscriptions/subscriptions_panel.dart';
@@ -17,6 +19,7 @@ class DashboardScreen extends ConsumerWidget {
   void _showConfig(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
@@ -59,9 +62,13 @@ class DashboardScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Column(
                 children: [
-                  const GettingStartedCard(),
+                  // Asks for an App Store rating at the right moment. Renders nothing.
+                  const ReviewPromptTrigger(),
+                  // Runway is always the hero, center-top (CONTRACTS.md §4.3).
                   RunwayCard(model: model),
                   const SizedBox(height: AppSpacing.cardGap),
+                  // Adds its own bottom gap, and none once dismissed.
+                  const GettingStartedCard(),
                   GoalCard(model: model),
                   const SizedBox(height: AppSpacing.cardGap),
                   const ThisMonthCard(),
@@ -130,11 +137,7 @@ class _RunwayBadgeState extends ConsumerState<_RunwayBadge>
     SurvivalStatus.critical => const Duration(milliseconds: 650),
   };
 
-  static Color _colorFor(SurvivalStatus s) => switch (s) {
-    SurvivalStatus.stable   => AppColors.neonGreen,
-    SurvivalStatus.caution  => AppColors.gold,
-    SurvivalStatus.critical => AppColors.red,
-  };
+  static Color _colorFor(SurvivalStatus s) => statusColor(s);
 
   @override
   void initState() {

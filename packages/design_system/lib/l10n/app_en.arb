@@ -8,7 +8,6 @@
   "pressureLabel": "Monthly costs",
   "metrics": "Signals",
   "cash": "CASH",
-  "burnPerMonth": "BURN/MO",
   "loanPerMonth": "DEBT/MO",
   "runway": "RUNWAY",
   "runOut": "RUN OUT",
@@ -35,7 +34,7 @@
   "purgeEntry": "> PURGE ENTRY?",
   "scenarioSimulator": "Scenario planning",
   "overrideInputs": "Planning inputs",
-  "burnRateOverride": "Monthly burn",
+  "burnRateOverride": "Monthly costs",
   "simulatedIncome": "Income change / month",
   "simResults": "Projected impact",
   "simRunway": "Projected runway",
@@ -165,11 +164,35 @@
   "addEntry": "+ ADD",
   "willRemoveLoan": "WILL ALSO REMOVE FROM LIABILITIES",
   "delete": "DELETE",
+  "dataSection": "Your data",
+  "@dataSection": {
+    "description": "Settings card title for erasing all local data"
+  },
+  "deleteAllDataBody": "Erase every entry, loan, subscription and setting from this device. Runway Pro stays unlocked.",
+  "@deleteAllDataBody": {
+    "description": "Explains what Delete all data erases"
+  },
+  "deleteAllDataButton": "DELETE ALL DATA",
+  "@deleteAllDataButton": {
+    "description": "Button that opens the delete-all-data confirmation"
+  },
+  "deleteAllDataConfirmTitle": "Delete everything?",
+  "@deleteAllDataConfirmTitle": {
+    "description": "Title of the delete-all-data confirmation dialog"
+  },
+  "deleteAllDataConfirmBody": "Your data is erased from this device and cannot be recovered. Runway starts again from the beginning.",
+  "@deleteAllDataConfirmBody": {
+    "description": "Warning that deletion is permanent"
+  },
+  "deleteAllDataConfirmAction": "DELETE EVERYTHING",
+  "@deleteAllDataConfirmAction": {
+    "description": "Confirms permanent deletion of all data"
+  },
   "planned": "PLANNED",
   "whatIfAnalysis": "WHAT-IF ANALYSIS",
   "current": "CURRENT",
   "simulate": "Plan",
-  "simHint": "OVERRIDE BURN RATE OR ADD INCOME TO SEE IMPACT ON RUNWAY",
+  "simHint": "CHANGE MONTHLY COSTS OR ADD INCOME TO SEE THE IMPACT ON RUNWAY",
   "simulation": "Scenario",
   "enterValuesToSim": "Enter values above to see the impact",
   "perMonth": "/ MONTH",
@@ -179,21 +202,37 @@
   "rentFixed": "RENT / FIXED",
   "livingExpenses": "LIVING EXPENSES",
   "subtotal": "SUBTOTAL",
+  "budgetLeft": "{amount} left",
+  "@budgetLeft": {
+    "description": "Unused part of a monthly budget, e.g. $ 29,790 left",
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "budgetOver": "{amount} over budget",
+  "@budgetOver": {
+    "description": "Spending above a monthly budget, e.g. $ 1,500 over budget",
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "dailyAllowance": "{days, plural, =1{{amount} left for today} other{{amount} a day for {days} days}}",
+  "@dailyAllowance": {
+    "description": "What is left of the living budget per remaining day of the month",
+    "placeholders": { "amount": { "type": "String" }, "days": { "type": "int" } }
+  },
+  "noLivingExpensesThisMonth": "No living expenses logged this month",
   "totalBudgetPerMonth": "TOTAL BUDGET/MO",
   "setBudget": "SET BUDGET",
   "rentFixedCosts": "RENT / FIXED COSTS",
   "subscrDebtAuto": "SUBSCRIPTIONS + DEBT ADDED AUTOMATICALLY",
   "futureAssumptions": "Forecast",
-  "expectedInflow": "Expected inflow",
-  "expectedBurn": "Expected burn",
+  "expectedInflow": "Expected income",
+  "expectedBurn": "Expected costs",
   "notSet": "Not set",
-  "usingCurrentBurn": "Using current burn",
+  "usingCurrentBurn": "Using current costs",
   "assumptionsProjectionOnly": "Assumptions affect future projections only. They do not create transactions.",
   "setAssumptions": "SET FORECAST",
-  "expectedMonthlyInflow": "Expected monthly inflow",
-  "expectedMonthlyBurn": "Expected monthly burn",
-  "useCurrentBurn": "Use current burn",
-  "futureInflowHint": "Any recurring or expected inflow — retainers, contracts, creator income, dividends.",
+  "expectedMonthlyInflow": "Expected monthly income",
+  "expectedMonthlyBurn": "Expected monthly costs",
+  "useCurrentBurn": "Use current costs",
+  "futureInflowHint": "Any recurring or expected income, such as retainers, contracts, creator income or dividends.",
   "runwayGoal": "Runway goal",
   "goal": "Goal",
   "none": "None",
@@ -217,14 +256,13 @@
   "runwayBrand": "RUNWAY",
   "bootRunwayCheck": "Checking your runway...",
   "bootIncomeStopped": "Looking at what changes if income pauses...",
-  "bootCountingCashDays": "Estimating your breathing room...",
+  "bootCountingCashDays": "Counting the months your money covers...",
   "bootRemovingComfortFilter": "Separating essentials from noise...",
   "bootRealityCheckReady": "Your financial picture is ready.",
-  "ifIncomeStoppedToday": "If inflow stopped today",
   "ifIncomePausedToday": "If income paused today",
   "monthSingular": "month",
   "monthPlural": "months",
-  "sustainableWithExpectedInflow": "Sustainable with your expected inflow",
+  "sustainableWithExpectedInflow": "Sustainable with your expected income",
   "shortByPerMonth": "Short by {amount} / month",
   "@shortByPerMonth": {
     "placeholders": {
@@ -241,23 +279,17 @@
       }
     }
   },
-  "monthlyBurn": "Monthly burn",
   "availableCash": "Available cash",
-  "historicalBurn": "Avg burn",
   "notEnoughHistory": "Not enough history",
   "projectionSource": "Projection source",
   "usingAssumptions": "Using assumptions",
   "fixedPressure": "Fixed costs",
-  "actualBurn": "Actual burn",
-  "actualBurnHigh": "Actual burn ▲",
   "plannedEssentials": "Planned essentials",
   "recurringCosts": "Recurring costs",
   "debtCommitments": "Loan payments",
   "daysUpper": "DAYS",
   "yourRunway": "Your runway",
-  "loseIncome": "Inflow stops",
   "higherExpenses": "Higher expenses",
-  "incomeSetToZero": "Inflow set to 0",
   "deltaDays": "{days} days",
   "@deltaDays": {
     "placeholders": {
@@ -282,5 +314,13 @@
   "cashIn": "IN",
   "cashOut": "OUT",
   "netLabel": "NET",
-  "noActivityThisMonth": "No activity yet this month"
+  "noActivityThisMonth": "No activity yet this month",
+  "paywallTermsOfUse": "Terms of Use",
+  "paywallPrivacyPolicy": "Privacy Policy",
+  "@paywallTermsOfUse": {
+    "description": "Link on the paywall to Apple's standard end user license agreement"
+  },
+  "@paywallPrivacyPolicy": {
+    "description": "Link on the paywall to the Runway privacy policy"
+  }
 }

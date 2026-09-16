@@ -33,9 +33,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cash => '現金';
 
   @override
-  String get burnPerMonth => '月支出';
-
-  @override
   String get loanPerMonth => '月債務';
 
   @override
@@ -450,6 +447,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String get delete => '刪除';
 
   @override
+  String get dataSection => '你的資料';
+
+  @override
+  String get deleteAllDataBody => '從這台裝置清除所有紀錄、貸款、訂閱與設定。Runway Pro 仍保持解鎖。';
+
+  @override
+  String get deleteAllDataButton => '刪除所有資料';
+
+  @override
+  String get deleteAllDataConfirmTitle => '要刪除全部嗎？';
+
+  @override
+  String get deleteAllDataConfirmBody => '資料會從這台裝置清除，且無法復原。Runway 將從頭開始。';
+
+  @override
+  String get deleteAllDataConfirmAction => '全部刪除';
+
+  @override
   String get planned => '計劃中';
 
   @override
@@ -490,6 +505,30 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get subtotal => '小計';
+
+  @override
+  String budgetLeft(String amount) {
+    return '剩餘 $amount';
+  }
+
+  @override
+  String budgetOver(String amount) {
+    return '超出預算 $amount';
+  }
+
+  @override
+  String dailyAllowance(String amount, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '每天 $amount，還有 $days 天',
+      one: '今天可用 $amount',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noLivingExpensesThisMonth => '本月還沒有生活費紀錄';
 
   @override
   String get totalBudgetPerMonth => '總預算/月';
@@ -596,9 +635,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get bootRealityCheckReady => '> 现实检查就绪。';
 
   @override
-  String get ifIncomeStoppedToday => 'If inflow stopped today';
-
-  @override
   String get ifIncomePausedToday => '如果收入今天暂停';
 
   @override
@@ -621,13 +657,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get monthlyBurn => '每月支出';
-
-  @override
   String get availableCash => '可用现金';
-
-  @override
-  String get historicalBurn => '平均支出';
 
   @override
   String get notEnoughHistory => '历史资料不足';
@@ -640,12 +670,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get fixedPressure => '固定支出';
-
-  @override
-  String get actualBurn => '实际支出';
-
-  @override
-  String get actualBurnHigh => '实际支出 ▲';
 
   @override
   String get plannedEssentials => '计划必要支出';
@@ -663,13 +687,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get yourRunway => '你的生存跑道';
 
   @override
-  String get loseIncome => 'Inflow stops';
-
-  @override
   String get higherExpenses => '支出增加';
-
-  @override
-  String get incomeSetToZero => 'Inflow set to 0';
 
   @override
   String deltaDays(int days) {
@@ -713,6 +731,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get noActivityThisMonth => '本月暂无活动';
+
+  @override
+  String get paywallTermsOfUse => '使用条款';
+
+  @override
+  String get paywallPrivacyPolicy => '隐私政策';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -742,9 +766,6 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get cash => '現金';
-
-  @override
-  String get burnPerMonth => '月支出';
 
   @override
   String get loanPerMonth => '月債務';
@@ -1161,6 +1182,24 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get delete => '刪除';
 
   @override
+  String get dataSection => '你的資料';
+
+  @override
+  String get deleteAllDataBody => '從這台裝置清除所有紀錄、貸款、訂閱與設定。Runway Pro 仍保持解鎖。';
+
+  @override
+  String get deleteAllDataButton => '刪除所有資料';
+
+  @override
+  String get deleteAllDataConfirmTitle => '要刪除全部嗎？';
+
+  @override
+  String get deleteAllDataConfirmBody => '資料會從這台裝置清除，且無法復原。Runway 將從頭開始。';
+
+  @override
+  String get deleteAllDataConfirmAction => '全部刪除';
+
+  @override
   String get planned => '規劃中';
 
   @override
@@ -1201,6 +1240,30 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get subtotal => '小計';
+
+  @override
+  String budgetLeft(String amount) {
+    return '剩餘 $amount';
+  }
+
+  @override
+  String budgetOver(String amount) {
+    return '超出預算 $amount';
+  }
+
+  @override
+  String dailyAllowance(String amount, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '每天 $amount，還有 $days 天',
+      one: '今天可用 $amount',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noLivingExpensesThisMonth => '本月還沒有生活費紀錄';
 
   @override
   String get totalBudgetPerMonth => '每月總預算';
@@ -1298,16 +1361,13 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get bootIncomeStopped => '看看如果收入暫停會怎樣...';
 
   @override
-  String get bootCountingCashDays => '正在估算你還有多少緩衝...';
+  String get bootCountingCashDays => '正在計算你的錢可以支應幾個月...';
 
   @override
   String get bootRemovingComfortFilter => '把必要支出和雜訊分開...';
 
   @override
   String get bootRealityCheckReady => '你的財務狀況整理好了。';
-
-  @override
-  String get ifIncomeStoppedToday => 'If inflow stopped today';
 
   @override
   String get ifIncomePausedToday => '如果今天收入暫停';
@@ -1332,13 +1392,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   }
 
   @override
-  String get monthlyBurn => '每月支出';
-
-  @override
   String get availableCash => '目前現金';
-
-  @override
-  String get historicalBurn => '平均支出';
 
   @override
   String get notEnoughHistory => '資料還不夠';
@@ -1351,12 +1405,6 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get fixedPressure => '固定支出';
-
-  @override
-  String get actualBurn => '實際支出';
-
-  @override
-  String get actualBurnHigh => '實際支出 ▲';
 
   @override
   String get plannedEssentials => '預計必要支出';
@@ -1374,13 +1422,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get yourRunway => '你的跑道';
 
   @override
-  String get loseIncome => 'Inflow stops';
-
-  @override
   String get higherExpenses => '支出增加';
-
-  @override
-  String get incomeSetToZero => 'Inflow set to 0';
 
   @override
   String deltaDays(int days) {
@@ -1424,4 +1466,10 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get noActivityThisMonth => '本月暫無活動';
+
+  @override
+  String get paywallTermsOfUse => '使用條款';
+
+  @override
+  String get paywallPrivacyPolicy => '隱私權政策';
 }

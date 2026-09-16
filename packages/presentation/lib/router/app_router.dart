@@ -15,6 +15,7 @@ import '../features/transactions/widgets/loan_wizard.dart';
 import '../features/subscriptions/subscription_form.dart';
 import '../features/paywall/paywall_screen.dart';
 import '../features/scenarios/scenarios_screen.dart';
+import 'page_indicator.dart';
 
 // Global keys for coach mark tour
 final hudNavKey = GlobalKey();
@@ -67,6 +68,7 @@ class _ScaffoldWithNavState extends ConsumerState<_ScaffoldWithNav> {
   void _showActionSheet() {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (ctx) {
@@ -103,7 +105,7 @@ class _ScaffoldWithNavState extends ConsumerState<_ScaffoldWithNav> {
                     ),
                     const Divider(color: AppColors.cardBorder, height: 1),
                     _ActionRow(
-                      label: 'LOAN',
+                      label: 'NEW LOAN',
                       icon: Icons.credit_score_rounded,
                       color: AppColors.gold,
                       onTap: () {
@@ -139,6 +141,7 @@ class _ScaffoldWithNavState extends ConsumerState<_ScaffoldWithNav> {
     final loans = _loanChoices(existing: existing);
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
@@ -191,14 +194,16 @@ class _ScaffoldWithNavState extends ConsumerState<_ScaffoldWithNav> {
         (ref.read(entitlementProvider).value?.isPro ?? false);
     if (!isPro) {
       final loans = await ref.read(loansProvider.future);
+      final transactions = await ref.read(transactionsProvider.future);
       if (!mounted) return;
-      if (loans.isNotEmpty) {
+      if (hasActiveLoan(loans: loans, transactions: transactions)) {
         showPaywall(context, trigger: 'loan_limit');
         return;
       }
     }
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
@@ -247,6 +252,7 @@ class _ScaffoldWithNavState extends ConsumerState<_ScaffoldWithNav> {
   void _showSubscriptionForm() {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
@@ -256,13 +262,6 @@ class _ScaffoldWithNavState extends ConsumerState<_ScaffoldWithNav> {
       ),
       builder: (_) => SubscriptionForm(
         onSubmit: (name, category, amount, cycle, startDate, note) async {
-          final isPro =
-              FeatureFlags.devProEntitlement ||
-              (ref.read(entitlementProvider).value?.isPro ?? false);
-          if (!isPro) {
-            showPaywall(context, trigger: 'subscriptions');
-            return false;
-          }
           final now = DateTime.now();
           await ref.read(addSubscriptionUseCaseProvider).execute(
             Subscription(
@@ -333,29 +332,14 @@ class _ScaffoldWithNavState extends ConsumerState<_ScaffoldWithNav> {
               ),
             ),
 
-            // Page indicator dots
+            // Labelled page indicator: tap a label or swipe
             Positioned(
               left: 0,
               right: 0,
-              bottom: bottomSafe + AppSpacing.sm,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(3, (i) {
-                  final active = i == currentIndex;
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeOut,
-                    margin: const EdgeInsets.symmetric(horizontal: 3),
-                    width: active ? 18 : 4,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: active
-                          ? AppColors.neonGreen
-                          : AppColors.textDim.withAlpha(100),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  );
-                }),
+              bottom: bottomSafe,
+              child: PageIndicator(
+                currentIndex: currentIndex,
+                onSelect: widget.shell.goBranch,
               ),
             ),
           ],

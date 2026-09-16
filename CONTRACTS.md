@@ -59,17 +59,29 @@ Never commit stale `.g.dart` files.
 
 ### 3.1 Burn Rate Formula
 ```dart
-effectiveBurn = max(actualSpending, budgetEstimate) + subscriptions + debt
+monthlyBurn = max(rentBudget, typicalRent)
+            + max(livingBudget, typicalLiving)
+            + subscriptions + loanPayments
 ```
-- `actualSpending` = average `grossOutflow` from transaction history
-- `grossOutflow` excludes: income, loan inflows, investments
-- `budgetEstimate` = rent + living (user-defined floor)
-- Budget is a floor, never a ceiling — reality always wins when over
+- Expenses with the RENT category count as rent. Every other expense, including uncategorized ones, counts as living.
+- A logged expense uses up its budget and never adds on top of it. Burn only rises when a bucket goes over budget.
+- `typicalRent` and `typicalLiving` = average logged spending per completed month in that bucket, or this month's spending when there is no earlier month.
+- Loan repayments count only against their loan's scheduled payment. Income, loans received, investments and opening balances are not burn.
+- An expected burn override in Forecast replaces `monthlyBurn`.
 
 ### 3.2 Runway Calculation
-- No arbitrary cap — calculate mathematically beyond projection window
-- `runwayMonths = projectedMonths + (lastBalance / burnRate).floor()`
-- `runOutDate` = null only when burn rate is zero
+Runway is measured in months from today.
+```dart
+dueThisMonth = rentLeft + livingLeft
+             + subscriptions * fractionOfMonthLeft
+             + loan payments not yet logged this month
+runwayMonths = floor(fractionOfMonthLeft + (cash - dueThisMonth) / monthlyBurn)
+```
+- `fractionOfMonthLeft` counts today, so it is 1.0 on the first day of the month.
+- If cash does not cover `dueThisMonth`, cash runs out this month.
+- `runOutDate` is the month cash reaches zero. It is null only when burn is zero.
+- No arbitrary cap. 9999 means unlimited.
+- The dashboard and the simulator share this calculation.
 
 ### 3.3 Investable Calculation
 ```dart
@@ -107,10 +119,13 @@ Uses `originalTermMonths - elapsed` — not `remainingBalance / monthlyPayment`.
 | `SC.cost` / Pink | `#E8829E` | Total outflow, burn, critical status |
 | `SC.subscr` / Purple | `#BB6DFF` | Subscriptions ONLY |
 | `SC.chrome` / Gold | `#CB9A3E` | Debt, loan obligations |
+| Amber | `#FFC978` | Caution runway status only |
 | Turkish Blue | `#5B9DC4` | UI structure, investable, neutral |
 | Smoke | `#CDD5E0` | All other numbers — neutral facts |
 
 **Rule:** Color = semantic meaning, not decoration. Color a number only when it represents a distinct mental category.
+
+The runway number carries its status colour: mint when stable, amber when caution, pink when critical. Caution is amber, not gold, because the runway card sits directly above the gold liabilities card.
 
 ### 4.2 Typography Hierarchy
 - **Numbers/values** → JetBrains Mono (gaming soul)
@@ -146,7 +161,7 @@ No new top-level tabs without strong justification.
 ## 5. Data Contracts
 
 ### 5.1 Schema Versioning
-Current schema version: **4**
+Current schema version: **6**
 
 | Version | Change |
 |---|---|
@@ -154,8 +169,12 @@ Current schema version: **4**
 | 2 | Added: loanId to transactions, loans table |
 | 3 | Added: subscriptions table |
 | 4 | Added: originalTermMonths to loans |
+| 5 | Added: category to transactions |
+| 6 | Added: financial_settings table (single row: budget, forecast assumptions, runway goal) |
 
 Every schema change requires a migration in `MigrationStrategy`.
+
+All financial values live in the encrypted database. `SharedPreferences` may hold only non-financial state: onboarding and dismissal flags, locale, currency code, display settings and the cached Pro flag.
 
 ### 5.2 Opening Balance
 Opening balance transactions are handled specially:
@@ -272,6 +291,9 @@ Answer these questions:
 | 2026-04 | No investment in burn rate | Investment ≠ expense, would inflate burn |
 | 2026-04 | Adaptive safety buffer (6-18mo) | Balance conservative vs aggressive |
 | 2026-04 | max(actual, budget) formula | Reality wins, budget is floor not ceiling |
+| 2026-09 | Rent and living budget buckets | Logged spending uses up its budget instead of being compared with the whole budget, so nothing is counted twice or missed |
+| 2026-09 | Runway measured in months from today | The rest of the current month costs its unused budget, not a full month that was already partly paid |
+| 2026-09 | Caution runway status is amber `#FFC978`, not gold | Gold means debt. A gold runway number above the gold liabilities card read as one category |
 | 2026-04 | Mathematical runway (no 120mo cap) | Artificial caps mislead users |
 | 2026-04 | Two pockets (safety + investable) | Mental model clarity |
 | 2026-04 | JetBrains Mono for numbers | Gaming soul, readability |
@@ -281,3 +303,6 @@ Answer these questions:
 | 2026-04 | Subscription normalized to monthly | Apples-to-apples comparison |
 | 2026-06 | SQLite DB encrypted with AES-256 via SQLCipher (`PRAGMA key`) | User financial data is sensitive; key generated with `Random.secure()` and stored in iOS Keychain / Android Keystore via `flutter_secure_storage`. Wiring requires `sqlcipher_flutter_libs: ^0.6.0` (NOT `^0.7.0+eol` which is a no-op stub) and `open.overrideFor(...)` calls in `app_database.dart` — without both, `PRAGMA key` silently no-ops on plain sqlite3 |
 | 2026-06 | App Store export compliance: standard encryption (EAR 740.17(b)(1)) | SQLCipher counts as standard encryption — select "Standard algorithms" in App Store Connect compliance prompt, then claim exemption as local data protection only |
+| 2026-09 | Budget, forecast assumptions and runway goal moved from `SharedPreferences` into the encrypted database (schema 6) | They are financial values and `NSUserDefaults` is a plaintext plist. Existing values move on first launch, then the old keys are removed |
+| 2026-09 | `PRAGMA cipher_version` checked every time the database opens | If plain SQLite is loaded instead of SQLCipher, `PRAGMA key` silently does nothing. The check throws in debug builds and reports the error in release builds |
+| 2026-09 | "Delete all data" keeps only the cached Pro flag | It holds no financial data, and keeping it avoids locking a paying user out while offline |
